@@ -48,21 +48,21 @@ function initThreeJS() {
     
     // Load model
     try {
-        const geometry = new THREE.BoxGeometry(1, 1, 1);
-        const material = new THREE.MeshStandardMaterial({ 
-            color: 0x047857,
-            metalness: 0.5,
-            roughness: 0.1
-        });
-        model = new THREE.Mesh(geometry, material);
-        scene.add(model);
+        // const geometry = new THREE.BoxGeometry(1, 1, 1);
+        // const material = new THREE.MeshStandardMaterial({ 
+        //     color: 0x047857,
+        //     metalness: 0.5,
+        //     roughness: 0.1
+        // });
+        // model = new THREE.Mesh(geometry, material);
+        // scene.add(model);
         
         // For actual model, use:
-        // const loader = new THREE.GLTFLoader();
-        // loader.load('assets/models/your-model.glb', function(gltf) {
-        //     model = gltf.scene;
-        //     scene.add(model);
-        // });
+        const loader = new THREE.GLTFLoader();
+        loader.load('assets/models/ferrari.glb', function(gltf) {
+            model = gltf.scene;
+            scene.add(model);
+        });
         
     } catch (error) {
         console.error('Error loading model:', error);
