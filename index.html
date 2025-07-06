@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modeling - Services</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link rel="stylesheet" href="styles-main.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body class="bg-gray-50 text-gray-800">
+   <!-- Header Section -->
+    <header class="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-4 shadow-lg rounded-b-xl">
+        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center px-4 py-2">
+            <h1 class="text-3xl font-extrabold mb-2 md:mb-0">
+                <span class="block">Design & Engineering</span>
+                <span class="block text-xl font-medium opacity-90">3D Modeling Services</span>
+            </h1>
+            <nav>
+                <ul class="flex flex-wrap justify-center space-x-4 md:space-x-6 text-lg font-semibold">
+                    <li><a href="#services" class="hover:text-emerald-200 transition duration-300 ease-in-out px-3 py-1 rounded-md">Services</a></li>
+                    <li><a href="#portfolio" class="hover:text-emerald-200 transition duration-300 ease-in-out px-3 py-1 rounded-md">Portfolio</a></li>
+                    <li><a href="#about" class="hover:text-emerald-200 transition duration-300 ease-in-out px-3 py-1 rounded-md">About Us</a></li>
+                    <li><a href="#contact" class="hover:text-emerald-200 transition duration-300 ease-in-out px-3 py-1 rounded-md">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative bg-white py-16 md:py-24 shadow-md rounded-xl mx-4 my-8 overflow-hidden">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+                Your Vision, Precision Engineered.
+            </h2>
+            <p class="text-xl md:text-2xl text-gray-600 mb-10 max-w-3xl mx-auto">
+                Transforming ideas into tangible realities with cutting-edge CAD, CAM, and CAE solutions.
+            </p>
+       
+        <!-- Abstract background shapes for visual appeal -->
+        <div class="absolute inset-0 z-0 opacity-10">
+            <svg class="absolute top-0 left-0 w-1/3 h-1/3 text-emerald-500 transform -translate-x-1/2 -translate-y-1/2" fill="currentColor" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <path d="M100 0C44.77 0 0 44.77 0 100s44.77 100 100 100 100-44.77 100-100S155.23 0 100 0zm0 180c-44.11 0-80-35.89-80-80s35.89-80 80-80 80 35.89 80 80-35.89 80-80 80z"/>
+            </svg>
+            <svg class="absolute bottom-0 right-0 w-1/4 h-1/4 text-teal-500 transform translate-x-1/2 translate-y-1/2" fill="currentColor" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <path d="M100 0L0 100l100 100L200 100zM100 20L20 100l80 80 80-80z"/>
+            </svg>
+        </div>
+            </div>
+        <div class="text-center">
+          <button id="consultationBtn" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition duration-300 ease-in-out text-lg ">
+            Get a Free Consultation
+          </button>
+        </div>
+    </section>
+    
+
+    <!-- Consultation Modal -->
+    <div id="consultationModal" class="modal">
+        <div class="modal-content bg-teal-700 rounded-lg">
+            <span class="close-modal text-white">&times;</span>
+            <h2 class="text-3xl font-bold text-white mb-6 text-center">Request a Free Consultation</h2>
+            <p class="text-center text-white mb-8">
+                Fill out the form below and our team will get back to you within 24 hours.
+            </p>
+            <form id="contactForm" class="space-y-6" action=https://formspree.io/f/xeokwljn" method="POST">
+                <div>
+                    <label for="modal-name" class="block text-sm font-medium text-white mb-1">Name</label>
+                    <input type="text" id="modal-name" name="name" class="w-full p-3 rounded-md bg-gray-50 border border-gray-300 placeholder-gray-400 text-gray-800 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition duration-200" placeholder="Your Name">
+                </div>
+                <div>
+                    <label for="modal-email" class="block text-sm font-medium text-white mb-1">Email</label>
+                    <input type="email" id="modal-email" name="email" class="w-full p-3 rounded-md bg-gray-50 border border-gray-300 placeholder-gray-400 text-gray-800 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition duration-200" placeholder="your.email@example.com">
+                </div>
+                <div>
+                    <label for="modal-phone" class="block text-sm font-medium text-white mb-1">Phone (Optional)</label>
+                    <input type="tel" id="modal-phone" name="phone" class="w-full p-3 rounded-md bg-gray-50 border border-gray-300 placeholder-gray-400 text-gray-800 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition duration-200" placeholder="+1 (123) 456-7890">
+                </div>
+                <div>
+                    <label for="modal-service" class="block text-sm font-medium text-white mb-1">Service Interest</label>
+                    <select id="modal-service" name="service" class="w-full p-3 rounded-md bg-gray-50 border border-gray-300 text-gray-800 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition duration-200">
+                        <option value="">Select a service</option>
+                        <option value="cad">CAD Modeling</option>
+                        <option value="cam">CAM Programming</option>
+                        <option value="cae">CAE Simulation</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="modal-message" class="block text-sm font-medium text-white mb-1">Project Details</label>
+                    <textarea id="modal-message" name="message" rows="5" class="w-full p-3 rounded-md bg-gray-50 border border-gray-300 placeholder-gray-400 text-gray-800 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition duration-200" placeholder="Tell us about your project..."></textarea>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition duration-300 ease-in-out text-lg">
+                        Submit Request
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 3D Model Showcase Section -->
+    <section id="portfolio-showcase" class="container mx-auto px-4 py-16 my-8 bg-white shadow-md rounded-xl">
+        <h2 class="text-3xl font-bold text-gray-900 text-center mb-10">Our 3D Design Capabilities in Action</h2>
+        <div id="three-canvas" class="w-full rounded-lg shadow-inner"></div>
+        <p class="text-center text-gray-600 mt-6 text-lg max-w-2xl mx-auto">
+            Explore a sample of our precision 3D modeling. This interactive visualization demonstrates the quality and detail we bring to every project.
+            <b class="text-emerald-700">Drag your mouse to rotate the model!</b>
+        </p>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="container mx-auto px-4 py-16 my-8 bg-white shadow-md rounded-xl">
+        <h2 class="text-3xl font-bold text-gray-900 text-center mb-10">Our Comprehensive Services</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- CAD Services -->
+            <div class="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300 ease-in-out border border-emerald-200">
+                <h3 class="text-2xl font-semibold text-emerald-700 mb-4 flex items-center">
+                    <svg class="w-7 h-7 mr-3 text-emerald-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L1 21h22L12 2zm0 3.93L19.46 19H4.54L12 5.93zM11 12h2v5h-2z"/></svg>
+                    CAD Modeling
+                </h3>
+                <p class="text-gray-600 leading-relaxed">
+                    From concept to detailed design, we create precise 2D drawings and complex 3D models tailored to your specifications. Our expertise covers mechanical components, product designs, architectural elements, and more. We utilize industry-leading software to ensure accuracy and manufacturability.
+                </p>
+                <ul class="list-disc list-inside text-gray-600 mt-4 space-y-1">
+                    <li>3D Solid & Surface Modeling</li>
+                    <li>2D Drafting & Detailing</li>
+                    <li>Assembly Design</li>
+                    <li>Parametric Modeling</li>
+                    <li>Legacy Data Conversion</li>
+                </ul>
+            </div>
+            <!-- CAM Services -->
+            <div class="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300 ease-in-out border border-teal-200">
+                <h3 class="text-2xl font-semibold text-teal-700 mb-4 flex items-center">
+                    <svg class="w-7 h-7 mr-3 text-teal-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15H9v-2h2v2zm0-4H9v-2h2v2zm4 4h-2v-2h2v2zm0-4h-2v-2h2v2zm-2-7c-2.76 0-5 2.24-5 5h2c0-1.66 1.34-3 3-3s3 1.34 3 3-1.34 3-3 3H9c-1.1 0-2 .9-2 2v1h7v2H7v-1h2c0-2.21 1.79-4 4-4s4-1.79 4-4-1.79-4-4-4z"/></svg>
+                    CAM Programming
+                </h3>
+                <p class="text-gray-600 leading-relaxed">
+                    Optimize your manufacturing processes with our expert CAM programming services. We generate efficient and reliable toolpaths for CNC machining, ensuring high-quality output and reduced production times. From 2-axis to multi-axis machining, we cover a wide range of applications.
+                </p>
+                <ul class="list-disc list-inside text-gray-600 mt-4 space-y-1">
+                    <li>CNC Milling & Turning</li>
+                    <li>Multi-axis Machining</li>
+                    <li>Toolpath Optimization</li>
+                    <li>Post-processor Development</li>
+                    <li>Rapid Prototyping Support</li>
+                </ul>
+            </div>
+            <!-- CAE Services -->
+            <div class="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300 ease-in-out border border-sky-200">
+                <h3 class="text-2xl font-semibold text-sky-700 mb-4 flex items-center">
+                    <svg class="w-7 h-7 mr-3 text-sky-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 4c-4.41 0-8 3.59-8 8s3.59 8 8 8 8-3.59 8-8-3.59-8-8-8zm0 14c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6zM13 7h-2v6h2V7z"/></svg>
+                    CAE Simulation
+                </h3>
+                <p class="text-gray-600 leading-relaxed">
+                    Validate and optimize your designs before physical prototyping with our advanced CAE simulation services. We perform structural, thermal, fluid dynamics, and motion analyses to predict performance and identify potential issues, saving you time and resources.
+                </p>
+                <ul class="list-disc list-inside text-gray-600 mt-4 space-y-1">
+                    <li>Finite Element Analysis (FEA)</li>
+                    <li>Computational Fluid Dynamics (CFD)</li>
+                    <li>Stress & Strain Analysis</li>
+                    <li>Thermal Analysis</li>
+                    <li>Kinematics & Dynamics Simulation</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portfolio Section (Placeholder) -->
+    <section id="portfolio" class="container mx-auto px-4 py-16 my-8 bg-white shadow-md rounded-xl">
+        <h2 class="text-3xl font-bold text-gray-900 text-center mb-10">Our Portfolio of Excellence</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="bg-gray-50 p-4 rounded-lg shadow-md border border-gray-200">
+                <img src="https://placehold.co/400x300/e2e8f0/64748b?text=Product+Design+1" alt="Product Design 1" class="w-full h-48 object-cover rounded-md mb-4">
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">Industrial Component</h3>
+                <p class="text-gray-600">Precision engineering for a complex industrial part, optimized for manufacturing.</p>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg shadow-md border border-gray-200">
+                <img src="https://placehold.co/400x300/e2e8f0/64748b?text=Product+Design+2" alt="Product Design 2" class="w-full h-48 object-cover rounded-md mb-4">
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">Automotive Part</h3>
+                <p class="text-gray-600">Lightweight design and stress analysis for automotive application.</p>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg shadow-md border border-gray-200">
+                <img src="https://placehold.co/400x300/e2e8f0/64748b?text=Product+Design+3" alt="Product Design 3" class="w-full h-48 object-cover rounded-md mb-4">
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">Consumer Electronic Enclosure</h3>
+                <p class="text-gray-600">Sleek and functional enclosure design with intricate internal geometry.</p>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg shadow-md border border-gray-200">
+                <img src="https://placehold.co/400x300/e2e8f0/64748b?text=Product+Design+4" alt="Product Design 4" class="w-full h-48 object-cover rounded-md mb-4">
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">Jig & Fixture Design</h3>
+                <p class="text-gray-600">Custom jigs and fixtures to enhance manufacturing efficiency and accuracy.</p>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg shadow-md border border-gray-200">
+                <img src="https://placehold.co/400x300/e2e8f0/64748b?text=Product+Design+5" alt="Product Design 5" class="w-full h-48 object-cover rounded-md mb-4">
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">Architectural Visualization</h3>
+                <p class="text-gray-600">Stunning 3D renderings for architectural projects and interior designs.</p>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg shadow-md border border-gray-200">
+                <img src="https://placehold.co/400x300/e2e8f0/64748b?text=Product+Design+6" alt="Product Design 6" class="w-full h-48 object-cover rounded-md mb-4">
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">Reverse Engineering</h3>
+                <p class="text-gray-600">Creating CAD models from physical objects with high precision scanning.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Us Section -->
+    <section id="about" class="container mx-auto px-4 py-16 my-8 bg-white shadow-md rounded-xl">
+        <h2 class="text-3xl font-bold text-gray-900 text-center mb-10">About Us</h2>
+        <div class="max-w-4xl mx-auto text-center text-lg text-gray-700 leading-relaxed">
+            <p class="mb-4">
+                We are a team of dedicated and experienced engineers specializing in advanced 3D CAD/CAM/CAE services. With a passion for innovation and precision, we partner with businesses of all sizes to bring their complex designs to life, optimize production, and ensure product integrity.
+            </p>
+            <p class="mb-4">
+                Our commitment to excellence, state-of-the-art tools, and deep industry knowledge enable us to deliver solutions that exceed expectations, driving efficiency and success for our clients. We believe in building long-term relationships based on trust, quality, and mutual growth.
+            </p>
+            <p>
+                Let us be your trusted partner in navigating the challenges of modern product development and manufacturing.
+            </p>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="container mx-auto px-4 py-16 my-8 bg-teal-700 text-white shadow-lg rounded-xl">
+        <h2 class="text-3xl font-bold text-white text-center mb-10">Get in Touch</h2>
+        <div class="max-w-xl mx-auto">
+            <p class="text-center text-lg mb-8">
+                Ready to discuss your project? Fill out the form below or reach out to us directly.
+            </p>
+            <form id="contactForm" class="space-y-6" action="https://formspree.io/f/xeokwljn" method="POST">
+                <div>
+                    <label for="name" class="block text-sm font-medium text-white mb-1">Name</label>
+                    <input type="text" id="name" name="name" class="w-full p-3 rounded-md bg-white border border-teal-500 placeholder-teal-700 text-black focus:ring-2 focus:ring-teal-300 focus:border-teal-300 transition duration-200" placeholder="Your Name">
+                </div>
+                <div>
+                    <label for="email" class="block text-sm font-medium text-white mb-1">Email</label>
+                    <input type="email" id="email" name="email" class="w-full p-3 rounded-md bg-white border border-teal-500 placeholder-teal-700 text-black focus:ring-2 focus:ring-teal-300 focus:border-teal-300 transition duration-200" placeholder="email@example.com">
+                </div>
+                <div>
+                    <label for="message" class="block text-sm font-medium text-white mb-1">Message</label>
+                    <textarea id="message" name="message" rows="5" class="w-full p-3 rounded-md bg-white border border-teal-500 placeholder-teal-700 text-black focus:ring-2 focus:ring-teal-300 focus:border-teal-300 transition duration-200" placeholder="Tell us about your project..."></textarea>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition duration-300 ease-in-out text-lg">
+                        Send Message
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer class="bg-gray-800 text-gray-300 p-6 text-center rounded-t-xl mt-8">
+        <div class="container mx-auto px-4">
+            <p>&copy; 2025 Design & Engineering Services. All rights reserved.</p>
+            <div class="flex justify-center space-x-4 mt-4">
+                <a href="page1.html" class="hover:text-white transition duration-200">Privacy Policy</a>
+                <span class="text-gray-500">|</span>
+                <a href="page2.html" class="hover:text-white transition duration-200">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+    <script src="script-main.js"></script>
+</body>
+</html>
