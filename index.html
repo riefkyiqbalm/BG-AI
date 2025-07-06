@@ -35,12 +35,11 @@
         }
     }
 </script>
- 
+
 </head>
 <body class="bg-gray-200 dark:bg-gray-900 text-gray-800">
-   <!-- Header Section -->
     <header class="bg-gradient-to-r from-sky-600 to-pink-700 text-white p-4 shadow-lg rounded-b-xl">
-         <button id="darkModeToggle" class="ml-4 p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200">
+           <button id="darkModeToggle" class="ml-4 p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200">
     <svg id="sunIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
     </svg>
@@ -64,7 +63,6 @@
         </div>
     </header>
 
-    <!-- Hero Section -->
     <section class="relative bg-white dark:bg-gray-700 py-16 md:py-24 shadow-md rounded-xl mx-4 my-8 overflow-hidden">
         <div class="container mx-auto px-4 text-center">
             <h2 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-200 mb-6 leading-tight">
@@ -73,8 +71,7 @@
             <p class="text-xl md:text-2xl text-gray-600 dark:text-gray-100 mb-10 max-w-3xl mx-auto">
                 Transforming ideas into tangible realities with cutting-edge CAD, CAM, and CAE solutions.
             </p>
-       
-        <!-- Abstract background shapes for visual appeal -->
+
         <div class="absolute inset-0 z-0 opacity-50">
             <svg class="absolute top-0 left-0 w-1/3 h-1/3 text-sky-500 dark:text-rose-500 transform -translate-x-1/2 -translate-y-1/2" fill="currentColor" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
                 <path d="M100 0C44.77 0 0 44.77 0 100s44.77 100 100 100 100-44.77 100-100S155.23 0 100 0zm0 180c-44.11 0-80-35.89-80-80s35.89-80 80-80 80 35.89 80 80-35.89 80-80 80z"/>
@@ -90,9 +87,8 @@
           </button>
         </div>
     </section>
-    
 
-    <!-- Consultation Modal -->
+
     <div id="consultationModal" class="modal p-8">
         <div class="modal-content bg-emerald-600 dark:bg-emerald-900 rounded-lg p-8">
             <span class="close-modal text-white">&times;</span>
@@ -137,7 +133,6 @@
         </div>
     </div>
 
-    <!-- 3D Model Showcase Section -->
     <section id="portfolio-showcase" class="container mx-auto px-4 py-16 my-8 bg-white dark:bg-gray-800 shadow-md rounded-xl">
         <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 text-center mb-10">Our 3D Design Capabilities in Action</h2>
         <div id="three-canvas" class="w-full rounded-lg shadow-inner"></div>
@@ -147,11 +142,9 @@
         </p>
     </section>
 
-    <!-- Services Section -->
     <section id="services" class="container mx-auto px-4 py-16 my-8 bg-white dark:bg-gray-800 shadow-md rounded-xl">
         <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 text-center mb-10">Our Comprehensive Services</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <!-- CAD Services -->
             <div class="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300 ease-in-out border border-sky-200">
                 <h3 class="text-2xl font-semibold text-sky-700 dark:text-sky-200 mb-4 flex items-center">
                     <svg class="w-7 h-7 mr-3 text-violet-500 dark:text-violet-300" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L1 21h22L12 2zm0 3.93L19.46 19H4.54L12 5.93zM11 12h2v5h-2z"/></svg>
@@ -168,7 +161,6 @@
                     <li>Legacy Data Conversion</li>
                 </ul>
             </div>
-            <!-- CAM Services -->
             <div class="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300 ease-in-out border border-pink-200">
                 <h3 class="text-2xl font-semibold text-pink-700 dark:text-pink-200 mb-4 flex items-center">
                     <svg class="w-7 h-7 mr-3 text-fuchsia-500 dark: text-fuchsia-300" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15H9v-2h2v2zm0-4H9v-2h2v2zm4 4h-2v-2h2v2zm0-4h-2v-2h2v2zm-2-7c-2.76 0-5 2.24-5 5h2c0-1.66 1.34-3 3-3s3 1.34 3 3-1.34 3-3 3H9c-1.1 0-2 .9-2 2v1h7v2H7v-1h2c0-2.21 1.79-4 4-4s4-1.79 4-4-1.79-4-4-4z"/></svg>
@@ -185,7 +177,6 @@
                     <li>Rapid Prototyping Support</li>
                 </ul>
             </div>
-            <!-- CAE Services -->
             <div class="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300 ease-in-out border border-sky-200">
                 <h3 class="text-2xl font-semibold text-orange-700 dark:text-orange-200 mb-4 flex items-center">
                     <svg class="w-7 h-7 mr-3 text-sky-500 dark:text-sky-300" fill="currentColor" viewBox="0 0 24 24"><path d="M12 4c-4.41 0-8 3.59-8 8s3.59 8 8 8 8-3.59 8-8-3.59-8-8-8zm0 14c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6zM13 7h-2v6h2V7z"/></svg>
@@ -205,44 +196,42 @@
         </div>
     </section>
 
-    <!-- Portfolio Section (Placeholder) -->
     <section id="portfolio" class="container mx-auto px-4 py-16 my-8 bg-white dark:bg-gray-800 shadow-md rounded-xl">
         <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 text-center mb-10">Our Portfolio of Excellence</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg shadow-md">
-                <img src="https://placehold.co/400x300/e2e8f0/64748b?text=Product+Design+1" alt="Product Design 1" class="w-full h-48 object-cover rounded-md mb-4">
+                <img src="./assets/images/vending-machine.jpg" alt="Product Design 1" class="w-full h-48 object-cover rounded-md mb-4">
                 <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2">Industrial Component</h3>
                 <p class="text-gray-600 dark:text-gray-100">Precision engineering for a complex industrial part, optimized for manufacturing.</p>
             </div>
             <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg shadow-md">
-                <img src="https://placehold.co/400x300/e2e8f0/64748b?text=Product+Design+2" alt="Product Design 2" class="w-full h-48 object-cover rounded-md mb-4">
+                <img src="./assets/images/automotive.jpg" alt="Product Design 2" class="w-full h-48 object-cover rounded-md mb-4">
                 <h3 class="text-xl font-semibold text-gray-800  dark:text-gray-200 mb-2">Automotive Part</h3>
                 <p class="text-gray-600 dark:text-gray-100">Lightweight design and stress analysis for automotive application.</p>
             </div>
             <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg shadow-md">
-                <img src="https://placehold.co/400x300/e2e8f0/64748b?text=Product+Design+3" alt="Product Design 3" class="w-full h-48 object-cover rounded-md mb-4">
+                <img src="./assets/images/casing.jpg" alt="Product Design 3" class="w-full h-48 object-cover rounded-md mb-4">
                 <h3 class="text-xl font-semibold text-gray-800  dark:text-gray-200 mb-2">Consumer Electronic Enclosure</h3>
                 <p class="text-gray-600 dark:text-gray-100">Sleek and functional enclosure design with intricate internal geometry.</p>
             </div>
             <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg shadow-md">
-                <img src="https://placehold.co/400x300/e2e8f0/64748b?text=Product+Design+4" alt="Product Design 4" class="w-full h-48 object-cover rounded-md mb-4">
+                <img src="./assets/images/cetakan.jpg" alt="Product Design 4" class="w-full h-48 object-cover rounded-md mb-4">
                 <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2">Jig & Fixture Design</h3>
                 <p class="text-gray-600 dark:text-gray-100">Custom jigs and fixtures to enhance manufacturing efficiency and accuracy.</p>
             </div>
+            <!--<div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg shadow-md">-->
+            <!--    <img src="https://placehold.co/400x300/e2e8f0/64748b?text=Product+Design+5" alt="Product Design 5" class="w-full h-48 object-cover rounded-md mb-4">-->
+            <!--    <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2">Architectural Visualization</h3>-->
+            <!--    <p class="text-gray-600 dark:text-gray-100">Stunning 3D renderings for architectural projects and interior designs.</p>-->
+            <!--</div>-->
             <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg shadow-md">
-                <img src="https://placehold.co/400x300/e2e8f0/64748b?text=Product+Design+5" alt="Product Design 5" class="w-full h-48 object-cover rounded-md mb-4">
-                <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2">Architectural Visualization</h3>
-                <p class="text-gray-600 dark:text-gray-100">Stunning 3D renderings for architectural projects and interior designs.</p>
-            </div>
-            <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg shadow-md">
-                <img src="https://placehold.co/400x300/e2e8f0/64748b?text=Product+Design+6" alt="Product Design 6" class="w-full h-48 object-cover rounded-md mb-4">
+                <img src="./assets/images/revese-eng.jpg" alt="Product Design 5" class="w-full h-48 object-cover rounded-md mb-4">
                 <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2">Reverse Engineering</h3>
                 <p class="text-gray-600 dark:text-gray-100">Creating CAD models from physical objects with high precision scanning.</p>
             </div>
         </div>
     </section>
 
-    <!-- About Us Section -->
     <section id="about" class="container mx-auto px-4 py-16 my-8 bg-white dark:bg-gray-800 shadow-md rounded-xl">
         <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-200 text-center mb-10">About Us</h2>
         <div class="max-w-4xl mx-auto text-center text-lg text-gray-700 dark:text-gray-200 leading-relaxed">
@@ -258,7 +247,6 @@
         </div>
     </section>
 
-    <!-- Contact Section -->
     <section id="contact" class="container mx-auto px-4 py-16 my-8 bg-emerald-600 dark:bg-emerald-900 text-white shadow-lg rounded-xl">
         <h2 class="text-3xl font-bold text-white text-center mb-10">Get in Touch</h2>
         <div class="max-w-xl mx-auto">
@@ -297,22 +285,28 @@
                         Send Message
                     </button>
                 </div>
-                 <p class="text-center text-white mb-8" id="alert-text">By clicking Submit button your aggree with our <a href = "privacypolicy.html" class = "text-sky-500 mb-10 font-bold">Privacy Policy</a> and <a href="termsofservices.html"class="text-sky-500 font-bold">Terms of Services</a></p>
+                    <p class="text-center text-white mb-8" id="alert-text">By clicking Submit button your aggree with our <a href = "privacypolicy.html" class = "text-sky-500 mb-10 font-bold">Privacy Policy</a> and <a href="termsofservices.html"class="text-sky-500 font-bold">Terms of Services</a></p>
             </form>
         </div>
     </section>
 
-    <!-- Footer Section -->
     <footer class="bg-gray-800 text-gray-300 p-6 text-center rounded-t-xl mt-8">
         <div class="container mx-auto px-4">
             <p>&copy; 2025 Design & Engineering Services. All rights reserved.</p>
             <div class="flex justify-center space-x-4 mt-4">
-                <a href="page1.html" class="hover:text-white transition duration-200">Privacy Policy</a>
+                <a href="privacypolicy.html" class="hover:text-white transition duration-200">Privacy Policy</a>
                 <span class="text-gray-500">|</span>
-                <a href="page2.html" class="hover:text-white transition duration-200">Terms of Service</a>
+                <a href="termsofservices.html" class="hover:text-white transition duration-200">Terms of Service</a>
             </div>
         </div>
     </footer>
+
+    <button id="backToTop" class="fixed bottom-6 right-6 bg-sky-500 text-white p-4 rounded-full shadow-lg hover:bg-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-opacity-75 transition-all duration-300 ease-in-out z-50 opacity-0 invisible">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+        </svg>
+    </button>
+    
     <script src="script-main.js"></script>
 </body>
 </html>
