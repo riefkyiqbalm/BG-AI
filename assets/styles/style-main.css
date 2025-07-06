@@ -17,7 +17,7 @@ body {
 /* Modal styles */
 .modal {
     display: none;
-    position: fixed;
+    position:fixed;
     top: 0;
     left: 0;
     width: 100%;
@@ -25,7 +25,6 @@ body {
     background-color: rgba(0, 0, 0, 0.7);
     z-index: 1000;
     overflow-y: auto;
-}
 
 /* ... (rest of your CSS styles) ... */
 
@@ -42,4 +41,53 @@ body {
         width: 95%;
         padding: 1rem;
     }
+    
+}
+
+/* Dark mode styles */
+.dark {
+    --tw-bg-opacity: 1;
+    --tw-text-opacity: 1;
+}
+
+.dark body {
+    @apply bg-gray-900 text-gray-100;
+}
+
+.dark .bg-white {
+    @apply bg-gray-800;
+}
+
+.dark .bg-gray-50 {
+    @apply bg-gray-700;
+}
+
+.dark .text-gray-600, 
+.dark .text-gray-700, 
+.dark .text-gray-800 {
+    @apply text-gray-300;
+}
+
+.dark .border-gray-200 {
+    @apply border-gray-600;
+}
+
+.dark #three-canvas {
+    @apply bg-gray-800;
+}
+
+/* Modal dark mode */
+.dark .modal-content {
+    @apply bg-gray-800 text-white;
+}
+
+.dark .modal-content input,
+.dark .modal-content textarea,
+.dark .modal-content select {
+    @apply bg-gray-700 text-white border-gray-600;
+}
+
+.dark .modal-content input::placeholder,
+.dark .modal-content textarea::placeholder {
+    @apply text-gray-400;
 }
