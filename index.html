@@ -7,12 +7,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <link rel="stylesheet" href="./assets/css/styles-main.css">
-    <link rel="icon" href="./assets/images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="styles-main.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body class="bg-gray-50 text-gray-800">
    <!-- Header Section -->
-    <header class="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-4 shadow-lg rounded-b-xl">
+    <header class="bg-gradient-to-r from-sky-600 to-pink-700 text-white p-4 shadow-lg rounded-b-xl">
         <div class="container mx-auto flex flex-col md:flex-row justify-between items-center px-4 py-2">
             <h1 class="text-3xl font-extrabold mb-2 md:mb-0">
                 <span class="block">Design & Engineering</span>
@@ -20,10 +20,10 @@
             </h1>
             <nav>
                 <ul class="flex flex-wrap justify-center space-x-4 md:space-x-6 text-lg font-semibold">
-                    <li><a href="#services" class="hover:text-emerald-200 transition duration-300 ease-in-out px-3 py-1 rounded-md">Services</a></li>
-                    <li><a href="#portfolio" class="hover:text-emerald-200 transition duration-300 ease-in-out px-3 py-1 rounded-md">Portfolio</a></li>
-                    <li><a href="#about" class="hover:text-emerald-200 transition duration-300 ease-in-out px-3 py-1 rounded-md">About Us</a></li>
-                    <li><a href="#contact" class="hover:text-emerald-200 transition duration-300 ease-in-out px-3 py-1 rounded-md">Contact</a></li>
+                    <li><a href="#services" class="hover:text-sky-200 transition duration-300 ease-in-out px-3 py-1 rounded-md">Services</a></li>
+                    <li><a href="#portfolio" class="hover:text-sky-200 transition duration-300 ease-in-out px-3 py-1 rounded-md">Portfolio</a></li>
+                    <li><a href="#about" class="hover:text-sky-200 transition duration-300 ease-in-out px-3 py-1 rounded-md">About Us</a></li>
+                    <li><a href="#contact" class="hover:text-sky-200 transition duration-300 ease-in-out px-3 py-1 rounded-md">Contact</a></li>
                 </ul>
             </nav>
         </div>
@@ -40,17 +40,17 @@
             </p>
        
         <!-- Abstract background shapes for visual appeal -->
-        <div class="absolute inset-0 z-0 opacity-10">
-            <svg class="absolute top-0 left-0 w-1/3 h-1/3 text-emerald-500 transform -translate-x-1/2 -translate-y-1/2" fill="currentColor" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <div class="absolute inset-0 z-0 opacity-50">
+            <svg class="absolute top-0 left-0 w-1/3 h-1/3 text-sky-500 transform -translate-x-1/2 -translate-y-1/2" fill="currentColor" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
                 <path d="M100 0C44.77 0 0 44.77 0 100s44.77 100 100 100 100-44.77 100-100S155.23 0 100 0zm0 180c-44.11 0-80-35.89-80-80s35.89-80 80-80 80 35.89 80 80-35.89 80-80 80z"/>
             </svg>
-            <svg class="absolute bottom-0 right-0 w-1/4 h-1/4 text-teal-500 transform translate-x-1/2 translate-y-1/2" fill="currentColor" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <svg class="absolute bottom-0 right-0 w-1/4 h-1/4 text-red-500 transform translate-x-1/2 translate-y-1/2" fill="currentColor" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
                 <path d="M100 0L0 100l100 100L200 100zM100 20L20 100l80 80 80-80z"/>
             </svg>
         </div>
             </div>
         <div class="text-center">
-          <button id="consultationBtn" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition duration-300 ease-in-out text-lg ">
+          <button id="consultationBtn" class="bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition duration-300 ease-in-out text-lg ">
             Get a Free Consultation
           </button>
         </div>
@@ -58,29 +58,29 @@
     
 
     <!-- Consultation Modal -->
-    <div id="consultationModal" class="modal">
-        <div class="modal-content bg-teal-700 rounded-lg">
+    <div id="consultationModal" class="modal p-8">
+        <div class="modal-content bg-emerald-700 rounded-lg p-8">
             <span class="close-modal text-white">&times;</span>
             <h2 class="text-3xl font-bold text-white mb-6 text-center">Request a Free Consultation</h2>
             <p class="text-center text-white mb-8">
                 Fill out the form below and our team will get back to you within 24 hours.
             </p>
-            <form id="contactForm" class="space-y-6" action=https://formspree.io/f/xeokwljn" method="POST">
+            <form id="contactForm" class="space-y-6" action="https://formspree.io/f/xeokwljn" method="POST">
                 <div>
                     <label for="modal-name" class="block text-sm font-medium text-white mb-1">Name</label>
-                    <input type="text" id="modal-name" name="name" class="w-full p-3 rounded-md bg-gray-50 border border-gray-300 placeholder-gray-400 text-gray-800 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition duration-200" placeholder="Your Name">
+                    <input type="text" id="modal-name" name="name" class="w-full p-3 rounded-md bg-gray-50 border border-gray-300 placeholder-gray-400 text-gray-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition duration-200" placeholder="Your Name">
                 </div>
                 <div>
                     <label for="modal-email" class="block text-sm font-medium text-white mb-1">Email</label>
-                    <input type="email" id="modal-email" name="email" class="w-full p-3 rounded-md bg-gray-50 border border-gray-300 placeholder-gray-400 text-gray-800 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition duration-200" placeholder="your.email@example.com">
+                    <input type="email" id="modal-email" name="email" class="w-full p-3 rounded-md bg-gray-50 border border-gray-300 placeholder-gray-400 text-gray-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition duration-200" placeholder="your.email@example.com">
                 </div>
                 <div>
                     <label for="modal-phone" class="block text-sm font-medium text-white mb-1">Phone (Optional)</label>
-                    <input type="tel" id="modal-phone" name="phone" class="w-full p-3 rounded-md bg-gray-50 border border-gray-300 placeholder-gray-400 text-gray-800 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition duration-200" placeholder="+1 (123) 456-7890">
+                    <input type="tel" id="modal-phone" name="phone" class="w-full p-3 rounded-md bg-gray-50 border border-gray-300 placeholder-gray-400 text-gray-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition duration-200" placeholder="+1 (123) 456-7890 (Whatsapp available)">
                 </div>
                 <div>
                     <label for="modal-service" class="block text-sm font-medium text-white mb-1">Service Interest</label>
-                    <select id="modal-service" name="service" class="w-full p-3 rounded-md bg-gray-50 border border-gray-300 text-gray-800 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition duration-200">
+                    <select id="modal-service" name="service" class="w-full p-3 rounded-md bg-gray-50 border border-gray-300 text-gray-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition duration-200">
                         <option value="">Select a service</option>
                         <option value="cad">CAD Modeling</option>
                         <option value="cam">CAM Programming</option>
@@ -90,13 +90,14 @@
                 </div>
                 <div>
                     <label for="modal-message" class="block text-sm font-medium text-white mb-1">Project Details</label>
-                    <textarea id="modal-message" name="message" rows="5" class="w-full p-3 rounded-md bg-gray-50 border border-gray-300 placeholder-gray-400 text-gray-800 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition duration-200" placeholder="Tell us about your project..."></textarea>
+                    <textarea id="modal-message" name="message" rows="5" class="w-full p-3 rounded-md bg-gray-50 border border-gray-300 placeholder-gray-400 text-gray-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition duration-200" placeholder="Tell us about your project..."></textarea>
                 </div>
                 <div class="text-center">
-                    <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition duration-300 ease-in-out text-lg">
+                    <button type="submit" class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition duration-300 ease-in-out text-lg">
                         Submit Request
                     </button>
                 </div>
+                <p class="text-center text-white mb-8" id="alert-text">By clicking Submit button your aggree with our <a href = "privacypolicy.html" class = "text-sky-500 mb-10 font-bold">Privacy Policy</a> and <a href="termsofservices.html"class="text-sky-500 font-bold">Terms of Services</a></p>
             </form>
         </div>
     </div>
@@ -107,7 +108,7 @@
         <div id="three-canvas" class="w-full rounded-lg shadow-inner"></div>
         <p class="text-center text-gray-600 mt-6 text-lg max-w-2xl mx-auto">
             Explore a sample of our precision 3D modeling. This interactive visualization demonstrates the quality and detail we bring to every project.
-            <b class="text-emerald-700">Drag your mouse to rotate the model!</b>
+            <b class="text-sky-700">Drag your mouse to rotate the model!</b>
         </p>
     </section>
 
@@ -116,9 +117,9 @@
         <h2 class="text-3xl font-bold text-gray-900 text-center mb-10">Our Comprehensive Services</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <!-- CAD Services -->
-            <div class="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300 ease-in-out border border-emerald-200">
-                <h3 class="text-2xl font-semibold text-emerald-700 mb-4 flex items-center">
-                    <svg class="w-7 h-7 mr-3 text-emerald-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L1 21h22L12 2zm0 3.93L19.46 19H4.54L12 5.93zM11 12h2v5h-2z"/></svg>
+            <div class="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300 ease-in-out border border-sky-200">
+                <h3 class="text-2xl font-semibold text-sky-700 mb-4 flex items-center">
+                    <svg class="w-7 h-7 mr-3 text-violet-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L1 21h22L12 2zm0 3.93L19.46 19H4.54L12 5.93zM11 12h2v5h-2z"/></svg>
                     CAD Modeling
                 </h3>
                 <p class="text-gray-600 leading-relaxed">
@@ -133,9 +134,9 @@
                 </ul>
             </div>
             <!-- CAM Services -->
-            <div class="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300 ease-in-out border border-teal-200">
-                <h3 class="text-2xl font-semibold text-teal-700 mb-4 flex items-center">
-                    <svg class="w-7 h-7 mr-3 text-teal-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15H9v-2h2v2zm0-4H9v-2h2v2zm4 4h-2v-2h2v2zm0-4h-2v-2h2v2zm-2-7c-2.76 0-5 2.24-5 5h2c0-1.66 1.34-3 3-3s3 1.34 3 3-1.34 3-3 3H9c-1.1 0-2 .9-2 2v1h7v2H7v-1h2c0-2.21 1.79-4 4-4s4-1.79 4-4-1.79-4-4-4z"/></svg>
+            <div class="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300 ease-in-out border border-pink-200">
+                <h3 class="text-2xl font-semibold text-pink-700 mb-4 flex items-center">
+                    <svg class="w-7 h-7 mr-3 text-fuchsia-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15H9v-2h2v2zm0-4H9v-2h2v2zm4 4h-2v-2h2v2zm0-4h-2v-2h2v2zm-2-7c-2.76 0-5 2.24-5 5h2c0-1.66 1.34-3 3-3s3 1.34 3 3-1.34 3-3 3H9c-1.1 0-2 .9-2 2v1h7v2H7v-1h2c0-2.21 1.79-4 4-4s4-1.79 4-4-1.79-4-4-4z"/></svg>
                     CAM Programming
                 </h3>
                 <p class="text-gray-600 leading-relaxed">
@@ -151,7 +152,7 @@
             </div>
             <!-- CAE Services -->
             <div class="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300 ease-in-out border border-sky-200">
-                <h3 class="text-2xl font-semibold text-sky-700 mb-4 flex items-center">
+                <h3 class="text-2xl font-semibold text-orange-700 mb-4 flex items-center">
                     <svg class="w-7 h-7 mr-3 text-sky-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 4c-4.41 0-8 3.59-8 8s3.59 8 8 8 8-3.59 8-8-3.59-8-8-8zm0 14c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6zM13 7h-2v6h2V7z"/></svg>
                     CAE Simulation
                 </h3>
@@ -223,7 +224,7 @@
     </section>
 
     <!-- Contact Section -->
-    <section id="contact" class="container mx-auto px-4 py-16 my-8 bg-teal-700 text-white shadow-lg rounded-xl">
+    <section id="contact" class="container mx-auto px-4 py-16 my-8 bg-emerald-700 text-white shadow-lg rounded-xl">
         <h2 class="text-3xl font-bold text-white text-center mb-10">Get in Touch</h2>
         <div class="max-w-xl mx-auto">
             <p class="text-center text-lg mb-8">
@@ -232,21 +233,36 @@
             <form id="contactForm" class="space-y-6" action="https://formspree.io/f/xeokwljn" method="POST">
                 <div>
                     <label for="name" class="block text-sm font-medium text-white mb-1">Name</label>
-                    <input type="text" id="name" name="name" class="w-full p-3 rounded-md bg-white border border-teal-500 placeholder-teal-700 text-black focus:ring-2 focus:ring-teal-300 focus:border-teal-300 transition duration-200" placeholder="Your Name">
+                    <input type="text" id="name" name="name" class="w-full p-3 rounded-md bg-white border border-gray-500 placeholder-emerald-700 text-black focus:ring-2 focus:ring-sky-300 focus:border-sky-300 transition duration-200" placeholder="Your Name">
                 </div>
                 <div>
                     <label for="email" class="block text-sm font-medium text-white mb-1">Email</label>
-                    <input type="email" id="email" name="email" class="w-full p-3 rounded-md bg-white border border-teal-500 placeholder-teal-700 text-black focus:ring-2 focus:ring-teal-300 focus:border-teal-300 transition duration-200" placeholder="email@example.com">
+                    <input type="email" id="email" name="email" class="w-full p-3 rounded-md bg-white border border-gray-500 placeholder-emerald-700 text-black focus:ring-2 focus:ring-sky-300 focus:border-sky-300 transition duration-200" placeholder="email@example.com">
+                </div>
+                <div>
+                    <label for="modal-phone" class="block text-sm font-medium text-white mb-1">Phone (Optional)</label>
+                    <input type="tel" id="modal-phone" name="phone" class="w-full p-3 rounded-md bg-gray-50 border border-gray-300 placeholder-emerald-700 text-gray-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition duration-200" placeholder="+1 (123) 456-7890 (Whatsapp available)">
+                </div>
+                <div>
+                    <label for="modal-service" class="block text-sm font-medium text-white mb-1">Service Interest</label>
+                    <select id="modal-service" name="service" class="w-full p-3 rounded-md bg-gray-50 border border-gray-300 text-gray-800 focus:ring-2 focus:ring-sky-500 focus:border-gray-500 transition duration-200">
+                        <option value="">Select a service</option>
+                        <option value="cad">CAD Modeling</option>
+                        <option value="cam">CAM Programming</option>
+                        <option value="cae">CAE Simulation</option>
+                        <option value="other">Other</option>
+                    </select>
                 </div>
                 <div>
                     <label for="message" class="block text-sm font-medium text-white mb-1">Message</label>
-                    <textarea id="message" name="message" rows="5" class="w-full p-3 rounded-md bg-white border border-teal-500 placeholder-teal-700 text-black focus:ring-2 focus:ring-teal-300 focus:border-teal-300 transition duration-200" placeholder="Tell us about your project..."></textarea>
+                    <textarea id="message" name="message" rows="5" class="w-full p-3 rounded-md bg-white border border-gray-500 placeholder-emerald-700 text-black focus:ring-2 focus:ring-pink-300 focus:border-pink-300 transition duration-200" placeholder="Tell us about your project..."></textarea>
                 </div>
                 <div class="text-center">
-                    <button type="submit" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition duration-300 ease-in-out text-lg">
+                    <button type="submit" class="bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition duration-300 ease-in-out text-lg">
                         Send Message
                     </button>
                 </div>
+                 <p class="text-center text-white mb-8" id="alert-text">By clicking Submit button your aggree with our <a href = "privacypolicy.html" class = "text-sky-500 mb-10 font-bold">Privacy Policy</a> and <a href="termsofservices.html"class="text-sky-500 font-bold">Terms of Services</a></p>
             </form>
         </div>
     </section>
@@ -262,6 +278,6 @@
             </div>
         </div>
     </footer>
-    <script src="./assets/script/script-main.js"></script>
+    <script src="script-main.js"></script>
 </body>
 </html>
