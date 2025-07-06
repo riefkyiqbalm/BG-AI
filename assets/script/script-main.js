@@ -7,6 +7,8 @@ window.onload = function() {
     animate();
     setupModal();
     setupEventListeners();
+    setupDarkMode();
+    setupForm();
 };
 
 // Three.js Initialization
@@ -48,22 +50,14 @@ function initThreeJS() {
     
     // Load model
     try {
-        // const geometry = new THREE.BoxGeometry(1, 1, 1);
-        // const material = new THREE.MeshStandardMaterial({ 
-        //     color: 0x047857,
-        //     metalness: 0.5,
-        //     roughness: 0.1
-        // });
-        // model = new THREE.Mesh(geometry, material);
-        // scene.add(model);
-        
-        // For actual model, use:
-        const loader = new THREE.GLTFLoader();
-        loader.load('assets/models/ferrari.glb', function(gltf) {
-            model = gltf.scene;
-            scene.add(model);
+        const geometry = new THREE.BoxGeometry(1, 1, 1);
+        const material = new THREE.MeshStandardMaterial({ 
+            color: 0x047857,
+            metalness: 0.5,
+            roughness: 0.1
         });
-        
+        model = new THREE.Mesh(geometry, material);
+        scene.add(model);
     } catch (error) {
         console.error('Error loading model:', error);
         loadFallbackModel();
@@ -200,5 +194,61 @@ function setupEventListeners() {
 
     container.addEventListener('touchend', () => {
         isDragging = false;
+    });
+}
+
+// Dark Mode Toggle
+function setupDarkMode() {
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    const sunIcon = document.getElementById('sunIcon');
+    const moonIcon = document.getElementById('moonIcon');
+    
+    // Check for saved user preference or system preference
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const savedMode = localStorage.getItem('darkMode');
+    
+    // Set initial mode
+    if (savedMode === 'dark' || (!savedMode && prefersDark)) {
+        document.documentElement.classList.add('dark');
+        sunIcon.classList.add('hidden');
+        moonIcon.classList.remove('hidden');
+    } else {
+        document.documentElement.classList.remove('dark');
+        sunIcon.classList.remove('hidden');
+        moonIcon.classList.add('hidden');
+    }
+    
+    // Toggle dark mode
+    darkModeToggle.addEventListener('click', () => {
+        document.documentElement.classList.toggle('dark');
+        sunIcon.classList.toggle('hidden');
+        moonIcon.classList.toggle('hidden');
+        
+        // Save preference
+        const isDark = document.documentElement.classList.contains('dark');
+        localStorage.setItem('darkMode', isDark ? 'dark' : 'light');
+    });
+}
+
+// Form Submission Handling
+function setupForm() {
+    const contactForm = document.getElementById('contactForm');
+    if (!contactForm) return;
+
+    contactForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        const submitBtn = contactForm.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.textContent = 'Sending...';
+        submitBtn.disabled = true;
+
+        // Simulate form submission (replace with actual form handling)
+        setTimeout(() => {
+            alert('Form submitted successfully!');
+            contactForm.reset();
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+        }, 1500);
     });
 }
