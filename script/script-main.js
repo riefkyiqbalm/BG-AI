@@ -254,6 +254,29 @@ function setupForm() {
     });
 }
 
+// Form Submission Handling
+function setupForm2() {
+    const contactForm = document.getElementById('modalForm');
+    if (!contactForm) return;
+
+    contactForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const submitBtn = contactForm.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.textContent = 'Sending...';
+        submitBtn.disabled = true;
+
+        // Simulate form submission (replace with actual form handling)
+        setTimeout(() => {
+            alert('Form submitted successfully!');
+            contactForm.reset();
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+        }, 1500);
+    });
+}
+
 // Back to Top Button
 function setupBackToTop() {
     const backToTopBtn = document.getElementById('backToTop');
