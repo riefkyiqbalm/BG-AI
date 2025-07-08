@@ -4,9 +4,13 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "http-server .",
-    "build": "npx @tailwindcss/cli -i ./styles/style-main.css -o ./dist/output.css --minify",
-    "deploy:s3": "aws s3 sync . s3://your-s3-bucket-name --delete --acl public-read"
+    "clean:dist": "rm -rf dist",
+    "build:css": "npx @tailwindcss/cli -i ./styles/style-main.css -o ./dist/output.css --minify",
+    "copy:html": "cpx \"./*.html\" ./dist",
+    "copy:js": "cpx \"./script/script-main.js\" ./dist/script",
+    "build": "npm run clean:dist && npm run build:css && npm run copy:html && npm run copy:js",
+    "start": "http-server ./dist", 
+    "deploy:s3": "aws s3 sync ./dist s3://your-s3-bucket-name --delete --acl public-read --cache-control max-age=31536000,public"
   },
   "dependencies": {
     "express": "^4.18.2"
@@ -17,9 +21,7 @@
     "tailwindcss": "4.x.x",
     "@tailwindcss/cli": "4.x.x",
     "postcss": "^8.x.x",
-    "autoprefixer": "^10.x.x"
-  },
-  "sources": {
-    "negated": false  
+    "autoprefixer": "^10.x.x",
+    "cpx": "^1.5.0" 
   }
 }
