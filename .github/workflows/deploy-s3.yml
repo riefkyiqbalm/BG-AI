@@ -1,0 +1,74 @@
+# .github/workflows/deploy-s3.yml
+
+name: Deploy Static Site to S3
+
+# This workflow will run on every push to the 'main' branch.
+# You can change 'main' to 'master' or any other branch you use for deployments.
+on:
+  push:
+    branches:
+      - main
+
+# Permissions required for the GitHub Actions runner.
+# 'contents: read' allows the action to read your repository's files.
+# 'id-token: write' is for OIDC (OpenID Connect), a more secure way to authenticate with AWS,
+# but requires additional setup in AWS. For simplicity with Access Keys, it can be omitted
+# or kept if you plan to transition to OIDC later.
+permissions:
+  contents: read
+  id-token: write # Keep this if you might use OIDC in the future, otherwise can be removed.
+
+jobs:
+  deploy:
+    # Specifies the operating system for the runner.
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository code.
+      # This makes your project files available to the workflow.
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Configure AWS credentials.
+      # This action sets up the AWS CLI environment with your secrets.
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          # Your AWS Access Key ID, stored as a GitHub Secret.
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          # Your AWS Secret Access Key, stored as a GitHub Secret.
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          # IMPORTANT: Specify the AWS region where your S3 bucket is located.
+          # Example: 'us-east-1', 'ap-southeast-1', 'eu-west-1', etc.
+          aws-region: ap-southeast-1 # <<<--- REPLACE THIS WITH YOUR ACTUAL AWS REGION
+
+
+      # Step 3: Deploy your static files to the S3 bucket.
+      # This action uses the AWS CLI 's3 sync' command under the hood.
+      - name: Deploy to S3
+        uses: aws-actions/amazon-s3-deploy@v1.4.3
+        with:
+          # IMPORTANT: Replace 'your-s3-bucket-name' with the exact name of your S3 bucket.
+          bucket: balteng.com # <<<--- REPLACE THIS WITH YOUR ACTUAL S3 BUCKET NAME
+          # 'source_dir' specifies the local directory containing your website files.
+          # Use '.' if your HTML, CSS, and JS files are at the root of your repository.
+          # If you have a build step (e.g., 'npm run build') that outputs to a folder like 'dist',
+          # you would change this to 'dist'.
+          source_dir: .
+          # 'sync: true' ensures that files in S3 are synchronized with your source directory.
+          # Files that are removed from your source will also be removed from S3.
+          sync: true
+          # 'delete_removed: true' explicitly confirms that files removed from the source
+          # should also be deleted from the S3 bucket.
+          delete_removed: true
+          # 'no_cache: true' sets Cache-Control headers to prevent browser caching.
+          # This ensures users always get the latest version of your site.
+          # You might adjust this for production if you want some caching.
+          no_cache: true
+          # You can optionally set a specific ACL for uploaded objects.
+          # 'public-read' is common for static websites to make files publicly accessible.
+          acl: public-read
+
+      # No CloudFront invalidation step is included as per your request.
+      # If you later decide to add CloudFront, you would add a step here
+      # to invalidate its cache after the S3 deployment.
