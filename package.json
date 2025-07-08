@@ -1,21 +1,22 @@
 {
-  "name": "balteng.com-services",
+  "name": "my-app",
   "version": "1.0.0",
-  "description": "IF YOU NEED 3D MODELING FOR YOUR PROJECT IN ENGINEERING FIELD OR IN ANOTHER FIELD I SELL A SERVICES TO ACCOMODATE YOUR NEEDS, PLEASE CHECK MY WEBSITE FOR MORE INFORMATION OR VISIT MY YOUTUBE CHANELL BALTENGG (with double G) OR CLICK/COPY THIS LINK https://www.youtube.com/@Baltengg",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "http-server ."
+    "start": "http-server .",
+    "build": "npx @tailwindcss/cli -i ./styles/style-main.css -o ./dist/output.css --minify",
+    "deploy:s3": "aws s3 sync . s3://your-s3-bucket-name --delete --acl public-read"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "http-server": "^14.1.1",
-    "tailwindcss": "^3.4.17"
+    "express": "^4.18.2"
   },
   "devDependencies": {
-    "autoprefixer": "^10.4.21",
-    "postcss": "^8.5.6"
+    "gh-pages": "^6.1.1",
+    "http-server": "^14.1.1",
+    "tailwindcss": "4.x.x",
+    "@tailwindcss/cli": "4.x.x",
+    "postcss": "^8.x.x",
+    "autoprefixer": "^10.x.x"
   }
 }
