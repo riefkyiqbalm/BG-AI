@@ -5,7 +5,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "clean:dist": "rm -rf dist",
-    "build:css": "npx @tailwindcss/cli -i ./styles/style-main.css -o ./dist/output.css --minify",
+    "build:css": "npx @tailwindcss/cli -i ./styles/style-main.css -o ./dist/styles/style-main.css --minify",
     "copy:html": "cpx \"./*.html\" ./dist",
     "copy:js": "cpx \"./script/script-main.js\" ./dist/script",
     "build": "npm run clean:dist && npm run build:css && npm run copy:html && npm run copy:js",
