@@ -18,5 +18,8 @@
     "@tailwindcss/cli": "4.x.x",
     "postcss": "^8.x.x",
     "autoprefixer": "^10.x.x"
+  },
+  "sources": {
+    "negated": false  
   }
 }
