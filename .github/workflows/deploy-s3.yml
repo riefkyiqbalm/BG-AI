@@ -29,7 +29,7 @@ jobs:
 
       # --- START OF THE CHANGE ---
       - name: Deploy to S3 with s3-sync
-        uses: aws-actions/s3-sync@v1.1.1 # As of July 2025, v1.1.1 is the latest stable. Check the marketplace for newer versions!
+        uses: aws-actions/s3-sync@v1 # As of July 2025, v1.1.1 is the latest stable. Check the marketplace for newer versions!
         with:
    
           bucket: balteng.com
