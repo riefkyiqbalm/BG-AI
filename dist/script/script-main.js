@@ -10,20 +10,47 @@ window.addEventListener('click',function(event){if(event.target===modal){modal.s
 function setupEventListeners(){const container=document.getElementById('three-canvas');if(!container)return;let isDragging=!1;let previousMousePosition={x:0,y:0};container.addEventListener('mousedown',(event)=>{isDragging=!0;previousMousePosition={x:event.clientX,y:event.clientY}});container.addEventListener('mousemove',(event)=>{if(!isDragging||!model)return;const deltaX=event.clientX-previousMousePosition.x;const deltaY=event.clientY-previousMousePosition.y;model.rotation.y+=deltaX*0.01;model.rotation.x+=deltaY*0.01;previousMousePosition={x:event.clientX,y:event.clientY}});container.addEventListener('mouseup',()=>{isDragging=!1});container.addEventListener('mouseleave',()=>{isDragging=!1});container.addEventListener('touchstart',(event)=>{isDragging=!0;const touch=event.touches[0];previousMousePosition={x:touch.clientX,y:touch.clientY};event.preventDefault()},{passive:!1});container.addEventListener('touchmove',(event)=>{if(!isDragging||!model)return;const touch=event.touches[0];const deltaX=touch.clientX-previousMousePosition.x;const deltaY=touch.clientY-previousMousePosition.y;model.rotation.y+=deltaX*0.01;model.rotation.x+=deltaY*0.01;previousMousePosition={x:touch.clientX,y:touch.clientY};event.preventDefault()},{passive:!1});container.addEventListener('touchend',()=>{isDragging=!1})}
 function setupDarkMode(){const darkModeToggle=document.getElementById('darkModeToggle');const sunIcon=document.getElementById('sunIcon');const moonIcon=document.getElementById('moonIcon');const prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;const savedMode=localStorage.getItem('darkMode');if(savedMode==='dark'||(!savedMode&&prefersDark)){document.documentElement.classList.add('dark');sunIcon.classList.add('hidden');moonIcon.classList.remove('hidden')}else{document.documentElement.classList.remove('dark');sunIcon.classList.remove('hidden');moonIcon.classList.add('hidden')}
 darkModeToggle.addEventListener('click',()=>{document.documentElement.classList.toggle('dark');sunIcon.classList.toggle('hidden');moonIcon.classList.toggle('hidden');const isDark=document.documentElement.classList.contains('dark');localStorage.setItem('darkMode',isDark?'dark':'light')})}
-function setupBackToTop(){const backToTopBtn=document.getElementById('backToTop');if(!backToTopBtn){console.error("Back to Top button not found!");return}
-window.addEventListener('scroll',()=>{if(window.pageYOffset>300){backToTopBtn.classList.remove('opacity-0','invisible');backToTopBtn.classList.add('opacity-100','visible')}else{backToTopBtn.classList.add('opacity-0','invisible');backToTopBtn.classList.remove('opacity-100','visible')}});backToTopBtn.addEventListener('click',(e)=>{e.preventDefault();window.scrollTo({top:0,behavior:'smooth'})});backToTopBtn.addEventListener('keydown',function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();window.scrollTo({top:0,behavior:'smooth'})}});if(window.pageYOffset>300){backToTopBtn.classList.remove('opacity-0','invisible');backToTopBtn.classList.add('opacity-100','visible')}}
-document.addEventListener('DOMContentLoaded',function(){
+function setupBackToTop() {
+  const backToTopBtn = document.getElementById('backToTop');
+  if (!backToTopBtn) return;
+  // Always check scroll state on load
+  function toggleBtn() {
+    if (window.pageYOffset > 300) {
+      backToTopBtn.classList.remove('opacity-0', 'invisible');
+      backToTopBtn.classList.add('opacity-100', 'visible');
+    } else {
+      backToTopBtn.classList.add('opacity-0', 'invisible');
+      backToTopBtn.classList.remove('opacity-100', 'visible');
+    }
+  }
+  window.addEventListener('scroll', toggleBtn);
+  // Call once on load to set initial state
+  toggleBtn();
+  backToTopBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  backToTopBtn.addEventListener('keydown', function(e) {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function(){
   initThreeJS();
   animate();
   setupModal();
   setupEventListeners();
   setupDarkMode();
   setupForm();
-  /* PROD_ONLY_START */
   setupBackToTop();
-  var modalForm=document.getElementById('modalForm');
-  if(modalForm)modalForm.action='https://formspree.io/f/xvgrneno';
-  var contactForm=document.getElementById('contactForm');
-  if(contactForm)contactForm.action='https://formspree.io/f/xeokwljn';
-  /* PROD_ONLY_END */
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    var modalForm = document.getElementById('modalForm');
+    if (modalForm) modalForm.action = 'https://formspree.io/f/xvgrneno';
+    var contactForm = document.getElementById('contactForm');
+    if (contactForm) contactForm.action = 'https://formspree.io/f/xeokwljn';
+  });
