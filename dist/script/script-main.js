@@ -1,4 +1,4 @@
-let scene,camera,renderer,model;function initThreeJS(){const container=document.getElementById('three-canvas');if(!container){console.error("Three.js container not found!");return}
+let scene,camera,renderer,model;window.onload=function(){initThreeJS();animate();setupModal();setupEventListeners();setupDarkMode();setupForm();setupBackToTop()};function initThreeJS(){const container=document.getElementById('three-canvas');if(!container){console.error("Three.js container not found!");return}
 scene=new THREE.Scene();scene.background=new THREE.Color(0xe1e7d8);camera=new THREE.PerspectiveCamera(75,container.clientWidth/container.clientHeight,0.1,1000);camera.position.z=5;renderer=new THREE.WebGLRenderer({antialias:!0,alpha:!0});renderer.setSize(container.clientWidth,container.clientHeight);container.appendChild(renderer.domElement);const ambientLight=new THREE.AmbientLight(0xffffff,0.5);scene.add(ambientLight);const directionalLight=new THREE.DirectionalLight(0xffffff,0.8);directionalLight.position.set(1,1,1);scene.add(directionalLight);try{const geometry=new THREE.BoxGeometry(1,1,1);const material=new THREE.MeshStandardMaterial({color:0x047857,metalness:0.5,roughness:0.1});model=new THREE.Mesh(geometry,material);scene.add(model)}catch(error){console.error('Error loading model:',error);loadFallbackModel()}
 window.addEventListener('resize',onWindowResize)}
 function loadFallbackModel(){const geometry=new THREE.BoxGeometry(1,1,1);const material=new THREE.MeshBasicMaterial({color:0x20B2AA});model=new THREE.Mesh(geometry,material);scene.add(model)}
@@ -10,47 +10,11 @@ window.addEventListener('click',function(event){if(event.target===modal){modal.s
 function setupEventListeners(){const container=document.getElementById('three-canvas');if(!container)return;let isDragging=!1;let previousMousePosition={x:0,y:0};container.addEventListener('mousedown',(event)=>{isDragging=!0;previousMousePosition={x:event.clientX,y:event.clientY}});container.addEventListener('mousemove',(event)=>{if(!isDragging||!model)return;const deltaX=event.clientX-previousMousePosition.x;const deltaY=event.clientY-previousMousePosition.y;model.rotation.y+=deltaX*0.01;model.rotation.x+=deltaY*0.01;previousMousePosition={x:event.clientX,y:event.clientY}});container.addEventListener('mouseup',()=>{isDragging=!1});container.addEventListener('mouseleave',()=>{isDragging=!1});container.addEventListener('touchstart',(event)=>{isDragging=!0;const touch=event.touches[0];previousMousePosition={x:touch.clientX,y:touch.clientY};event.preventDefault()},{passive:!1});container.addEventListener('touchmove',(event)=>{if(!isDragging||!model)return;const touch=event.touches[0];const deltaX=touch.clientX-previousMousePosition.x;const deltaY=touch.clientY-previousMousePosition.y;model.rotation.y+=deltaX*0.01;model.rotation.x+=deltaY*0.01;previousMousePosition={x:touch.clientX,y:touch.clientY};event.preventDefault()},{passive:!1});container.addEventListener('touchend',()=>{isDragging=!1})}
 function setupDarkMode(){const darkModeToggle=document.getElementById('darkModeToggle');const sunIcon=document.getElementById('sunIcon');const moonIcon=document.getElementById('moonIcon');const prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;const savedMode=localStorage.getItem('darkMode');if(savedMode==='dark'||(!savedMode&&prefersDark)){document.documentElement.classList.add('dark');sunIcon.classList.add('hidden');moonIcon.classList.remove('hidden')}else{document.documentElement.classList.remove('dark');sunIcon.classList.remove('hidden');moonIcon.classList.add('hidden')}
 darkModeToggle.addEventListener('click',()=>{document.documentElement.classList.toggle('dark');sunIcon.classList.toggle('hidden');moonIcon.classList.toggle('hidden');const isDark=document.documentElement.classList.contains('dark');localStorage.setItem('darkMode',isDark?'dark':'light')})}
-function setupBackToTop() {
-  const backToTopBtn = document.getElementById('backToTop');
-  if (!backToTopBtn) return;
-  function toggleBtn() {
-    // Use only .visible/.invisible for toggling, not opacity-100
-    if (window.pageYOffset > 300) {
-      backToTopBtn.classList.remove('invisible');
-      backToTopBtn.classList.add('visible');
-    } else {
-      backToTopBtn.classList.remove('visible');
-      backToTopBtn.classList.add('invisible');
-    }
-  }
-  window.addEventListener('scroll', toggleBtn);
-  // Set initial state
-  toggleBtn();
-  backToTopBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  });
-  backToTopBtn.addEventListener('keydown', function(e) {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  });
-}
-
-document.addEventListener('DOMContentLoaded', function(){
-  initThreeJS();
-  animate();
-  setupModal();
-  setupEventListeners();
-  setupDarkMode();
-  setupForm();
-  setupBackToTop();
-});
-
+function setupBackToTop(){const backToTopBtn=document.getElementById('backToTop');if(!backToTopBtn){console.error("Back to Top button not found!");return}
+window.addEventListener('scroll',()=>{if(window.pageYOffset>300){backToTopBtn.classList.remove('opacity-0','invisible');backToTopBtn.classList.add('opacity-100','visible')}else{backToTopBtn.classList.add('opacity-0','invisible');backToTopBtn.classList.remove('opacity-100','visible')}});backToTopBtn.addEventListener('click',(e)=>{e.preventDefault();window.scrollTo({top:0,behavior:'smooth'})});backToTopBtn.addEventListener('keydown',function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();window.scrollTo({top:0,behavior:'smooth'})}});if(window.pageYOffset>300){backToTopBtn.classList.remove('opacity-0','invisible');backToTopBtn.classList.add('opacity-100','visible')}}
 document.addEventListener('DOMContentLoaded', function() {
-    var modalForm = document.getElementById('modalForm');
-    if (modalForm) modalForm.action = 'https://formspree.io/f/xvgrneno';
-    var contactForm = document.getElementById('contactForm');
-    if (contactForm) contactForm.action = 'https://formspree.io/f/xeokwljn';
-  });
+  var modalForm = document.getElementById('modalForm');
+  if (modalForm) modalForm.action = 'https://formspree.io/f/xvgrneno';
+  var contactForm = document.getElementById('contactForm');
+  if (contactForm) contactForm.action = 'https://formspree.io/f/xeokwljn';
+});
