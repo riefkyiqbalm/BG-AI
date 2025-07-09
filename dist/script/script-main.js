@@ -1,4 +1,4 @@
-let scene,camera,renderer,model;window.onload=function(){initThreeJS();animate();setupModal();setupEventListeners();setupDarkMode();setupForm();setupBackToTop()};function initThreeJS(){const container=document.getElementById('three-canvas');if(!container){console.error("Three.js container not found!");return}
+let scene,camera,renderer,model;function initThreeJS(){const container=document.getElementById('three-canvas');if(!container){console.error("Three.js container not found!");return}
 scene=new THREE.Scene();scene.background=new THREE.Color(0xe1e7d8);camera=new THREE.PerspectiveCamera(75,container.clientWidth/container.clientHeight,0.1,1000);camera.position.z=5;renderer=new THREE.WebGLRenderer({antialias:!0,alpha:!0});renderer.setSize(container.clientWidth,container.clientHeight);container.appendChild(renderer.domElement);const ambientLight=new THREE.AmbientLight(0xffffff,0.5);scene.add(ambientLight);const directionalLight=new THREE.DirectionalLight(0xffffff,0.8);directionalLight.position.set(1,1,1);scene.add(directionalLight);try{const geometry=new THREE.BoxGeometry(1,1,1);const material=new THREE.MeshStandardMaterial({color:0x047857,metalness:0.5,roughness:0.1});model=new THREE.Mesh(geometry,material);scene.add(model)}catch(error){console.error('Error loading model:',error);loadFallbackModel()}
 window.addEventListener('resize',onWindowResize)}
 function loadFallbackModel(){const geometry=new THREE.BoxGeometry(1,1,1);const material=new THREE.MeshBasicMaterial({color:0x20B2AA});model=new THREE.Mesh(geometry,material);scene.add(model)}
@@ -12,8 +12,18 @@ function setupDarkMode(){const darkModeToggle=document.getElementById('darkModeT
 darkModeToggle.addEventListener('click',()=>{document.documentElement.classList.toggle('dark');sunIcon.classList.toggle('hidden');moonIcon.classList.toggle('hidden');const isDark=document.documentElement.classList.contains('dark');localStorage.setItem('darkMode',isDark?'dark':'light')})}
 function setupBackToTop(){const backToTopBtn=document.getElementById('backToTop');if(!backToTopBtn){console.error("Back to Top button not found!");return}
 window.addEventListener('scroll',()=>{if(window.pageYOffset>300){backToTopBtn.classList.remove('opacity-0','invisible');backToTopBtn.classList.add('opacity-100','visible')}else{backToTopBtn.classList.add('opacity-0','invisible');backToTopBtn.classList.remove('opacity-100','visible')}});backToTopBtn.addEventListener('click',(e)=>{e.preventDefault();window.scrollTo({top:0,behavior:'smooth'})});backToTopBtn.addEventListener('keydown',function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();window.scrollTo({top:0,behavior:'smooth'})}});if(window.pageYOffset>300){backToTopBtn.classList.remove('opacity-0','invisible');backToTopBtn.classList.add('opacity-100','visible')}}
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", setupBackToTop);
-} else {
+document.addEventListener('DOMContentLoaded',function(){
+  initThreeJS();
+  animate();
+  setupModal();
+  setupEventListeners();
+  setupDarkMode();
+  setupForm();
+  /* PROD_ONLY_START */
   setupBackToTop();
-}
+  var modalForm=document.getElementById('modalForm');
+  if(modalForm)modalForm.action='https://formspree.io/f/xvgrneno';
+  var contactForm=document.getElementById('contactForm');
+  if(contactForm)contactForm.action='https://formspree.io/f/xeokwljn';
+  /* PROD_ONLY_END */
+});
