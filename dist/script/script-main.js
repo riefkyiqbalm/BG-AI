@@ -13,18 +13,18 @@ darkModeToggle.addEventListener('click',()=>{document.documentElement.classList.
 function setupBackToTop() {
   const backToTopBtn = document.getElementById('backToTop');
   if (!backToTopBtn) return;
-  // Always check scroll state on load
   function toggleBtn() {
+    // Use only .visible/.invisible for toggling, not opacity-100
     if (window.pageYOffset > 300) {
-      backToTopBtn.classList.remove('opacity-0', 'invisible');
-      backToTopBtn.classList.add('opacity-100', 'visible');
+      backToTopBtn.classList.remove('invisible');
+      backToTopBtn.classList.add('visible');
     } else {
-      backToTopBtn.classList.add('opacity-0', 'invisible');
-      backToTopBtn.classList.remove('opacity-100', 'visible');
+      backToTopBtn.classList.remove('visible');
+      backToTopBtn.classList.add('invisible');
     }
   }
   window.addEventListener('scroll', toggleBtn);
-  // Call once on load to set initial state
+  // Set initial state
   toggleBtn();
   backToTopBtn.addEventListener('click', (e) => {
     e.preventDefault();
