@@ -1,1 +1,251 @@
-let scene,camera,renderer,model;function initThreeJS(){const e=document.getElementById("three-canvas");if(!e)return void console.error("Three.js container not found!");scene=new THREE.Scene,scene.background=new THREE.Color(14804952),camera=new THREE.PerspectiveCamera(75,e.clientWidth/e.clientHeight,.1,1e3),camera.position.z=5,renderer=new THREE.WebGLRenderer({antialias:!0,alpha:!0}),renderer.setSize(e.clientWidth,e.clientHeight),e.appendChild(renderer.domElement);const t=new THREE.AmbientLight(16777215,.5);scene.add(t);const n=new THREE.DirectionalLight(16777215,.8);n.position.set(1,1,1),scene.add(n);try{const e=new THREE.BoxGeometry(1,1,1),t=new THREE.MeshStandardMaterial({color:292951,metalness:.5,roughness:.1});model=new THREE.Mesh(e,t),scene.add(model)}catch(e){console.error("Error loading model:",e),loadFallbackModel()}window.addEventListener("resize",onWindowResize)}function loadFallbackModel(){const e=new THREE.BoxGeometry(1,1,1),t=new THREE.MeshBasicMaterial({color:2142890});model=new THREE.Mesh(e,t),scene.add(model)}function animate(){requestAnimationFrame(animate),model&&(model.rotation.x+=.005,model.rotation.y+=.005),renderer.render(scene,camera)}function onWindowResize(){const e=document.getElementById("three-canvas");e&&camera&&renderer&&(camera.aspect=e.clientWidth/e.clientHeight,camera.updateProjectionMatrix(),renderer.setSize(e.clientWidth,e.clientHeight))}function setupModal(){const e=document.getElementById("consultationModal"),t=document.getElementById("consultationBtn"),n=document.getElementsByClassName("close-modal")[0];e&&t&&(t.addEventListener("click",(function(){e.style.display="block",document.body.style.overflow="hidden"})),n&&n.addEventListener("click",(function(){e.style.display="none",document.body.style.overflow="auto"})),window.addEventListener("click",(function(t){t.target===e&&(e.style.display="none",document.body.style.overflow="auto")})),document.addEventListener("keydown",(function(t){"Escape"===t.key&&"block"===e.style.display&&(e.style.display="none",document.body.style.overflow="auto")})))}function setupEventListeners(){const e=document.getElementById("three-canvas");if(!e)return;let t=!1,n={x:0,y:0};e.addEventListener("mousedown",(e=>{t=!0,n={x:e.clientX,y:e.clientY}})),e.addEventListener("mousemove",(e=>{if(!t||!model)return;const o=e.clientX-n.x,d=e.clientY-n.y;model.rotation.y+=.01*o,model.rotation.x+=.01*d,n={x:e.clientX,y:e.clientY}})),e.addEventListener("mouseup",(()=>{t=!1})),e.addEventListener("mouseleave",(()=>{t=!1})),e.addEventListener("touchstart",(e=>{t=!0;const o=e.touches[0];n={x:o.clientX,y:o.clientY},e.preventDefault()}),{passive:!1}),e.addEventListener("touchmove",(e=>{if(!t||!model)return;const o=e.touches[0],d=o.clientX-n.x,s=o.clientY-n.y;model.rotation.y+=.01*d,model.rotation.x+=.01*s,n={x:o.clientX,y:o.clientY},e.preventDefault()}),{passive:!1}),e.addEventListener("touchend",(()=>{t=!1}))}function setupDarkMode(){const e=document.getElementById("darkModeToggle"),t=document.getElementById("sunIcon"),n=document.getElementById("moonIcon"),o=window.matchMedia("(prefers-color-scheme: dark)").matches,d=localStorage.getItem("darkMode");"dark"===d||!d&&o?(document.documentElement.classList.add("dark"),t.classList.add("hidden"),n.classList.remove("hidden")):(document.documentElement.classList.remove("dark"),t.classList.remove("hidden"),n.classList.add("hidden")),e.addEventListener("click",(()=>{document.documentElement.classList.toggle("dark"),t.classList.toggle("hidden"),n.classList.toggle("hidden");const e=document.documentElement.classList.contains("dark");localStorage.setItem("darkMode",e?"dark":"light")}))}function setupBackToTop(){const e=document.getElementById("backToTop");e?(window.addEventListener("scroll",(()=>{window.pageYOffset>300?(e.classList.remove("opacity-0","invisible"),e.classList.add("opacity-100","visible")):(e.classList.add("opacity-0","invisible"),e.classList.remove("opacity-100","visible"))})),e.addEventListener("click",(t=>{t.preventDefault(),document.documentElement.scrollTop=0,document.body.scrollTop=0,window.scrollTo({top:0,behavior:"smooth"}),e.blur()})),e.addEventListener("keydown",(function(e){"Enter"!==e.key&&" "!==e.key||(e.preventDefault(),window.scrollTo({top:0,behavior:"smooth"}),document.body.scrollTop=0,document.documentElement.scrollTop=0)})),window.pageYOffset>300&&(e.classList.remove("opacity-0","invisible"),e.classList.add("opacity-100","visible"))):console.error("Back to Top button not found!")}window.onload=function(){initThreeJS(),animate(),setupModal(),setupEventListeners(),setupDarkMode(),setupForm()},document.addEventListener("DOMContentLoaded",(function(){var e=document.getElementById("modalForm");e&&(e.action="https://formspree.io/f/xvgrneno");var t=document.getElementById("contactForm");t&&(t.action="https://formspree.io/f/xeokwljn"),setupBackToTop();const n=document.getElementById("permissionBanner"),o=document.getElementById("acceptPermissionBanner");n&&o&&(localStorage.getItem("permissionAccepted")||(n.style.display="flex"),o.addEventListener("click",(function(){localStorage.setItem("permissionAccepted","true"),n.style.display="none"})))}));
+let scene, camera, renderer, model;
+window.onload = function() {
+    initThreeJS();
+    animate();
+    setupModal();
+    setupEventListeners();
+    setupDarkMode();
+    setupForm()
+};
+
+function initThreeJS() {
+    const container = document.getElementById('three-canvas');
+    if (!container) {
+        console.error("Three.js container not found!");
+        return
+    }
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xe1e7d8);
+    camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+    camera.position.z = 5;
+    renderer = new THREE.WebGLRenderer({
+        antialias: !0,
+        alpha: !0
+    });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    container.appendChild(renderer.domElement);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    scene.add(ambientLight);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    directionalLight.position.set(1, 1, 1);
+    scene.add(directionalLight);
+    try {
+        const geometry = new THREE.BoxGeometry(1, 1, 1);
+        const material = new THREE.MeshStandardMaterial({
+            color: 0x047857,
+            metalness: 0.5,
+            roughness: 0.1
+        });
+        model = new THREE.Mesh(geometry, material);
+        scene.add(model)
+    } catch (error) {
+        console.error('Error loading model:', error);
+        loadFallbackModel()
+    }
+    window.addEventListener('resize', onWindowResize)
+}
+
+function loadFallbackModel() {
+    const geometry = new THREE.BoxGeometry(1, 1, 1);
+    const material = new THREE.MeshBasicMaterial({
+        color: 0x20B2AA
+    });
+    model = new THREE.Mesh(geometry, material);
+    scene.add(model)
+}
+
+function animate() {
+    requestAnimationFrame(animate);
+    if (model) {
+        model.rotation.x += 0.005;
+        model.rotation.y += 0.005
+    }
+    renderer.render(scene, camera)
+}
+
+function onWindowResize() {
+    const container = document.getElementById('three-canvas');
+    if (container && camera && renderer) {
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight)
+    }
+}
+
+function setupModal() {
+    const modal = document.getElementById("consultationModal");
+    const btn = document.getElementById("consultationBtn");
+    const span = document.getElementsByClassName("close-modal")[0];
+    if (!modal || !btn) return;
+    btn.addEventListener('click', function() {
+        modal.style.display = "block";
+        document.body.style.overflow = "hidden"
+    });
+    if (span) {
+        span.addEventListener('click', function() {
+            modal.style.display = "none";
+            document.body.style.overflow = "auto"
+        })
+    }
+    window.addEventListener('click', function(event) {
+        if (event.target === modal) {
+            modal.style.display = "none";
+            document.body.style.overflow = "auto"
+        }
+    });
+    document.addEventListener('keydown', function(event) {
+        if (event.key === "Escape" && modal.style.display === "block") {
+            modal.style.display = "none";
+            document.body.style.overflow = "auto"
+        }
+    })
+}
+
+function setupEventListeners() {
+    const container = document.getElementById('three-canvas');
+    if (!container) return;
+    let isDragging = !1;
+    let previousMousePosition = {
+        x: 0,
+        y: 0
+    };
+    container.addEventListener('mousedown', (event) => {
+        isDragging = !0;
+        previousMousePosition = {
+            x: event.clientX,
+            y: event.clientY
+        }
+    });
+    container.addEventListener('mousemove', (event) => {
+        if (!isDragging || !model) return;
+        const deltaX = event.clientX - previousMousePosition.x;
+        const deltaY = event.clientY - previousMousePosition.y;
+        model.rotation.y += deltaX * 0.01;
+        model.rotation.x += deltaY * 0.01;
+        previousMousePosition = {
+            x: event.clientX,
+            y: event.clientY
+        }
+    });
+    container.addEventListener('mouseup', () => {
+        isDragging = !1
+    });
+    container.addEventListener('mouseleave', () => {
+        isDragging = !1
+    });
+    container.addEventListener('touchstart', (event) => {
+        isDragging = !0;
+        const touch = event.touches[0];
+        previousMousePosition = {
+            x: touch.clientX,
+            y: touch.clientY
+        };
+        event.preventDefault()
+    }, {
+        passive: !1
+    });
+    container.addEventListener('touchmove', (event) => {
+        if (!isDragging || !model) return;
+        const touch = event.touches[0];
+        const deltaX = touch.clientX - previousMousePosition.x;
+        const deltaY = touch.clientY - previousMousePosition.y;
+        model.rotation.y += deltaX * 0.01;
+        model.rotation.x += deltaY * 0.01;
+        previousMousePosition = {
+            x: touch.clientX,
+            y: touch.clientY
+        };
+        event.preventDefault()
+    }, {
+        passive: !1
+    });
+    container.addEventListener('touchend', () => {
+        isDragging = !1
+    })
+}
+
+function setupDarkMode() {
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    const sunIcon = document.getElementById('sunIcon');
+    const moonIcon = document.getElementById('moonIcon');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const savedMode = localStorage.getItem('darkMode');
+    if (savedMode === 'dark' || (!savedMode && prefersDark)) {
+        document.documentElement.classList.add('dark');
+        sunIcon.classList.add('hidden');
+        moonIcon.classList.remove('hidden')
+    } else {
+        document.documentElement.classList.remove('dark');
+        sunIcon.classList.remove('hidden');
+        moonIcon.classList.add('hidden')
+    }
+    darkModeToggle.addEventListener('click', () => {
+        document.documentElement.classList.toggle('dark');
+        sunIcon.classList.toggle('hidden');
+        moonIcon.classList.toggle('hidden');
+        const isDark = document.documentElement.classList.contains('dark');
+        localStorage.setItem('darkMode', isDark ? 'dark' : 'light')
+    })
+}
+
+function setupBackToTop() {
+    const backToTopBtn = document.getElementById('backToTop');
+    if (!backToTopBtn) {
+        console.error("Back to Top button not found!");
+        return
+    }
+    window.addEventListener('scroll', () => {
+        if (window.pageYOffset > 300) {
+            backToTopBtn.classList.remove('opacity-0', 'invisible');
+            backToTopBtn.classList.add('opacity-100', 'visible')
+        } else {
+            backToTopBtn.classList.add('opacity-0', 'invisible');
+            backToTopBtn.classList.remove('opacity-100', 'visible')
+        }
+    });
+     backToTopBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        // Robust scroll to top for all browsers
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE, Opera
+        document.body.scrollTop = 0;            // For Safari
+        // Fallback for smooth scroll
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        // Remove focus to hide outline
+        backToTopBtn.blur();
+    });
+    backToTopBtn.addEventListener('keydown', function(e) {
+        if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+    });
+    if (window.pageYOffset > 300) {
+        backToTopBtn.classList.remove('opacity-0', 'invisible');
+        backToTopBtn.classList.add('opacity-100', 'visible')
+    }
+}
+document.addEventListener('DOMContentLoaded', function() {
+    var modalForm = document.getElementById('modalForm');
+    if (modalForm) modalForm.action = 'https://formspree.io/f/xvgrneno';
+    var contactForm = document.getElementById('contactForm');
+    if (contactForm) contactForm.action = 'https://formspree.io/f/xeokwljn';
+    setupBackToTop();
+
+    // Permission banner logic
+    const permissionBanner = document.getElementById('permissionBanner');
+    const acceptPermissionBanner = document.getElementById('acceptPermissionBanner');
+    if (permissionBanner && acceptPermissionBanner) {
+        if (!localStorage.getItem('permissionAccepted')) {
+            permissionBanner.style.display = 'flex';
+        }
+        acceptPermissionBanner.addEventListener('click', function() {
+            localStorage.setItem('permissionAccepted', 'true');
+            permissionBanner.style.display = 'none';
+        });
+    }
+});
