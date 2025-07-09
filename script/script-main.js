@@ -203,15 +203,15 @@ function setupBackToTop() {
             backToTopBtn.classList.remove('opacity-100', 'visible')
         }
     });
-    backToTopBtn.addEventListener('onclick', (e) => {
+     backToTopBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        // Cross-browser scroll to top
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
-        document.body.scrollTop = 0;
-        document.documentElement.scrollTop = 0;
+        // Robust scroll to top for all browsers
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE, Opera
+        document.body.scrollTop = 0;            // For Safari
+        // Fallback for smooth scroll
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        // Remove focus to hide outline
+        backToTopBtn.blur();
     });
     backToTopBtn.addEventListener('keydown', function(e) {
         if (e.key === "Enter" || e.key === " ") {
@@ -235,4 +235,17 @@ document.addEventListener('DOMContentLoaded', function() {
     var contactForm = document.getElementById('contactForm');
     if (contactForm) contactForm.action = 'https://formspree.io/f/xeokwljn';
     setupBackToTop();
+
+    // Permission banner logic
+    const permissionBanner = document.getElementById('permissionBanner');
+    const acceptPermissionBanner = document.getElementById('acceptPermissionBanner');
+    if (permissionBanner && acceptPermissionBanner) {
+        if (!localStorage.getItem('permissionAccepted')) {
+            permissionBanner.style.display = 'flex';
+        }
+        acceptPermissionBanner.addEventListener('click', function() {
+            localStorage.setItem('permissionAccepted', 'true');
+            permissionBanner.style.display = 'none';
+        });
+    }
 });

@@ -7,7 +7,7 @@
     "clean:dist": "rm -rf dist",
     "build:css": "npx @tailwindcss/cli -i ./styles/style-main.css -o ./dist/styles/style-main.css --minify",
     "copy:html": "cpx \"./*.html\" ./dist",
-    "copy:js": "cpx \"./script/script-main.js\" ./dist/script",
+    "copy:js": "cpx \"./script/script-main.js\" ./dist/script ",
     "build": "npm run clean:dist && npm run build:css && npm run copy:html && npm run copy:js",
     "start": "http-server ./dist", 
     "deploy:s3": "aws s3 sync ./dist s3://balteng.com --delete --acl public-read --cache-control max-age=31536000,public"

@@ -144,3 +144,36 @@ body {
 .dark #backToTop:hover {
     background-color: #075985
 }
+
+#permissionBanner {
+    animation: fadeIn 0.3s;
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.15);
+    min-width: 250px;
+    max-width: 320px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+#permissionBanner a {
+    text-decoration: underline;
+    color: #0ea5e9;
+}
+
+#permissionBanner button {
+    margin-top: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+@media (max-width: 640px) {
+    #permissionBanner {
+        left: 0.5rem;
+        bottom: 0.5rem;
+        max-width: 95vw;
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+    #backToTop {
+        bottom: 2rem;
+    }
+}
