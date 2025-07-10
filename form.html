@@ -35,7 +35,7 @@
         }
     </script>
 
-    <body
+ <body
         class="bg-[url('./assets/images/vertical-bg.png')] bg-center dark:bg-[url('./assets/images/vertical-bg-dark.png')] text-gray-800">
         <header class="text-white shadow-lg p-4 bg-blue-400 dark:bg-sky-800 rounded-b-xl">
             <div class="container mx-auto px-4 flex flex-col items-center justify-between md:flex-row py-2">
@@ -44,6 +44,7 @@
                         <h1 class="font-extrabold mb-2 md:mb-0 text-3xl"><span class=block>Design &
                                 Engineering</span><span class="block font-medium opacity-90 text-xl">3D Modeling
                                 Services</span></h1></a>
+            
                 <button id="hamburger" class="md:hidden focus:outline-none hamburger-menu"
                     aria-label="Toggle navigation">
                     <span class="bar block w-6 h-0.5 bg-white my-1 transition-all duration-300 ease-in-out"></span>
@@ -71,83 +72,54 @@
                 </nav>
             </div>
         </header>
-        <main class="container mx-auto px-4 bg-white my-8 py-16 rounded-xl shadow-md">
-            <h1 class="mb-10 font-bold text-4xl text-center text-gray-900 dark:text-white">Privacy Policy</h1>
-            <p class="mb-6 text-gray-600">Last Updated: January 1, 2025
-            <section class=mb-10>
-                <h2 class="mb-4 font-semibold text-2xl text-emerald-700">1. Introduction</h2>
-                <p class="mb-4 text-gray-700">Welcome to 3D Design & Engineering Services ("we," "our," or "us"). We are
-                    committed to protecting your privacy and ensuring the security of your personal information.
-                <p class=text-gray-700>This Privacy Policy explains how we collect, use, disclose, and safeguard your
-                    information when you visit our website or use our services.
+        <main>
+            <section
+                class="text-white shadow-lg bg-emerald-600 container dark:bg-emerald-900 mx-auto my-8 px-4 py-16 rounded-xl"
+                id=contact>
+                <h2 class="text-white font-bold text-3xl text-center mb-6">Request a Free Consultation</h2>
+                <p class="text-white text-center mb-8">Fill out the form below and our team will get back to you within
+                    24 hours.
+                <form class="space-y-6 p-8" id=pageForm method=POST>
+                    <div><label class="text-white block font-medium mb-1 text-sm" for=name>Name</label><input
+                            class="transition rounded-md border duration-200 focus:ring-2 p-3 w-full placeholder-emerald-700 dark:placeholder-emerald-700 bg-white dark:bg-white border-gray-500 text-black dark:text-black focus:border-sky-300 focus:ring-sky-300"
+                            id=name name=name placeholder="Your Name"></div>
+                    <div><label class="text-white block font-medium mb-1 text-sm" for=email>Email</label><input
+                            class="transition rounded-md border duration-200 focus:ring-2 p-3 w-full placeholder-emerald-700 dark:placeholder-emerald-700 bg-white dark:bg-white border-gray-500 text-black dark:text-black focus:border-sky-500 focus:ring-sky-500"
+                            id=email name=email placeholder=email@example.com type=email></div>
+                    <div><label class="text-white block font-medium mb-1 text-sm" for=modal-phone>Phone
+                            (Optional)</label><input
+                            class="transition rounded-md border duration-200 focus:ring-2 p-3 w-full placeholder-emerald-700 dark:placeholder-emerald-700 bg-white dark:bg-white border-sky-500 focus:border-sky-500 focus:ring-sky-500 text-black dark:text-black "
+                            id=modal-phone name=phone placeholder="+1 (123) 456-7890 (Whatsapp available)" type=tel>
+                    </div>
+                    <div><label class="text-white block font-medium mb-1 text-sm" for=modal-service>Service
+                            Interest</label><select
+                            class="transition rounded-md border duration-200 focus:ring-2 p-3 w-full bg-white dark:bg-white border-gray-500 focus:ring-sky-500 text-black dark:text-black focus:border-sky-500"
+                            id=modal-service name=service>
+                            <option value="">Select a service
+                            <option value=cad>CAD Modeling
+                            <option value=cam>CAM Programming
+                            <option value=cae>CAE Simulation
+                            <option value=other>Other
+                        </select></div>
+                    <div><label class="text-white block font-medium mb-1 text-sm" for=message>Message</label><textarea
+                            class="transition rounded-md border duration-200 focus:ring-2 p-3 w-full placeholder-emerald-700 dark:placeholder-emerald-700 bg-white dark:bg-white border-gray-500 text-black dark:text-black focus:border-sky-500 focus:ring-sky-500"
+                            id=message name=message placeholder="Tell us about your project..." rows=5></textarea></div>
+                    <div class=text-center><button
+                            class="text-white shadow-lg bg-sky-500 duration-300 ease-in-out hover:bg-sky-600 rounded-full font-bold hover:scale-105 px-8 py-3 text-lg transform transition"
+                            type=submit>Send Message</button></div>
+                    <p class="text-white text-center mb-8" id=alert-text>By clicking Submit button your aggree with
+                        our<a class="text-sky-500 font-bold mb-10" href=privacypolicy.html> Privacy Policy </a>and <a
+                            class="text-sky-500 font-bold" href=termsofservice.html>Terms of Services</a>
+                </form>
+                </div>
+                <div>
+                    <h2 class="mb-4 font-semibold text-2xl text-sky-500 dark:text-sky-700">Contact Us</h2>
+                    <p class=text-gray-700>If you have any questions about this Form, please contact us at:
+                    <p class="text-gray-700 mt-2"><strong>Email:</strong> riefkyiqbalm@gmail.com
+                    <p class=text-gray-700><strong>Address:</strong> Bantul City, Yogyakarta District, 55752
+                </div>
             </section>
-            <section class=mb-10>
-                <h2 class="mb-4 font-semibold text-2xl text-emerald-700">2. Information We Collect</h2>
-                <p class="mb-4 text-gray-700">We may collect the following types of information:
-                <ul class="text-gray-700 list-disc pl-6 space-y-2">
-                    <li><strong>Personal Information:</strong> Name, email address, phone number, and other contact
-                        details when you submit forms on our website.
-                    <li><strong>Technical Data:</strong> IP address, browser type, operating system, and usage data
-                        collected through cookies and similar technologies.
-                    <li><strong>Project Information:</strong> Details about your project requirements when you request
-                        our services.
-                </ul>
-            </section>
-            <section class=mb-10>
-                <h2 class="mb-4 font-semibold text-2xl text-emerald-700">3. How We Use Your Information</h2>
-                <p class="mb-4 text-gray-700">We use the information we collect for the following purposes:
-                <ul class="text-gray-700 list-disc pl-6 space-y-2">
-                    <li>To provide and maintain our services
-                    <li>To communicate with you about your inquiries and projects
-                    <li>To improve our website and services
-                    <li>To comply with legal obligations
-                    <li>To protect against fraudulent or unauthorized activity
-                </ul>
-            </section>
-            <section class=mb-10>
-                <h2 class="mb-4 font-semibold text-2xl text-emerald-700">4. Data Sharing and Disclosure</h2>
-                <p class="mb-4 text-gray-700">We do not sell your personal information. We may share information with:
-                <ul class="text-gray-700 list-disc pl-6 space-y-2">
-                    <li>Service providers who assist with our business operations
-                    <li>Legal authorities when required by law
-                    <li>Business partners in connection with providing services to you (with your consent)
-                </ul>
-            </section>
-            <section class=mb-10>
-                <h2 class="mb-4 font-semibold text-2xl text-emerald-700">5. Data Security</h2>
-                <p class="mb-4 text-gray-700">We implement appropriate technical and organizational measures to protect
-                    your personal information. However, no internet transmission is completely secure, and we cannot
-                    guarantee absolute security.
-            </section>
-            <section class=mb-10>
-                <h2 class="mb-4 font-semibold text-2xl text-emerald-700">6. Your Rights</h2>
-                <p class="mb-4 text-gray-700">Depending on your location, you may have certain rights regarding your
-                    personal information:
-                <ul class="text-gray-700 list-disc pl-6 space-y-2">
-                    <li>Access and receive a copy of your data
-                    <li>Request correction of inaccurate information
-                    <li>Request deletion of your data
-                    <li>Object to processing of your data
-                    <li>Withdraw consent where applicable
-                </ul>
-            </section>
-            <section class=mb-10>
-                <h2 class="mb-4 font-semibold text-2xl text-emerald-700">7. Cookies and Tracking Technologies</h2>
-                <p class="mb-4 text-gray-700">We use cookies and similar technologies to analyze trends, administer the
-                    website, and track users' movements around the site. You can control cookies through your browser
-                    settings.
-            </section>
-            <section class=mb-10>
-                <h2 class="mb-4 font-semibold text-2xl text-emerald-700">8. Changes to This Policy</h2>
-                <p class="mb-4 text-gray-700">We may update this Privacy Policy from time to time. We will notify you of
-                    any changes by posting the new policy on this page and updating the "Last Updated" date.
-            </section>
-            <section>
-                <h2 class="mb-4 font-semibold text-2xl text-emerald-700">9. Contact Us</h2>
-                <p class=text-gray-700>If you have any questions about this Privacy Policy, please contact us at:
-                <p class="text-gray-700 mt-2"><strong>Email:</strong> riefkyiqbalm@gmail.com
-                <p class=text-gray-700><strong>Address:</strong> Bantul city, Yogyakarta District, 55752
-            </section>
+
         </main>
         <footer class="text-center bg-gray-800 mt-8 p-6 rounded-t-xl text-gray-300">
             <div class="container mx-auto px-4">
