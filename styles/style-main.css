@@ -108,12 +108,12 @@ body {
 .dark .modal-content input,
 .dark .modal-content textarea,
 .dark .modal-content select {
-    @apply bg-gray-700 text-white border-gray-600
+    @apply bg-white text-black border-gray-600
 }
 
 .dark .modal-content input::placeholder,
 .dark .modal-content textarea::placeholder {
-    @apply text-gray-400
+    @apply text-emerald-700
 }
 
 #backToTop {

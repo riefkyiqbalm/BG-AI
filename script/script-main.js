@@ -4,7 +4,6 @@ window.onload = function() {
     animate();
     setupModal();
     setupEventListeners();
-    setupDarkMode();
     setupForm()
 };
 
@@ -164,29 +163,15 @@ function setupEventListeners() {
     })
 }
 
-function setupDarkMode() {
-    const darkModeToggle = document.getElementById('darkModeToggle');
-    const sunIcon = document.getElementById('sunIcon');
-    const moonIcon = document.getElementById('moonIcon');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const savedMode = localStorage.getItem('darkMode');
-    if (savedMode === 'dark' || (!savedMode && prefersDark)) {
+function applySystemTheme() {
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
         document.documentElement.classList.add('dark');
-        sunIcon.classList.add('hidden');
-        moonIcon.classList.remove('hidden')
     } else {
         document.documentElement.classList.remove('dark');
-        sunIcon.classList.remove('hidden');
-        moonIcon.classList.add('hidden')
     }
-    darkModeToggle.addEventListener('click', () => {
-        document.documentElement.classList.toggle('dark');
-        sunIcon.classList.toggle('hidden');
-        moonIcon.classList.toggle('hidden');
-        const isDark = document.documentElement.classList.contains('dark');
-        localStorage.setItem('darkMode', isDark ? 'dark' : 'light')
-    })
 }
+applySystemTheme();
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applySystemTheme);
 
 function setupBackToTop() {
     const backToTopBtn = document.getElementById('backToTop');
