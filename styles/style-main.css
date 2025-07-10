@@ -177,3 +177,9 @@ body {
         bottom: 2rem;
     }
 }
+@media (max-width: 480px) {
+     #backToTop {
+        bottom: 2rem;
+    }
+
+}
