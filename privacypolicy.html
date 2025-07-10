@@ -111,5 +111,18 @@
                 <div class="flex justify-center space-x-4 mt-4"><a class="transition duration-200 hover:text-white" href=privacypolicy.html>Privacy Policy</a> <span class=text-gray-500>|</span> <a class="transition duration-200 hover:text-white" href=termsofservice.html>Terms of Service</a></div>
         </div>
     </footer><button class="duration-300 ease-in-out bg-sky-500 bottom-6 fixed focus:outline-none focus:ring-2 focus:ring-opacity-75 focus:ring-sky-500 hover:bg-sky-600 invisible opacity-0 p-4 right-6 rounded-full shadow-lg text-white transition-all z-50" id=backToTop><svg class="h-6 w-6"fill=none stroke=currentColor viewBox="0 0 24 24"xmlns=http://www.w3.org/2000/svg><path d="M5 10l7-7m0 0l7 7m-7-7v18"stroke-linecap=round stroke-linejoin=round stroke-width=2></path></svg></button>
+    <div id="permissionBanner" style="display:none"
+        class="fixed left-6 bottom-6 z-50 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg p-4 max-w-xs w-full sm:max-w-xs flex flex-col gap-3 sm:w-auto">
+        <div class="text-gray-800 dark:text-gray-100 text-sm">
+            This website uses browser cache for a better experience. By continuing, you accept our
+            <a href="privacypolicy.html" class="text-sky-600 underline" target="_blank">Privacy Policy</a>
+            and
+            <a href="termsofservice.html" class="text-sky-600 underline" target="_blank">Terms of Service</a>.
+        </div>
+        <div class="flex flex-col sm:flex-row gap-2 mt-2">
+            <button id="acceptPermissionBanner" class="bg-sky-500 hover:bg-sky-600 text-white rounded px-4 py-2 font-bold transition w-full sm:w-auto">Accept</button>
+            <button id="declinePermissionBanner" class="bg-black hover:bg-gray-500 text-white rounded px-4 py-2 font-bold transition w-full sm:w-auto">Decline</button>
+        </div>
+    </div>
     <script
         src=./script/script-main.js></script>

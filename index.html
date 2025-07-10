@@ -52,11 +52,11 @@
   <section class="shadow-md my-8 py-16 rounded-xl bg-white container dark:bg-gray-800 mx-auto px-4" id=portfolio-showcase id="hero">
         <div class="relative">
             <!-- Ornamen SVG shape top left -->
-            <svg class="absolute left-0 top-0 w-32 h-32 text-sky-200 dark:text-sky-700 opacity-60 -z-10" fill="currentColor" viewBox="0 0 200 200"><circle cx="100" cy="100" r="100"/></svg>
+            <svg class="absolute left-0 top-0 w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 text-sky-700 dark:text-sky-400 opacity-50 z-10" fill="currentColor" viewBox="0 0 200 200"><circle cx="100" cy="100" r="100"/></svg>
             <!-- Ornamen SVG shape bottom right -->
-            <svg class="absolute right-0 bottom-0 w-40 h-40 text-emerald-200 dark:text-emerald-700 opacity-50 -z-10" fill="currentColor" viewBox="0 0 200 200"><rect width="200" height="200" rx="60"/></svg>
+            <svg class="absolute right-0 bottom-0 w-28 h-28 sm:w-36 sm:h-36 md:w-40 md:h-40 text-emerald-700 dark:text-emerald-400 opacity-50 z-10" fill="currentColor" viewBox="0 0 200 200"><rect width="200" height="100" rx="30"/></svg>
             <!-- Ornamen SVG shape center -->
-            <svg class="absolute left-1/2 top-1/2 w-24 h-24 text-pink-200 dark:text-pink-700 opacity-40 -translate-x-1/2 -translate-y-1/2 -z-10" fill="currentColor" viewBox="0 0 200 200"><polygon points="100,10 190,190 10,190"/></svg>
+            <svg class="absolute left-1/2 top-1/2 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 text-pink-700 dark:text-pink-700 opacity-50 -translate-x-1/2 -translate-y-1/2 z-10" fill="currentColor" viewBox="0 0 200 200"><polygon points="100,10 190,190 10,190"/></svg>
             <!-- ...existing code for hero content... -->
             <div class="text-center mx-auto container px-4">
                 <h2 class="dark:text-gray-200 font-bold text-gray-900 leading-tight mb-6 md:text-5xl text-4xl">Your Vision, Precision Engineered.</h2>
@@ -201,15 +201,16 @@
     </button>
     <!-- Permission Banner -->
     <div id="permissionBanner" style="display:none"
-        class="fixed left-6 bottom-6 z-50 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg p-4 max-w-xs flex flex-col gap-3">
+        class="fixed left-6 bottom-6 z-50 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg p-4 max-w-xs w-full sm:max-w-xs flex flex-col gap-3 sm:w-auto">
         <div class="text-gray-800 dark:text-gray-100 text-sm">
             This website uses browser cache for a better experience. By continuing, you accept our
             <a href="privacypolicy.html" class="text-sky-600 underline" target="_blank">Privacy Policy</a>
             and
             <a href="termsofservice.html" class="text-sky-600 underline" target="_blank">Terms of Service</a>.
         </div>
-        <button id="acceptPermissionBanner" class="bg-sky-500 hover:bg-sky-600 text-white rounded px-4 py-2 font-bold transition">
-            Accept
-        </button>
+        <div class="flex flex-col sm:flex-row gap-2 mt-2">
+            <button id="acceptPermissionBanner" class="bg-sky-500 hover:bg-sky-600 text-white rounded px-4 py-2 font-bold transition w-full sm:w-auto">Accept</button>
+            <button id="declinePermissionBanner" class="bg-black hover:bg-gray-500 text-white rounded px-4 py-2 font-bold transition w-full sm:w-auto">Decline</button>
+        </div>
     </div>
     <script src=./script/script-main.js></script>

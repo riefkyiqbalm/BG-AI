@@ -163,6 +163,11 @@ body {
     margin-top: 0.5rem;
     font-weight: 600;
     cursor: pointer;
+    min-width: 100px;
+}
+
+#permissionBanner .flex {
+    justify-content: center;
 }
 
 @media (max-width: 640px) {
@@ -176,10 +181,26 @@ body {
     #backToTop {
         bottom: 2rem;
     }
+    #permissionBanner .flex {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    #permissionBanner button {
+        width: 100%;
+        min-width: unset;
+    }
 }
 @media (max-width: 480px) {
      #backToTop {
         bottom: 2rem;
     }
 
+}
+
+/* Loading spinner utility for loading.html */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.animate-spin {
+  animation: spin 1s linear infinite;
 }

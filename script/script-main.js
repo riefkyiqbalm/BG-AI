@@ -224,7 +224,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Permission banner logic
     const permissionBanner = document.getElementById('permissionBanner');
     const acceptPermissionBanner = document.getElementById('acceptPermissionBanner');
-    if (permissionBanner && acceptPermissionBanner) {
+    const declinePermissionBanner = document.getElementById('declinePermissionBanner');
+    if (permissionBanner && acceptPermissionBanner && declinePermissionBanner) {
         if (!localStorage.getItem('permissionAccepted')) {
             permissionBanner.style.display = 'flex';
         }
@@ -232,5 +233,14 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.setItem('permissionAccepted', 'true');
             permissionBanner.style.display = 'none';
         });
+        declinePermissionBanner.addEventListener('click', function() {
+            localStorage.setItem('permissionAccepted', 'declined');
+            permissionBanner.style.display = 'none';
+        });
     }
 });
+
+function showLoadingPage() {
+    window.location.href = 'loading.html';
+}
+// Example usage: showLoadingPage() before a heavy operation or navigation
