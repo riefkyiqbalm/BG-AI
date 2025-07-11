@@ -1,6 +1,9 @@
 <h1 align="center">🚀 Modeling Services by [AoTamaTa] (https://aotamata.space)</h1>
 <div align="center">
-![Status](https://img.shields.io/badge/Status-Active-green)</div>
+
+![Status](https://img.shields.io/badge/Status-Active-green)
+
+</div>
 
 Welcome to my modeling services repository! I specialize in creating high-quality 3D models, CAD/CAM/CAE designs, and more to bring your ideas to life. Whether you're an engineer, designer, or business owner, I'm here to help you with professional modeling solutions.
 ✨ Services Offered
