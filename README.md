@@ -14,7 +14,7 @@ Quality: Precision-crafted models tailored to your needs.
 Support: Dedicated assistance from concept to completion.
 
 📺 Check Out My Work
-Watch my latest modeling tutorials and projects on my YouTube Channel. Subscribe for updates! 🎥
+Watch my latest modeling tutorials and projects on my [YouTube Channel] (https://www.youtube.com/@Baltengg). Subscribe for updates! 🎥
 🌐 [Visit My Website] (https://aotamata.space)
 Ready to get started? Head over to my website for more details, pricing, and to place your order! 🚪
 📩 Contact Me
@@ -22,4 +22,4 @@ Have a project in mind? Drop me a message at your.email@example.com.
 ⭐ Support This Project
 If you like my work, consider starring this repository! 🌟 Your support helps me create more amazing content.
 
-Made with ❤️ by [Your Name]
+Made with ❤️ by [baltengg](https://www.youtube.com/@Baltengg)
