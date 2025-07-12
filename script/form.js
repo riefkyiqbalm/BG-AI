@@ -1,159 +1,3 @@
-let scene, camera, renderer, model; // Keep global variables for Three.js elements
-
-// Window load handler
-window.onload = () => {
-    initThreeJS();
-    animate();
-    setupEventListeners();
-    // Assuming setupForm is a simple function that might also be defined
-    // setupForm(); 
-};
-
-// Initializes Three.js scene, camera, renderer, and a basic model
-function initThreeJS() {
-    const container = document.getElementById('three-canvas');
-    if (!container) {
-        console.error("Three.js container not found!");
-        return;
-    }
-
-    scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xe1e7d8);
-
-    camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
-    camera.position.z = 5;
-
-    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(container.clientWidth, container.clientHeight);
-    container.appendChild(renderer.domElement);
-
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-    scene.add(ambientLight);
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    directionalLight.position.set(1, 1, 1);
-    scene.add(directionalLight);
-
-    try {
-        const geometry = new THREE.BoxGeometry(1, 1, 1);
-        const material = new THREE.MeshStandardMaterial({
-            color: 0x047857,
-            metalness: 0.5,
-            roughness: 0.1
-        });
-        model = new THREE.Mesh(geometry, material);
-        scene.add(model);
-    } catch (error) {
-        console.error('Error loading model:', error);
-        loadFallbackModel();
-    }
-
-    window.addEventListener('resize', onWindowResize);
-}
-
-// Loads a fallback model if the primary model fails
-const loadFallbackModel = () => {
-    const geometry = new THREE.BoxGeometry(1, 1, 1);
-    const material = new THREE.MeshBasicMaterial({ color: 0x20B2AA });
-    model = new THREE.Mesh(geometry, material);
-    scene.add(model);
-};
-
-// Animation loop for Three.js model
-const animate = () => {
-    requestAnimationFrame(animate);
-    model && ((model.rotation.x += 0.005), (model.rotation.y += 0.005));
-    renderer.render(scene, camera);
-};
-
-// Handles window resize for Three.js canvas
-const onWindowResize = () => {
-    const container = document.getElementById('three-canvas');
-    container && camera && renderer && (
-        (camera.aspect = container.clientWidth / container.clientHeight),
-        camera.updateProjectionMatrix(),
-        renderer.setSize(container.clientWidth, container.clientHeight)
-    );
-};
-
-// // Sets up the consultation modal functionality
-// function setupModal() {
-//     const modal = document.getElementById("consultationModal");
-//     const btn = document.getElementById("consultationBtn");
-//     const span = document.getElementsByClassName("close-modal")[0];
-
-//     if (!modal || !btn) return;
-
-//     btn.addEventListener('click', () => {
-//         modal.style.display = "block";
-//         document.body.style.overflow = "hidden";
-//     });
-
-//     span?.addEventListener('click', () => { // Optional chaining for 'span'
-//         modal.style.display = "none";
-//         document.body.style.overflow = "auto";
-//     });
-
-//     window.addEventListener('click', (event) => {
-//         event.target === modal && (
-//             (modal.style.display = "none"),
-//             (document.body.style.overflow = "auto")
-//         );
-//     });
-
-//     document.addEventListener('keydown', (event) => {
-//         event.key === "Escape" && modal.style.display === "block" && (
-//             (modal.style.display = "none"),
-//             (document.body.style.overflow = "auto")
-//         );
-//     });
-// }
-
-// Sets up event listeners for Three.js model interaction (dragging)
-function setupEventListeners() {
-    const container = document.getElementById('three-canvas');
-    if (!container) return;
-
-    let isDragging = false;
-    let previousMousePosition = { x: 0, y: 0 };
-
-    container.addEventListener('mousedown', (event) => {
-        isDragging = true;
-        previousMousePosition = { x: event.clientX, y: event.clientY };
-    });
-
-    container.addEventListener('mousemove', (event) => {
-        if (!isDragging || !model) return;
-        const deltaX = event.clientX - previousMousePosition.x;
-        const deltaY = event.clientY - previousMousePosition.y;
-        model.rotation.y += deltaX * 0.01;
-        model.rotation.x += deltaY * 0.01;
-        previousMousePosition = { x: event.clientX, y: event.clientY };
-    });
-
-    container.addEventListener('mouseup', () => (isDragging = false));
-    container.addEventListener('mouseleave', () => (isDragging = false));
-
-    container.addEventListener('touchstart', (event) => {
-        isDragging = true;
-        const touch = event.touches[0];
-        previousMousePosition = { x: touch.clientX, y: touch.clientY };
-        event.preventDefault();
-    }, { passive: false });
-
-    container.addEventListener('touchmove', (event) => {
-        if (!isDragging || !model) return;
-        const touch = event.touches[0];
-        const deltaX = touch.clientX - previousMousePosition.x;
-        const deltaY = touch.clientY - previousMousePosition.y;
-        model.rotation.y += deltaX * 0.01;
-        model.rotation.x += deltaY * 0.01;
-        previousMousePosition = { x: touch.clientX, y: touch.clientY };
-        event.preventDefault();
-    }, { passive: false });
-
-    container.addEventListener('touchend', () => (isDragging = false));
-}
-
 // Applies system theme (dark/light mode)
 const applySystemTheme = () => {
     window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -251,8 +95,6 @@ document.addEventListener('DOMContentLoaded', () => {
             formStatus.style.display = 'block';
         }
     });
-
-
     setupBackToTop();
 
     // Permission banner logic
@@ -274,11 +116,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
-
-// Example usage: showLoadingPage() before a heavy operation or navigation
-const showLoadingPage = () => {
-    window.location.href = 'loading.html';
-};
 
 
 // --- Permission Banner Logic ---
@@ -385,6 +222,5 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
-
 
 
