@@ -204,7 +204,7 @@ function setupForm() {
 // DOMContentLoaded handler for general setups
 document.addEventListener('DOMContentLoaded', () => {
     const pageForm = document.getElementById('pageForm');
-    pageForm && (pageForm.action = 'https://formspree.io/f/xvgrneno'); // Ternary for assignment
+    pageForm && (pageForm.action = 'https://6vcmvf08i3.execute-api.ap-southeast-1.amazonaws.com/default/aotamata-formhandler'); // Ternary for assignment
 
     const contactForm = document.getElementById('contactForm');
     contactForm && (contactForm.action = 'https://formspree.io/f/xeokwljn'); // Ternary for assignment
@@ -237,53 +237,53 @@ const showLoadingPage = () => {
 };
 
 
-    // --- Permission Banner Logic ---
-    const permissionBanner = document.getElementById('permissionBanner');
-    const acceptPermissionBanner = document.getElementById('acceptPermissionBanner');
-    const declinePermissionBanner = document.getElementById('declinePermissionBanner');
-    const cacheReminderBanner = document.getElementById('cacheReminderBanner');
-    const dismissCacheReminder = document.getElementById('dismissCacheReminder');
+// --- Permission Banner Logic ---
+const permissionBanner = document.getElementById('permissionBanner');
+const acceptPermissionBanner = document.getElementById('acceptPermissionBanner');
+const declinePermissionBanner = document.getElementById('declinePermissionBanner');
+const cacheReminderBanner = document.getElementById('cacheReminderBanner');
+const dismissCacheReminder = document.getElementById('dismissCacheReminder');
 
-    // Function to hide both banners
-    const hideAllBanners = () => {
-        permissionBanner && (permissionBanner.style.display = 'none');
-        cacheReminderBanner && (cacheReminderBanner.style.display = 'none');
-    };
+// Function to hide both banners
+const hideAllBanners = () => {
+    permissionBanner && (permissionBanner.style.display = 'none');
+    cacheReminderBanner && (cacheReminderBanner.style.display = 'none');
+};
 
-    if (permissionBanner && acceptPermissionBanner && declinePermissionBanner && cacheReminderBanner && dismissCacheReminder) {
-        const permissionStatus = localStorage.getItem('permissionAccepted');
+if (permissionBanner && acceptPermissionBanner && declinePermissionBanner && cacheReminderBanner && dismissCacheReminder) {
+    const permissionStatus = localStorage.getItem('permissionAccepted');
 
-        if (!permissionStatus) { // No status, show main banner
-            permissionBanner.style.display = 'flex';
-        } else if (permissionStatus === 'declined') { // Declined previously, show small reminder
-            cacheReminderBanner.style.display = 'flex';
-        }
-
-        acceptPermissionBanner.addEventListener('click', () => {
-            localStorage.setItem('permissionAccepted', 'true');
-            hideAllBanners();
-        });
-
-        declinePermissionBanner.addEventListener('click', () => {
-            localStorage.setItem('permissionAccepted', 'declined');
-            hideAllBanners();
-            cacheReminderBanner.style.display = 'flex'; // Show small reminder
-        });
-
-        dismissCacheReminder.addEventListener('click', () => {
-            // User dismissed the reminder, so we won't show it again unless they clear local storage
-            localStorage.setItem('cacheReminderDismissed', 'true');
-            cacheReminderBanner.style.display = 'none';
-        });
-
-        // If reminder was dismissed previously, don't show it again
-        if (localStorage.getItem('cacheReminderDismissed') === 'true') {
-            cacheReminderBanner.style.display = 'none';
-        }
+    if (!permissionStatus) { // No status, show main banner
+        permissionBanner.style.display = 'flex';
+    } else if (permissionStatus === 'declined') { // Declined previously, show small reminder
+        cacheReminderBanner.style.display = 'flex';
     }
-    // --- End Permission Banner Logic ---
 
-document.addEventListener('DOMContentLoaded', function() {
+    acceptPermissionBanner.addEventListener('click', () => {
+        localStorage.setItem('permissionAccepted', 'true');
+        hideAllBanners();
+    });
+
+    declinePermissionBanner.addEventListener('click', () => {
+        localStorage.setItem('permissionAccepted', 'declined');
+        hideAllBanners();
+        cacheReminderBanner.style.display = 'flex'; // Show small reminder
+    });
+
+    dismissCacheReminder.addEventListener('click', () => {
+        // User dismissed the reminder, so we won't show it again unless they clear local storage
+        localStorage.setItem('cacheReminderDismissed', 'true');
+        cacheReminderBanner.style.display = 'none';
+    });
+
+    // If reminder was dismissed previously, don't show it again
+    if (localStorage.getItem('cacheReminderDismissed') === 'true') {
+        cacheReminderBanner.style.display = 'none';
+    }
+}
+// --- End Permission Banner Logic ---
+
+document.addEventListener('DOMContentLoaded', function () {
     const hamburger = document.getElementById('hamburger');
     const navMenu = document.getElementById('nav-menu');
 
@@ -339,6 +339,55 @@ document.addEventListener('DOMContentLoaded', function() {
         consultationBtn.addEventListener('click', () => {
             window.location.href = 'form.html'; // Redirect to form.html
         });
+    }
+});
+
+const form = document.getElementById('pageForm');
+const formStatus = document.getElementById('formStatus');
+
+form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+
+    try {
+        const response = await fetch(form.action, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        // Tentukan kelas dan pesan berdasarkan respons
+        const isSuccess = response.ok;
+        const statusClass = isSuccess ? 'success' : 'error';
+        const initialMessage = 'Pesan Anda telah berhasil dikirim! Mengarahkan Anda...';
+
+        // Hapus kelas yang berlawanan dan tambahkan kelas yang benar
+        formStatus.classList.remove(isSuccess ? 'error' : 'success');
+        formStatus.classList.add(statusClass);
+        formStatus.style.display = 'block'; // Pastikan pesan ditampilkan
+
+        if (isSuccess) {
+            formStatus.textContent = initialMessage;
+            // Bagian redirect tetap di sini karena ini adalah efek samping
+            setTimeout(() => {
+                window.location.href = '/form-success.html';
+            }, 2000);
+        } else {
+            const errorData = await response.json();
+            formStatus.textContent = errorData.message || 'Terjadi kesalahan saat mengirim pesan.';
+        }
+
+    } catch (networkError) {
+        console.error('Network or CORS error:', networkError);
+        formStatus.classList.remove('success');
+        formStatus.classList.add('error');
+        formStatus.textContent = 'Tidak dapat terhubung ke server. Periksa koneksi Anda atau coba lagi nanti.';
+        formStatus.style.display = 'block';
     }
 });
 
