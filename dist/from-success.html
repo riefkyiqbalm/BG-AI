@@ -1,1 +1,56 @@
-<!doctypehtml><html lang="en"><head><meta charset="UTF-8"><meta name="viewport"content="width=device-width,initial-scale=1"><title>Terima Kasih!</title><style>body{font-family:sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;background-color:#f0f8ff;color:#333;text-align:center}.container{padding:40px;background-color:#fff;border-radius:10px;box-shadow:0 4px 15px rgba(0,0,0,.1)}h1{color:#28a745;font-size:2.5em;margin-bottom:20px}p{font-size:1.2em;line-height:1.6}a{color:#007bff;text-decoration:none;font-weight:700}a:hover{text-decoration:underline}</style></head><body><div class="container"><h1>Terima Kasih!</h1><p>Pesan Anda telah berhasil kami terima. Kami akan segera menghubungi Anda.</p><p>Anda akan diarahkan kembali ke <a href="/">halaman utama</a> dalam beberapa detik, atau klik <a href="/">di sini</a> sekarang.</p><script>setTimeout(function(){window.location.href="/"},5e3)</script></div></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terima Kasih!</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f8ff;
+            color: #333;
+            text-align: center;
+        }
+        .container {
+            padding: 40px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #28a745;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 1.2em;
+            line-height: 1.6;
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Terima Kasih!</h1>
+        <p>Pesan Anda telah berhasil kami terima. Kami akan segera menghubungi Anda.</p>
+        <p>Anda akan diarahkan kembali ke <a href="/">halaman utama</a> dalam beberapa detik, atau klik <a href="/">di sini</a> sekarang.</p>
+        <script>
+            setTimeout(function() {
+                window.location.href = '/'; // Mengarahkan ke halaman utama
+            }, 5000); // Redirect setelah 5 detik
+        </script>
+    </div>
+</body>
+</html>
