@@ -1,3 +1,91 @@
+ // Keep global variables for Three.js elements
+
+// Window load handler
+window.onload = () => {
+    initThreeJS();
+    // animate();
+    setupEventListeners();
+    // Assuming setupForm is a simple function that might also be defined
+    // setupForm(); 
+};
+
+// Initializes Three.js scene, camera, renderer, and a basic model
+function initThreeJS() {
+    const container = document.getElementById('three-canvas');
+    if (!container) {
+        console.error("Three.js container not found!");
+        return;
+    }
+
+    window.addEventListener('resize', onWindowResize);
+}
+
+// Loads a fallback model if the primary model fails
+const loadFallbackModel = () => {
+    const geometry = new THREE.BoxGeometry(1, 1, 1);
+    const material = new THREE.MeshBasicMaterial({ color: 0x20B2AA });
+    model = new THREE.Mesh(geometry, material);
+    scene.add(model);
+};
+
+// Animation loop for Three.js model
+
+// Handles window resize for Three.js canvas
+const onWindowResize = () => {
+    const container = document.getElementById('three-canvas');
+    container && camera && renderer && (
+        (camera.aspect = container.clientWidth / container.clientHeight),
+        camera.updateProjectionMatrix(),
+        renderer.setSize(container.clientWidth, container.clientHeight)
+    );
+};
+
+// Sets up event listeners for Three.js model interaction (dragging)
+function setupEventListeners() {
+    const container = document.getElementById('three-canvas');
+    if (!container) return;
+
+    let isDragging = false;
+    let previousMousePosition = { x: 0, y: 0 };
+
+    container.addEventListener('mousedown', (event) => {
+        isDragging = true;
+        previousMousePosition = { x: event.clientX, y: event.clientY };
+    });
+
+    container.addEventListener('mousemove', (event) => {
+        if (!isDragging || !model) return;
+        const deltaX = event.clientX - previousMousePosition.x;
+        const deltaY = event.clientY - previousMousePosition.y;
+        model.rotation.y += deltaX * 0.01;
+        model.rotation.x += deltaY * 0.01;
+        previousMousePosition = { x: event.clientX, y: event.clientY };
+    });
+
+    container.addEventListener('mouseup', () => (isDragging = false));
+    container.addEventListener('mouseleave', () => (isDragging = false));
+
+    container.addEventListener('touchstart', (event) => {
+        isDragging = true;
+        const touch = event.touches[0];
+        previousMousePosition = { x: touch.clientX, y: touch.clientY };
+        event.preventDefault();
+    }, { passive: false });
+
+    container.addEventListener('touchmove', (event) => {
+        if (!isDragging || !model) return;
+        const touch = event.touches[0];
+        const deltaX = touch.clientX - previousMousePosition.x;
+        const deltaY = touch.clientY - previousMousePosition.y;
+        model.rotation.y += deltaX * 0.01;
+        model.rotation.x += deltaY * 0.01;
+        previousMousePosition = { x: touch.clientX, y: touch.clientY };
+        event.preventDefault();
+    }, { passive: false });
+
+    container.addEventListener('touchend', () => (isDragging = false));
+}
+
 // Applies system theme (dark/light mode)
 const applySystemTheme = () => {
     window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -95,6 +183,8 @@ document.addEventListener('DOMContentLoaded', () => {
             formStatus.style.display = 'block';
         }
     });
+
+
     setupBackToTop();
 
     // Permission banner logic
@@ -116,6 +206,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+// Example usage: showLoadingPage() before a heavy operation or navigation
+const showLoadingPage = () => {
+    window.location.href = 'loading.html';
+};
 
 
 // --- Permission Banner Logic ---
@@ -218,9 +313,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const consultationBtn = document.getElementById("consultationBtn");
     if (consultationBtn) {
         consultationBtn.addEventListener('click', () => {
-            window.location.href = 'form.html'; // Redirect to form.html
+            window.location.href = '../form.html'; // Redirect to form.html
         });
     }
 });
+
 
 

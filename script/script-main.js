@@ -75,39 +75,6 @@ const onWindowResize = () => {
     );
 };
 
-// // Sets up the consultation modal functionality
-// function setupModal() {
-//     const modal = document.getElementById("consultationModal");
-//     const btn = document.getElementById("consultationBtn");
-//     const span = document.getElementsByClassName("close-modal")[0];
-
-//     if (!modal || !btn) return;
-
-//     btn.addEventListener('click', () => {
-//         modal.style.display = "block";
-//         document.body.style.overflow = "hidden";
-//     });
-
-//     span?.addEventListener('click', () => { // Optional chaining for 'span'
-//         modal.style.display = "none";
-//         document.body.style.overflow = "auto";
-//     });
-
-//     window.addEventListener('click', (event) => {
-//         event.target === modal && (
-//             (modal.style.display = "none"),
-//             (document.body.style.overflow = "auto")
-//         );
-//     });
-
-//     document.addEventListener('keydown', (event) => {
-//         event.key === "Escape" && modal.style.display === "block" && (
-//             (modal.style.display = "none"),
-//             (document.body.style.overflow = "auto")
-//         );
-//     });
-// }
-
 // Sets up event listeners for Three.js model interaction (dragging)
 function setupEventListeners() {
     const container = document.getElementById('three-canvas');
@@ -381,7 +348,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const consultationBtn = document.getElementById("consultationBtn");
     if (consultationBtn) {
         consultationBtn.addEventListener('click', () => {
-            window.location.href = 'form.html'; // Redirect to form.html
+            window.location.href = '../form.html'; // Redirect to form.html
         });
     }
 });
