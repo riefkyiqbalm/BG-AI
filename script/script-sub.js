@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Determine class and message based on response
                 const isSuccess = response.ok;
                 const statusClass = isSuccess ? 'success' : 'error';
-                const initialMessage = 'Pesan Anda telah berhasil dikirim! Mengarahkan Anda...';
+                const initialMessage = 'Request has been send...';
 
                 // Remove conflicting classes and add the correct one
                 formStatus.classList.remove(isSuccess ? 'error' : 'success');
@@ -94,18 +94,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     formStatus.textContent = initialMessage;
                     // Redirect part remains here as it's a side effect
                     setTimeout(() => {
-                        window.location.href = '/form-success.html';
+                        window.location.href = './form-success.html';
                     }, 2000);
                 } else {
                     const errorData = await response.json();
-                    formStatus.textContent = errorData.message || 'Terjadi kesalahan saat mengirim pesan.';
+                    formStatus.textContent = errorData.message || 'There was an error processing your request. Please try again later.';
                 }
 
             } catch (networkError) {
                 console.error('Network or CORS error:', networkError);
                 formStatus.classList.remove('success');
                 formStatus.classList.add('error');
-                formStatus.textContent = 'Tidak dapat terhubung ke server. Periksa koneksi Anda atau coba lagi nanti.';
+                formStatus.textContent = 'There was a network error. Please check your connection and try again.';
                 formStatus.style.display = 'block';
             }
         });

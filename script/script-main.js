@@ -169,56 +169,58 @@ function setupForm() {
 }
 
 // DOMContentLoaded handler for general setups
+// DOMContentLoaded handler for general setups
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('pageForm');
     const formStatus = document.getElementById('formStatus');
 
-    form.addEventListener('submit', async (event) => {
-        event.preventDefault();
+    if (form) { // Ensure the form element exists before adding listener
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
 
-        const formData = new FormData(form);
-        const data = Object.fromEntries(formData.entries());
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
 
-        try {
-            const response = await fetch(form.action, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify(data)
-            });
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
 
-            // Tentukan kelas dan pesan berdasarkan respons
-            const isSuccess = response.ok;
-            const statusClass = isSuccess ? 'success' : 'error';
-            const initialMessage = 'Pesan Anda telah berhasil dikirim! Mengarahkan Anda...';
+                // Determine class and message based on response
+                const isSuccess = response.ok;
+                const statusClass = isSuccess ? 'success' : 'error';
+                const initialMessage = 'Request has been send...';
 
-            // Hapus kelas yang berlawanan dan tambahkan kelas yang benar
-            formStatus.classList.remove(isSuccess ? 'error' : 'success');
-            formStatus.classList.add(statusClass);
-            formStatus.style.display = 'block'; // Pastikan pesan ditampilkan
+                // Remove conflicting classes and add the correct one
+                formStatus.classList.remove(isSuccess ? 'error' : 'success');
+                formStatus.classList.add(statusClass);
+                formStatus.style.display = 'block'; // Ensure message is displayed
 
-            if (isSuccess) {
-                formStatus.textContent = initialMessage;
-                // Bagian redirect tetap di sini karena ini adalah efek samping
-                setTimeout(() => {
-                    window.location.href = '/form-success.html';
-                }, 2000);
-            } else {
-                const errorData = await response.json();
-                formStatus.textContent = errorData.message || 'Terjadi kesalahan saat mengirim pesan.';
+                if (isSuccess) {
+                    formStatus.textContent = initialMessage;
+                    // Redirect part remains here as it's a side effect
+                    setTimeout(() => {
+                        window.location.href = './form-success.html';
+                    }, 2000);
+                } else {
+                    const errorData = await response.json();
+                    formStatus.textContent = errorData.message || 'There was an error processing your request. Please try again later.';
+                }
+
+            } catch (networkError) {
+                console.error('Network or CORS error:', networkError);
+                formStatus.classList.remove('success');
+                formStatus.classList.add('error');
+                formStatus.textContent = 'There was a network error. Please check your connection and try again.';
+                formStatus.style.display = 'block';
             }
-
-        } catch (networkError) {
-            console.error('Network or CORS error:', networkError);
-            formStatus.classList.remove('success');
-            formStatus.classList.add('error');
-            formStatus.textContent = 'Tidak dapat terhubung ke server. Periksa koneksi Anda atau coba lagi nanti.';
-            formStatus.style.display = 'block';
-        }
-    });
-
+        });
+    }
 
     setupBackToTop();
 
