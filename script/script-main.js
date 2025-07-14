@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     formStatus.textContent = initialMessage;
                     // Redirect part remains here as it's a side effect
                     setTimeout(() => {
-                        window.location.href = './form-success.html';
+                        window.location.href = '../success.html';
                     }, 2000);
                 } else {
                     const errorData = await response.json();
