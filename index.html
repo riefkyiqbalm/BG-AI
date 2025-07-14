@@ -36,12 +36,12 @@
     </script>
 
     <body
-        class="bg-[url('./assets/images/vertical-bg.png')] bg-center dark:bg-[url('./assets/images/vertical-bg-dark.png')] text-gray-800">
-        <header class="text-white shadow-lg p-4 bg-blue-400 dark:bg-sky-800 rounded-b-xl">
+        class="bg-[url('./assets/images/vertical-bg.png')] bg-center dark:bg-[url('./assets/images/vertical-bg-dark.png')] bg-center text-gray-800">
+        <header class="text-white shadow-lg p-4 bg-blue-400/80 dark:bg-sky-800/80 rounded-b-xl">
             <div class="container mx-auto px-4 flex flex-col items-center justify-between md:flex-row py-2">
-                <nav class="flex items-center gap-8 md:gap-6 w-full md:w-auto relative" id="nav-header">
+                <nav class="flex items-center gap-8 md:gap-6 w-screen md:w-auto relative" id="nav-header">
                     <a href="index.html">
-                        <h1 class="font-extrabold mb-2 md:mb-0 text-3xl"><span class=block>Design &
+                        <h1 class="font-extrabold mb-2 md:mb-0 text-3xl ml-5"><span class=block>Design &
                                 Engineering</span><span class="block font-medium opacity-90 text-xl">3D Modeling
                                 Services</span></h1></a>
                 <button id="hamburger" class="md:hidden focus:outline-none hamburger-menu"
@@ -53,25 +53,25 @@
                 <ul id="nav-menu"
                     class="hidden md:flex flex-col md:flex-row md:items-center absolute md:static top-full left-0 w-full md:w-auto bg-gray-700 md:bg-transparent shadow-md md:shadow-none transition-all duration-300 ease-in-out max-h-0 md:max-h-full overflow-hidden z-1000">
                     <li class="p-4 md:p-0"><a href="#home"
-                            class="block md:inline-block text-white hover:text-yellow-400 transition duration-300 text-lg">Home</a>
+                            class="block md:inline-block text-white hover:text-indigo-200 transition duration-300 text-lg">Home</a>
                     </li>
                     <li class="p-4 md:ml-6 md:p-0"><a href="#about"
-                            class="block md:inline-block text-white hover:text-yellow-400 transition duration-300 text-lg">About</a>
+                            class="block md:inline-block text-white hover:text-indigo-200 transition duration-300 text-lg">About</a>
                     </li>
                     <li class="p-4 md:ml-6 md:p-0"><a href="#services"
-                            class="block md:inline-block text-white hover:text-yellow-400 transition duration-300 text-lg">Services</a>
+                            class="block md:inline-block text-white hover:text-indigo-200 transition duration-300 text-lg">Services</a>
                     </li>
                     <li class="p-4 md:ml-6 md:p-0"><a href="#portfolio"
-                            class="block md:inline-block text-white hover:text-yellow-400 transition duration-300 text-lg">Portfolio</a>
+                            class="block md:inline-block text-white hover:text-indigo-200 transition duration-300 text-lg">Portfolio</a>
                     </li>
                     <li class="p-4 md:ml-6 md:p-0"><a href="#contact"
-                            class="block md:inline-block text-white hover:text-yellow-400 transition duration-300 text-lg">Contact</a>
+                            class="block md:inline-block text-white hover:text-indigo-200 transition duration-300 text-lg">Contact</a>
                     </li>
                 </ul>
                 </nav>
             </div>
         </header>
-        <section class="shadow-md my-8 py-16 rounded-xl bg-white container dark:bg-gray-800 mx-auto px-4"
+        <section class="shadow-md my-8 py-16 rounded-xl bg-white/80 container dark:bg-gray-800/80 mx-auto px-4"
             id="portfolio-showcase">
             <div class="relative">
                 <!-- Ornamen SVG shape top left -->
@@ -92,7 +92,7 @@
                         Vision, Precision Engineered.</h2>
                     <p class="text-gray-600 dark:text-gray-100 max-w-3xl mb-10 md:text-2xl mx-auto text-xl">Transforming
                         ideas into tangible realities with cutting-edge CAD, CAM, and CAE solutions.
-                    <div class="absolute inset-0 opacity-50 z-0">
+                    <!-- <div class="absolute inset-0 opacity-50 z-0">
                         <svg class="text-sky-500 -translate-x-1/2 -translate-y-1/2 absolute dark:text-rose-500 h-1/3 left-0 top-0 transform w-1/3"
                             fill="currentColor" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
                             <path
@@ -102,7 +102,7 @@
                             fill="currentColor" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
                             <path d="M100 0L0 100l100 100L200 100zM100 20L20 100l80 80 80-80z" />
                         </svg>
-                    </div>
+                    </div> -->
                     </p>
                 </div>
             </div>
@@ -113,7 +113,7 @@
             </div>
         </section>
         </div>
-        <section class="shadow-md my-8 py-16 rounded-xl bg-white container dark:bg-gray-800 mx-auto px-4"
+        <section class="shadow-md my-8 py-16 rounded-xl bg-white/80 container dark:bg-gray-800/80 mx-auto px-4"
             id=portfolio-showcase>
             <h2 class="text-center font-bold text-3xl mb-10 text-gray-900 dark:text-gray-100">Our 3D Design Capabilities
                 in Action</h2>
@@ -122,7 +122,7 @@
                 our precision 3D modeling. This interactive visualization demonstrates the quality and detail we bring
                 to every project.<b class="dark:text-sky-500 text-sky-700">Drag your mouse to rotate the model!</b>
         </section>
-        <section class="shadow-md my-8 py-16 rounded-xl bg-white container dark:bg-gray-800 mx-auto px-4" id=services>
+        <section class="shadow-md my-8 py-16 rounded-xl bg-white/80 container dark:bg-gray-800/80 mx-auto px-4" id=services>
             <h2 class="text-center font-bold text-3xl mb-10 text-gray-900 dark:text-gray-100">Our Comprehensive Services
             </h2>
             <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
@@ -191,7 +191,7 @@
                 </div>
             </div>
         </section>
-        <section class="shadow-md my-8 py-16 rounded-xl bg-white container dark:bg-gray-800 mx-auto px-4" id=portfolio>
+        <section class="shadow-md my-8 py-16 rounded-xl bg-white/80 container dark:bg-gray-800/80 mx-auto px-4" id=portfolio>
             <h2 class="text-center font-bold text-3xl mb-10 text-gray-900 dark:text-gray-100">Our Portfolio of
                 Excellence</h2>
             <div class="grid grid-cols-1 gap-6 lg:grid-cols-3 md:grid-cols-2">
@@ -228,7 +228,7 @@
                 </div>
             </div>
         </section>
-        <section class="shadow-md my-8 py-16 rounded-xl bg-white container dark:bg-gray-800 mx-auto px-4" id=about>
+        <section class="shadow-md my-8 py-16 rounded-xl bg-white/80 container dark:bg-gray-800/80 mx-auto px-4" id=about>
             <h2 class="text-center font-bold text-3xl mb-10 text-gray-900 dark:text-gray-200">About Us</h2>
             <div class="text-center dark:text-gray-200 mx-auto text-lg leading-relaxed max-w-4xl text-gray-700">
                 <p class=mb-4>We are a team of dedicated and experienced engineers specializing in advanced 3D
@@ -244,7 +244,7 @@
             </div>
         </section>
         <section
-            class="text-white shadow-lg bg-emerald-600 container dark:bg-emerald-900 mx-auto my-8 px-4 py-16 rounded-xl"
+            class="text-white shadow-lg bg-emerald-600/80 container dark:bg-emerald-900/80 mx-auto my-8 px-4 py-16 rounded-xl"
             id=contact>
             <h2 class="text-white font-bold text-3xl text-center mb-6">Request a Free Consultation</h2>
             <p class="text-white text-center mb-8">Fill out the form below and our team will get back to you within 24
@@ -305,7 +305,7 @@
             </svg></button>
         <!-- Permission Banner -->
         <div id="permissionBanner" style="display:none"
-            class="fixed left-6 bottom-6 z-50 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg p-4 max-w-xs w-full sm:max-w-xs flex flex-col gap-3 sm:w-auto">
+            class="fixed left-6 bottom-6 z-50 bg-white/80 dark:bg-gray-800/80 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg p-4 max-w-xs w-full sm:max-w-xs flex flex-col gap-3 sm:w-auto">
             <div class="text-gray-800 dark:text-gray-100 text-sm">
                 This website uses browser cache for a better experience. By continuing, you accept our
                 <a href="privacypolicy.html" class="text-sky-600 underline" target="_blank">Privacy Policy</a>

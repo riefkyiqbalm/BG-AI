@@ -203,7 +203,13 @@ body {
         bottom: 2rem;
         /* margin-right:5rem; */
     }
-
+    #text-maintenance{
+        padding: 1rem;
+    }
+    #btn-maintenance{
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+    }
 }
 
 /* Loading spinner utility for loading.html */

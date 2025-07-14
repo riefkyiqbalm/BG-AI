@@ -31,7 +31,7 @@ Ready to get started? Head over to my website for more details, pricing, and to 
 
 ## 📩 Contact Me
 
-Have a project in mind? Drop me a message at [riefkyiqbalm@gmail.com](mailto:riefkyiqbalm@gmail.com).
+Have a project in mind? Drop me a message at [info@aotamata.space] (mailto:info@aotamata.space).
 
 ## ⭐ Support This Project
 

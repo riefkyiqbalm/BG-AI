@@ -6,7 +6,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel=stylesheet>
     <script src=https://cdn.tailwindcss.com></script>
     <script src=https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js></script>
-    <link href=./styles/style-main.css rel=stylesheet>
+    <link href=./styles/style-sub.css rel=stylesheet>
     <link href=./assets/images/favicon.ico rel=icon type=image/x-icon>
     <script>
         tailwind.config = {
@@ -37,7 +37,7 @@
 
  <body
         class="bg-[url('./assets/images/vertical-bg.png')] bg-center dark:bg-[url('./assets/images/vertical-bg-dark.png')] text-gray-800">
-        <header class="text-white shadow-lg p-4 bg-blue-400 dark:bg-sky-800 rounded-b-xl">
+        <header class="text-white shadow-lg p-4 bg-blue-400/80 dark:bg-sky-800/80 rounded-b-xl">
             <div class="container mx-auto px-4 flex flex-col items-center justify-between md:flex-row py-2">
                 <nav class="flex items-center gap-8 md:gap-6 w-full md:w-auto relative" id="nav-header">
                     <a href="index.html">
@@ -74,7 +74,7 @@
         </header>
         <main>
             <section
-                class="text-white shadow-lg bg-emerald-600 container dark:bg-emerald-900 mx-auto my-8 px-4 py-16 rounded-xl"
+                class="text-white shadow-lg bg-emerald-600/80 container dark:bg-emerald-900/80 mx-auto my-8 px-4 py-16 rounded-xl"
                 id=contact>
                 <h2 class="text-white font-bold text-3xl text-center mb-6">Request a Free Consultation</h2>
                 <p class="text-white text-center mb-8">Fill out the form below and our team will get back to you within
@@ -137,7 +137,7 @@
             </svg></button>
         <!-- Permission Banner -->
         <div id="permissionBanner" style="display:none"
-            class="fixed left-6 bottom-6 z-50 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg p-4 max-w-xs w-full sm:max-w-xs flex flex-col gap-3 sm:w-auto">
+            class="fixed left-6 bottom-6 z-50 bg-white/80 dark:bg-gray-800/80 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg p-4 max-w-xs w-full sm:max-w-xs flex flex-col gap-3 sm:w-auto">
             <div class="text-gray-800 dark:text-gray-100 text-sm">
                 This website uses browser cache for a better experience. By continuing, you accept our
                 <a href="privacypolicy.html" class="text-sky-600 underline" target="_blank">Privacy Policy</a>
@@ -161,7 +161,7 @@
                     &times;
                 </button>
             </div></div>
-            <script src=./form-script/form.js></script>
+            <script src=./script/script-sub.js></script>
  </body>
 </html>
         
