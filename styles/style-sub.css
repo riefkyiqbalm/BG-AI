@@ -206,10 +206,6 @@ body {
     #text-maintenance{
         padding: 1rem;
     }
-    #btn-maintenance{
-        display: block;
-    }
-
 }
 
 /* Loading spinner utility for loading.html */

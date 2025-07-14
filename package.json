@@ -5,14 +5,13 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "clean:dist": "rm -rf dist",
-    "build:css": "npx @tailwindcss/cli -i ./styles/style-main.css -o ./dist/styles/style-main.css --minify",
-    "build:css:sub": "npx @tailwindcss/cli -i ./styles/style-sub.css -o ./dist/styles/style-sub.css --minify",
+    "build:css": "postcss ./styles/*.css --dir ./dist/styles",
     "copy:html": "cpx \"./*.html\" ./dist",
     "copy:js": "cpx \"./script/**/*.js\" ./dist/script",
     "copy:assets": "cpx \"./assets/**/*\" dist/assets",
     "minify:html": "find dist -name \"*.html\" -exec npx html-minifier-terser {} -o {} --collapse-whitespace --remove-comments --remove-redundant-attributes --remove-script-type-attributes --remove-tag-whitespace --use-short-doctype --minify-css true --minify-js true \\;",
     "minify:js": "find dist/script -name \"*.js\" -exec npx terser {} -o {} --compress --mangle \\;",
-    "build": "npm run clean:dist && npm run build:css && npm run copy:html && npm run copy:js && npm run copy:assets && npm run minify:html && npm run minify:js && npm run build:css:sub",
+    "build": "npm run clean:dist && npm run build:css && npm run copy:html && npm run copy:js && npm run copy:assets && npm run minify:html && npm run minify:js",
     "start": "http-server ./dist",
     "deploy:s3": "aws s3 sync ./dist s3://aotamata.space --delete --acl public-read --cache-control max-age=31536000,public"
   },
