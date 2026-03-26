@@ -1,0 +1,24 @@
+prepare-data
+   |
+   |---PRE_TRAIN.py            (MAIN DATA GENERATE FILE)  
+           |
+           |--------Input
+           |---coord           (dataset_format = .dat, function = Prototype_Data)
+           |---coord_ex        (dataset_format = .dat, function = Build_Data)
+           |---dump            (dataset_format = .dat, function = Unused_Data)
+           |
+           |
+           |--------Procces
+           |---CHECK_DAT.py
+           |---POLARPARSE.py
+           |---LOAD.py
+           |---XFOILRUN.py
+           |---PLOT.py
+           |
+           |
+           |--------Output
+           |---data            (dataset_format = .txt/xfoil_polar, function = Xfoil_Dataset_For_Train)
+           |---dataframe       (dataset_format = .txt, function = Dataframe_For_Train)  //WILL 'DEPRECATED'            
+           |---csv             (dataset_format = .csv, function = Dataset_Column_Name)  //WILL 'DEPRECATED'            
+
+                                                                                                                 
