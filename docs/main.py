@@ -18,9 +18,7 @@ Struktur folder:
   └── templates/
       ├── index.html    ← halaman chat utama
       ├── login.html    ← login & register
-      ├── auth.html     ← pengaturan akun
-      ├── terms.html    ← ketentuan layanan
-      └── 404.html      ← halaman error
+      └── auth.html      ← pengaturan akun
 """
 
 from flask import Flask, render_template, request, jsonify
@@ -176,16 +174,6 @@ def page_login():
 def page_auth():
     return render_template("auth.html")
 
-
-@app.route("/terms")
-@app.route("/tos")
-def page_terms():
-    return render_template("terms.html")
-
-
-@app.errorhandler(404)
-def page_404(e):
-    return render_template("404.html"), 404
 
 
 # ──────────────────────────────────────────────────────────────
