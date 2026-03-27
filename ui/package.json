@@ -1,0 +1,25 @@
+{
+  "name": "bg-ai-ui",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "export": "next build && next export",
+    "deploy:s3": "next build && aws s3 sync ./out s3://aotamata.space --delete --acl public-read --cache-control max-age=31536000,public"
+  },
+  "dependencies": {
+    "next": "^16.2.1",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
+  },
+  "devDependencies": {
+    "@types/node": "25.5.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "tailwindcss": "4.x.x",
+    "typescript": "^6.0.2"
+  }
+}
