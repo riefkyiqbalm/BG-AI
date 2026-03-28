@@ -1,6 +1,12 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { ChatContextType, ChatMessage, ChatSession } from "../types";
 import { sendChat, ChatResponse } from "../lib/api";
 
@@ -67,7 +73,10 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const addMessage = (sessionId: string, payload: Omit<ChatMessage, "id" | "createdAt">) => {
+  const addMessage = (
+    sessionId: string,
+    payload: Omit<ChatMessage, "id" | "createdAt">,
+  ) => {
     setSessions((prev) =>
       prev.map((session) => {
         if (session.id !== sessionId) return session;
@@ -81,7 +90,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
           updatedAt: new Date().toISOString(),
           messages: [...session.messages, msg],
         };
-      })
+      }),
     );
   };
 
@@ -98,6 +107,22 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
     // Use current activeSessionId or create new session
     let targetSessionId = activeSessionId;
+    // 1. Tambahkan pesan user ke UI
+    addMessage(targetSessionId, {
+      sessionId: targetSessionId,
+      role: "user",
+      text,
+    });
+
+    // 2. LOGIKA UBAH NAMA SESI: Jika ini pesan pertama, ubah judul sesi
+    const currentSession = sessions.find(s => s.id === targetSessionId);
+    if (currentSession && currentSession.messages.length === 0) {
+      setSessions(prev => prev.map(s => 
+        s.id === targetSessionId 
+          ? { ...s, title: text.substring(0, 30) + (text.length > 30 ? "..." : "") } 
+          : s
+      ));
+    }
     
     // Find OR create session
     let targetSession = sessions.find((s) => s.id === targetSessionId);
@@ -117,7 +142,10 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
     // Build message list to send to Flask
     // Include all existing messages in this session + new user message
-    const messagesToSend: Array<{ role: "user" | "assistant" | "system"; content: string }> = [];
+    const messagesToSend: Array<{
+      role: "user" | "assistant" | "system";
+      content: string;
+    }> = [];
 
     // Add existing messages from session
     targetSession.messages.forEach((msg) => {
@@ -133,15 +161,27 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       content: text,
     });
 
-    console.log("[ChatContext] Messages to send to Flask:", messagesToSend.length, "messages");
-    console.log("[ChatContext] Message details:", JSON.stringify(messagesToSend, null, 2));
+    console.log(
+      "[ChatContext] Messages to send to Flask:",
+      messagesToSend.length,
+      "messages",
+    );
+    console.log(
+      "[ChatContext] Message details:",
+      JSON.stringify(messagesToSend, null, 2),
+    );
 
     // VALIDATION: Ensure we have messages
     if (!messagesToSend || messagesToSend.length === 0) {
-      console.error("[ChatContext] ERROR: messagesToSend is empty after building!");
-      console.error("[ChatContext] targetSession.messages:", targetSession.messages);
+      console.error(
+        "[ChatContext] ERROR: messagesToSend is empty after building!",
+      );
+      console.error(
+        "[ChatContext] targetSession.messages:",
+        targetSession.messages,
+      );
       console.error("[ChatContext] text:", text);
-      
+
       // Force at least the user message
       messagesToSend.length = 0; // clear array
       messagesToSend.push({
@@ -160,7 +200,10 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
     // Send to Flask backend
     try {
-      console.log("[ChatContext] About to call Flask /api/chat with:", messagesToSend);
+      console.log(
+        "[ChatContext] About to call Flask /api/chat with:",
+        messagesToSend,
+      );
       const response: ChatResponse = await sendChat(messagesToSend);
       console.log("[ChatContext] Flask response received:", response);
 
@@ -194,7 +237,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
   const activeSession = useMemo(
     () => sessions.find((s) => s.id === activeSessionId) || null,
-    [sessions, activeSessionId]
+    [sessions, activeSessionId],
   );
 
   const value: ChatContextType = {

@@ -292,6 +292,20 @@ function ChatProvider({ children }) {
         console.log("[ChatContext] sessions.length:", sessions.length);
         // Use current activeSessionId or create new session
         let targetSessionId = activeSessionId;
+        // 1. Tambahkan pesan user ke UI
+        addMessage(targetSessionId, {
+            sessionId: targetSessionId,
+            role: "user",
+            text
+        });
+        // 2. LOGIKA UBAH NAMA SESI: Jika ini pesan pertama, ubah judul sesi
+        const currentSession = sessions.find((s)=>s.id === targetSessionId);
+        if (currentSession && currentSession.messages.length === 0) {
+            setSessions((prev)=>prev.map((s)=>s.id === targetSessionId ? {
+                        ...s,
+                        title: text.substring(0, 30) + (text.length > 30 ? "..." : "")
+                    } : s));
+        }
         // Find OR create session
         let targetSession = sessions.find((s)=>s.id === targetSessionId);
         if (!targetSession) {
@@ -395,7 +409,7 @@ function ChatProvider({ children }) {
         children: children
     }, void 0, false, {
         fileName: "[project]/src/context/ChatContext.tsx",
-        lineNumber: 211,
+        lineNumber: 254,
         columnNumber: 10
     }, this);
 }
