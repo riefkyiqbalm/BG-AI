@@ -437,3 +437,4 @@ FLASK_PORT=5000
 Tidak diperlukan — proxy dikonfigurasi di `next.config.js`.
 
 
+# Untuk Database Architecture Harap Lihat DATABASE_FORMS.md dan PRISMA.md
