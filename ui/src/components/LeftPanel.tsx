@@ -17,7 +17,7 @@ export default function Sidebar() {
       width: isOpen ? 280 : 70,
     }}>
       <div style={S.container}>
-        <div style={S.header}>
+        <div style={S.header} className="custom-scroll">
           <HamburgerIcon isOpen={isOpen} onClick={() => setIsOpen(!isOpen)} />
           <div style={{
             ...S.titleContainer, 

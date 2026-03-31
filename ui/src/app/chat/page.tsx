@@ -1,460 +1,365 @@
 "use client";
-// src/app/chat/page.tsx
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import Link from "next/link";
-import { useChat }      from "@/context/ChatContext";
-import { useToast }     from "@/context/ToastContext";
-import Sidebar          from "@/components/LeftPanel";
-import TopPanel         from "@/components/TopPanel";
-import MessageBubble    from "@/components/MessageBubble";
+import { useChat } from "@/context/ChatContext";
+import { useToast } from "@/context/ToastContext";
+
+// Komponen Internal
+import Sidebar from "@/components/LeftPanel";
+import TopPanel from "@/components/TopPanel";
+import MessageBubble from "@/components/MessageBubble";
+import SuggestionsList from "@/components/DefaultPrompt";
+
+// Types
 import { InputMode, UIMessage } from "@/types";
 
-
-
-// ── Kartu saran di welcome screen ────────────────────────────
-const SUGGESTIONS = [
-  {
-    icon: "📸",
-    title: "Foto Makanan",
-    desc: "Estimasi gizi dari deskripsi piring",
-    prompt:
-      "Analisis kandungan gizi menu: nasi putih 200g, ayam goreng 100g, tumis kangkung 80g",
-  },
-  {
-    icon: "📝",
-    title: "Deskripsi Menu",
-    desc: "Ketik bahan dan porsi untuk analisis",
-    prompt:
-      "Hitung estimasi gizi: nasi 200g, tempe goreng 75g, sup sayuran 150g, pisang 1 buah",
-  },
-  {
-    icon: "📊",
-    title: "Cek Standar AKG",
-    desc: "Bandingkan menu dengan standar Kemenkes",
-    prompt:
-      "Apakah menu nasi, ayam, sayur, buah memenuhi standar AKG Kemenkes untuk anak SD usia 7-9 tahun?",
-  },
-  {
-    icon: "🏢",
-    title: "Verifikasi Vendor",
-    desc: "Cek kelengkapan dokumen vendor MBG",
-    prompt:
-      "Verifikasi kelengkapan dokumen perizinan vendor MBG dan deteksi potensi anomali anggaran",
-  },
-];
-
-// ── Halaman chat ──────────────────────────────────────────────
 export default function ChatPage() {
-  // Ambil dari ChatContext sesuai ChatContextType yang sudah ada
   const {
     activeSession,
+    loadingSessionId,
     sendMessage,
     createSession,
   } = useChat();
 
   const { toast } = useToast();
 
-  const [input, setInput]         = useState("");
+  const [input, setInput] = useState("");
   const [inputMode, setInputMode] = useState<InputMode>("text");
-  const [loading, setLoading]     = useState(false);
-  const { activeSession: currentSession, loadingSessionId } = useChat();
-
-  const chatEndRef  = useRef<HTMLDivElement>(null);
+  
+  const chatEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Scroll ke bawah setiap ada pesan baru
-  useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [activeSession?.messages]);
+  // Status loading khusus untuk sesi yang sedang aktif
+  const isCurrentLoading = useMemo(() => 
+    loadingSessionId !== null && loadingSessionId === activeSession?.id,
+    [loadingSessionId, activeSession?.id]
+  );
 
-  // Auto-resize textarea
-  const resize = () => {
+  // Auto scroll ke bawah saat ada pesan baru atau mulai loading
+  useEffect(() => {
+    if (chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [activeSession?.messages, isCurrentLoading]);
+
+  // Handle auto-resize textarea
+  const resizeTextarea = () => {
     const el = textareaRef.current;
     if (!el) return;
     el.style.height = "auto";
-    el.style.height = Math.min(el.scrollHeight, 140) + "px";
+    el.style.height = `${Math.min(el.scrollHeight, 140)}px`;
   };
 
-  // Kirim pesan
+  // Fungsi Kirim Pesan
   const handleSend = async () => {
     const text = input.trim();
-    if (!text || loading) return;
+    if (!text || isCurrentLoading) return;
 
-    // Buat sesi baru jika belum ada
-    if (!activeSession) createSession();
+    // Jika belum ada sesi, buat otomatis
+    if (!activeSession) {
+      createSession();
+    }
 
     setInput("");
     if (textareaRef.current) textareaRef.current.style.height = "auto";
-    setLoading(true);
 
     try {
       await sendMessage(text);
-    } catch {
-      toast("Gagal terhubung ke AI. Pastikan Flask dan LM Studio aktif.", "error");
-    } finally {
-      setLoading(false);
+    } catch (err) {
+      toast("Gagal terhubung ke AI. Pastikan Flask/LM Studio aktif.", "error");
     }
   };
 
-  // Enter = kirim, Shift+Enter = baris baru
-  const handleKey = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSend();
     }
   };
 
-  // Isi prompt dari kartu saran
-  const fillPrompt = (text: string) => {
-    if (!activeSession) createSession();
-    setInput(text);
+  // Mengisi input dari Suggestion Cards
+  const handleSelectSuggestion = (prompt: string) => {
+    setInput(prompt);
+    // Memberi sedikit delay agar fokus & resize berjalan setelah state update
     setTimeout(() => {
       textareaRef.current?.focus();
-      resize();
+      resizeTextarea();
     }, 50);
   };
 
-  // Attach file
-  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const f = e.target.files?.[0];
-    if (!f) return;
-    setInput(
-      `[File: ${f.name} (${(f.size / 1024).toFixed(1)} KB)] Tolong analisis file ini.`
-    );
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    setInput(`[File: ${file.name}] Tolong analisis data dari file ini.`);
     setInputMode("text");
-    toast(`File "${f.name}" siap dikirim`, "info");
+    toast(`File "${file.name}" ditambahkan.`, "info");
   };
 
-  // Pesan dari sesi aktif — UIMessage sudah punya field yang benar
-  const messages: UIMessage[] = (activeSession?.messages ?? []) as UIMessage[];
-  const showWelcome = messages.length === 0;
+  const messages = (activeSession?.messages ?? []) as UIMessage[];
+  const isWelcomeScreen = messages.length === 0;
 
-  // ── Render ────────────────────────────────────────────────
   return (
     <div style={S.root}>
-      {/* Sidebar kiri */}
+      {/* Sidebar - Footer sudah di-fix di dalam komponen ini */}
       <Sidebar />
 
-      {/* Area utama */}
       <main style={S.main}>
         <TopPanel />
 
-        {/* Area percakapan */}
-        <div style={S.chatArea}>
-          {showWelcome ? (
-            // Welcome screen
+        {/* Area Chat */}
+        <div style={S.chatArea} className="custom-scroll">
+          {isWelcomeScreen ? (
             <div style={S.welcome} className="animate-fade-up">
-              <div style={S.welcomeIcon}>🥗</div>
+              <div style={S.welcomeIcon}>🌿</div>
               <h2 style={S.h2}>
-                Selamat datang di{" "}
-                <span style={{ color: "var(--teal)" }}>BG-AI</span>
+                Halo, <span style={{ color: "var(--teal)" }}>Riefky P.</span>
               </h2>
               <p style={S.p}>
-                Kirimkan deskripsi menu, foto, atau video makanan untuk analisis
-                gizi otomatis. Atau kirim dokumen vendor MBG untuk verifikasi
-                perizinan.
+                Asisten BGAI siap membantu untuk proses administrasi dan perizinan IPAL.
               </p>
-              <div style={S.suggGrid}>
-                {SUGGESTIONS.map((s) => (
-                  <div
-                    key={s.title}
-                    style={S.suggCard}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.borderColor = "var(--teal)")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.borderColor = "var(--border)")
-                    }
-                    onClick={() => fillPrompt(s.prompt)}
-                  >
-                    <div style={{ fontSize: 22, marginBottom: 6 }}>{s.icon}</div>
-                    <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 3 }}>
-                      {s.title}
-                    </div>
-                    <div
-                      style={{
-                        fontSize: 11,
-                        color: "var(--muted)",
-                        lineHeight: 1.4,
-                      }}
-                    >
-                      {s.desc}
-                    </div>
-                  </div>
-                ))}
-              </div>
+
+              {/* Komponen Suggestion sudah dipisah */}
+              <SuggestionsList onSelect={handleSelectSuggestion} />
             </div>
           ) : (
-            // Daftar pesan — m adalah UIMessage, sudah punya .id dan .text
-            messages.map((m) => (
-              <MessageBubble key={m.id} msg={m} />
-            ))
+            <div style={S.messageList}>
+              {messages.map((m) => (
+                <MessageBubble key={m.id} msg={m} />
+              ))}
+            </div>
           )}
 
-          {/* Indikator mengetik */}
-          {loading && (
+          {/* Typing Indicator */}
+          {isCurrentLoading && (
             <div style={S.typingRow} className="animate-fade-in">
-              <div style={S.typingAvatar}>🌿</div>
+              <div style={S.typingAvatar}>🤖</div>
               <div style={S.typingBubble}>
-                {[0, 1, 2].map((i) => (
-                  <span
-                    key={i}
-                    style={{
-                      width: 6,
-                      height: 6,
-                      borderRadius: "50%",
-                      background: "var(--teal)",
-                      display: "inline-block",
-                      animation: `blink 1.2s infinite ${i * 0.2}s`,
-                    }}
-                  />
-                ))}
+                <span className="dot-blink"></span>
+                <span className="dot-blink" style={{ animationDelay: "0.2s" }}></span>
+                <span className="dot-blink" style={{ animationDelay: "0.4s" }}></span>
               </div>
             </div>
           )}
 
-          <div ref={chatEndRef} />
+          <div ref={chatEndRef} style={{ height: 1 }} />
         </div>
 
-        {/* Input area */}
+        {/* Input Bar */}
         <div style={S.inputArea}>
-          {/* Pilihan mode input */}
-          <div style={{ display: "flex", gap: 6, marginBottom: 10 }}>
-            {(["text", "foto", "video", "dokumen"] as InputMode[]).map((m) => (
+          <div style={S.modeRow}>
+            {(["text", "foto", "video", "dokumen"] as InputMode[]).map((mode) => (
               <button
-                key={m}
-                onClick={() => setInputMode(m)}
+                key={mode}
+                onClick={() => setInputMode(mode)}
                 style={{
                   ...S.modeBtn,
-                  ...(inputMode === m ? S.modeBtnOn : {}),
+                  ...(inputMode === mode ? S.modeBtnActive : {}),
                 }}
               >
-                {
-                  {
-                    text: "✏ Teks",
-                    foto: "📸 Foto",
-                    video: "🎬 Video",
-                    dokumen: "📄 Dokumen",
-                  }[m]
-                }
+                {mode === "text" && "✏️ Teks"}
+                {mode === "foto" && "📸 Foto"}
+                {mode === "video" && "🎬 Video"}
+                {mode === "dokumen" && "📄 Dokumen"}
               </button>
             ))}
           </div>
 
-          {/* Drop zone untuk mode non-teks */}
           {inputMode !== "text" && (
-            <div
-              style={S.dropZone}
-              onClick={() => document.getElementById("fi-input")?.click()}
-            >
-              <div style={{ fontSize: 26, marginBottom: 6 }}>☁</div>
-              <div style={{ fontSize: 13 }}>Klik untuk memilih file</div>
-              <div
-                style={{ fontSize: 11, color: "var(--muted)", marginTop: 4 }}
-              >
-                Foto: JPG/PNG · Video: MP4 · Dokumen: PDF/DOCX
-              </div>
-              <input
-                id="fi-input"
-                type="file"
-                style={{ display: "none" }}
-                onChange={handleFile}
-              />
+            <div style={S.dropZone} onClick={() => document.getElementById("file-up")?.click()}>
+              <span>☁️ Klik untuk upload {inputMode}</span>
+              <input id="file-up" type="file" style={{ display: "none" }} onChange={handleFileUpload} />
             </div>
           )}
 
-          {/* Kotak input teks */}
-          <div style={S.inputBox}>
+          <div style={S.inputContainer}>
             <textarea
               ref={textareaRef}
               value={input}
               onChange={(e) => {
                 setInput(e.target.value);
-                resize();
+                resizeTextarea();
               }}
-              onKeyDown={handleKey}
-              placeholder="Deskripsikan makanan atau tanyakan tentang gizi…"
+              onKeyDown={handleKeyDown}
+              placeholder="Tanyakan sesuatu..."
               rows={1}
               style={S.textarea}
-              disabled={loading}
+              disabled={isCurrentLoading}
             />
-            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <button
-                style={S.inpBtn}
-                title="Lampirkan file"
-                onClick={() => document.getElementById("fi-input")?.click()}
-              >
+            <div style={S.actionButtons}>
+              <button style={S.iconBtn} onClick={() => document.getElementById("file-up")?.click()}>
                 📎
               </button>
               <button
                 onClick={handleSend}
-                disabled={loading || !input.trim()}
+                disabled={isCurrentLoading || !input.trim()}
                 style={{
                   ...S.sendBtn,
-                  ...(loading || !input.trim()
-                    ? { opacity: 0.45, cursor: "not-allowed" as const }
-                    : {}),
+                  ...((isCurrentLoading || !input.trim()) ? S.sendBtnDisabled : {}),
                 }}
-                title="Kirim (Enter)"
               >
                 ➤
               </button>
             </div>
           </div>
 
-          {/* Hint */}
-          <div style={S.hint}>
-            Enter untuk kirim · Shift+Enter baris baru ·{" "}
-            <Link href="/terms" style={{ color: "var(--teal)" }}>
-              Ketentuan Layanan
-            </Link>{" "}
-            · Model: Qwen3-4B via LM Studio
+          <div style={S.footerHint}>
+            Qwen3-4B · AI Bisa Salah Harap Cek Kembali. <Link href="/terms" style={{ color: "var(--teal)" }}>Terms of Service</Link>
           </div>
         </div>
       </main>
+
+      {/* Global CSS untuk Animasi Typing */}
+      <style jsx global>{`
+        .dot-blink {
+          width: 6px;
+          height: 6px;
+          background-color: var(--teal);
+          border-radius: 50%;
+          display: inline-block;
+          animation: blink 1.4s infinite ease-in-out both;
+        }
+        @keyframes blink {
+          0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
+          40% { opacity: 1; transform: scale(1.1); }
+        }
+        .animate-fade-up {
+          animation: fadeUp 0.5s ease-out;
+        }
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   );
 }
 
-// ── Inline styles ─────────────────────────────────────────────
 const S: Record<string, React.CSSProperties> = {
   root: {
     display: "flex",
     height: "100vh",
-    overflow: "hidden",
     background: "var(--bg)",
     color: "var(--text)",
+    overflow: "hidden",
   },
   main: {
     flex: 1,
     display: "flex",
     flexDirection: "column",
-    overflow: "hidden",
     minWidth: 0,
+    position: "relative",
   },
-
   chatArea: {
     flex: 1,
     overflowY: "auto",
-    padding: "32px 32px",
+    padding: "20px 5% 40px",
     display: "flex",
     flexDirection: "column",
-    gap: 20,
   },
   welcome: {
     margin: "auto",
     textAlign: "center",
-    maxWidth: 560,
+    maxWidth: 600,
+    padding: "40px 0",
   },
   welcomeIcon: {
-    width: 72,
-    height: 72,
-    background:
-      "linear-gradient(135deg,rgba(0,212,200,.2),rgba(0,112,255,.15))",
-    border: "1px solid rgba(0,212,200,.3)",
-    borderRadius: 20,
+    fontSize: 40,
+    background: "rgba(0, 212, 200, 0.1)",
+    width: 80,
+    height: 80,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    fontSize: 32,
+    borderRadius: 20,
     margin: "0 auto 20px",
-    boxShadow: "var(--glow)",
+    border: "1px solid var(--teal)",
   },
-  h2: {
-    fontFamily: "var(--font-head)",
-    fontSize: 28,
-    fontWeight: 800,
-    marginBottom: 12,
-  },
-  p: {
-    color: "var(--muted)",
-    fontSize: 14,
-    lineHeight: 1.7,
-    marginBottom: 32,
-    maxWidth: 480,
-    margin: "0 auto 32px",
-  },
-  suggGrid: {
-    display: "grid",
-    gridTemplateColumns: "1fr 1fr",
-    gap: 12,
-    textAlign: "left",
-  },
-  suggCard: {
-    background: "var(--card)",
-    border: "1px solid var(--border)",
-    borderRadius: 14,
-    padding: 16,
-    cursor: "pointer",
-    transition: "border-color .2s",
+  h2: { fontSize: 32, fontWeight: 800, marginBottom: 12 },
+  p: { color: "var(--muted)", fontSize: 15, lineHeight: 1.6, marginBottom: 30 },
+  messageList: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 24,
+    maxWidth: 800,
+    margin: "0 auto",
+    width: "100%",
   },
   typingRow: {
     display: "flex",
     gap: 12,
-    alignSelf: "flex-start",
+    alignItems: "center",
+    maxWidth: 800,
+    margin: "20px auto 0",
+    width: "100%",
   },
   typingAvatar: {
-    width: 34,
-    height: 34,
-    borderRadius: 10,
-    background: "linear-gradient(135deg,var(--teal-dim),#004f6e)",
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    background: "var(--teal-dim)",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     fontSize: 14,
-    flexShrink: 0,
-    boxShadow: "var(--glow)",
   },
   typingBubble: {
     background: "var(--card)",
+    padding: "12px 16px",
+    borderRadius: "12px 12px 12px 4px",
     border: "1px solid var(--border)",
-    borderRadius: 14,
-    borderTopLeftRadius: 4,
-    padding: "14px 16px",
     display: "flex",
-    gap: 5,
-    alignItems: "center",
+    gap: 4,
   },
   inputArea: {
-    padding: "14px 32px 20px",
-    borderTop: "1px solid var(--border)",
-    background: "var(--panel)",
+    padding: "20px 5% 24px",
+    background: "linear-gradient(to top, var(--bg) 80%, transparent)",
+  },
+  modeRow: {
+    display: "flex",
+    gap: 8,
+    marginBottom: 12,
+    justifyContent: "center",
   },
   modeBtn: {
-    padding: "5px 14px",
-    borderRadius: 99,
-    fontSize: 11,
-    fontWeight: 600,
+    padding: "6px 12px",
+    borderRadius: 20,
+    fontSize: 12,
+    background: "transparent",
     border: "1px solid var(--border)",
-    background: "none",
     color: "var(--muted)",
     cursor: "pointer",
-    transition: "all .15s",
+    transition: "0.2s",
   },
-  modeBtnOn: {
-    background: "rgba(0,212,200,.12)",
+  modeBtnActive: {
+    background: "rgba(0, 212, 200, 0.1)",
     borderColor: "var(--teal)",
     color: "var(--teal)",
   },
   dropZone: {
     border: "2px dashed var(--border)",
     borderRadius: 12,
-    padding: "18px 20px",
+    padding: 20,
     textAlign: "center",
-    color: "var(--muted)",
+    marginBottom: 12,
+    maxWidth: 800,
+    margin: "0 auto 12px",
     cursor: "pointer",
-    marginBottom: 10,
-    transition: "all .2s",
+    color: "var(--muted)",
+    fontSize: 13,
   },
-  inputBox: {
-    display: "flex",
-    alignItems: "flex-end",
-    gap: 10,
+  inputContainer: {
+    maxWidth: 800,
+    margin: "0 auto",
     background: "var(--card)",
     border: "1px solid var(--border)",
     borderRadius: 16,
-    padding: "10px 12px 10px 18px",
+    padding: "10px 16px",
+    display: "flex",
+    alignItems: "flex-end",
+    gap: 12,
+    boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
   },
   textarea: {
     flex: 1,
@@ -462,41 +367,43 @@ const S: Record<string, React.CSSProperties> = {
     border: "none",
     outline: "none",
     color: "var(--text)",
-    fontFamily: "var(--font-body)",
-    fontSize: 14,
-    lineHeight: 1.6,
+    fontSize: 15,
+    lineHeight: "1.5",
     resize: "none",
     maxHeight: 140,
-    minHeight: 24,
+    padding: "4px 0",
   },
-  inpBtn: {
-    width: 34,
-    height: 34,
-    borderRadius: 8,
-    border: "1px solid var(--border)",
+  actionButtons: { display: "flex", gap: 8, alignItems: "center" },
+  iconBtn: {
     background: "none",
+    border: "none",
     color: "var(--muted)",
-    fontSize: 16,
+    fontSize: 20,
     cursor: "pointer",
-    flexShrink: 0,
+    padding: 4,
   },
   sendBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    background: "var(--teal)",
+    color: "white",
     border: "none",
-    background: "linear-gradient(135deg,var(--teal),#0080cc)",
-    color: "#fff",
-    fontSize: 16,
     cursor: "pointer",
-    transition: "all .2s",
-    boxShadow: "0 4px 16px rgba(0,212,200,.3)",
-    flexShrink: 0,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    transition: "0.2s",
   },
-  hint: {
+  sendBtnDisabled: {
+    opacity: 0.4,
+    cursor: "not-allowed",
+    filter: "grayscale(1)",
+  },
+  footerHint: {
+    textAlign: "center",
     fontSize: 11,
     color: "var(--muted)",
-    marginTop: 9,
-    textAlign: "center",
+    marginTop: 12,
   },
 };

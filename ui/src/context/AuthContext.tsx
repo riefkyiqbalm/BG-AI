@@ -2,6 +2,9 @@
 
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { AuthContextType, User } from "../types";
+// Import js-cookie untuk memudahkan manajemen cookie
+// Install dulu: npm install js-cookie && npm install --save-dev @types/js-cookie
+import Cookies from "js-cookie";
 
 const AUTH_STORAGE_KEY = "bgai_auth_user";
 const AUTH_TOKEN_KEY = "bgai_auth_token";
@@ -11,6 +14,7 @@ const defaultAuth: AuthContextType = {
   isAuthenticated: false,
   loading: true,
   login: async () => {},
+  register: async () => {},
   logout: () => {},
 };
 
@@ -21,38 +25,87 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Cek di localStorage (untuk data user) dan Cookie (untuk token/middleware)
     const stored = localStorage.getItem(AUTH_STORAGE_KEY);
-    const token = localStorage.getItem(AUTH_TOKEN_KEY);
+    const token = Cookies.get(AUTH_TOKEN_KEY);
+
     if (stored && token) {
       try {
         const parsed = JSON.parse(stored) as User;
         setUser(parsed);
       } catch {
-        localStorage.removeItem(AUTH_STORAGE_KEY);
-        localStorage.removeItem(AUTH_TOKEN_KEY);
+        logout(); // Bersihkan jika data korup
       }
     }
     setLoading(false);
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const login = async (username: string, password: string) => {
     setLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    const fakeUser: User = {
-      id: "user_" + Date.now(),
-      name: email.split("@")[0],
-      email,
-    };
-    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(fakeUser));
-    localStorage.setItem(AUTH_TOKEN_KEY, "fake-token-" + Date.now());
-    setUser(fakeUser);
-    setLoading(false);
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+      
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Login failed');
+      
+      const userData: User = {
+        id: data.user.id.toString(),
+        name: data.user.username,
+        email: data.user.username
+      };
+
+      // 1. Simpan Token di COOKIE agar bisa dibaca Middleware
+      // expires: 1 berarti 1 hari
+      Cookies.set(AUTH_TOKEN_KEY, data.token, { expires: 1, path: '/' });
+
+      // 2. Simpan profil di LocalStorage
+      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(userData));
+      
+      setUser(userData);
+    } catch (error) {
+      console.error('Login error:', error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const register = async (username: string, password: string) => {
+    setLoading(true);
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+      
+      const responseText = await response.text();
+      const data = responseText ? JSON.parse(responseText) : {};
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Registration failed');
+      }
+      
+      // Auto-login setelah register berhasil
+      await login(username, password);
+    } catch (error) {
+      console.error('Register error:', error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
   };
 
   const logout = () => {
     setUser(null);
     localStorage.removeItem(AUTH_STORAGE_KEY);
-    localStorage.removeItem(AUTH_TOKEN_KEY);
+    Cookies.remove(AUTH_TOKEN_KEY, { path: '/' });
+    // Opsional: arahkan ke login setelah logout
+    window.location.href = '/login';
   };
 
   const value = useMemo(
@@ -61,6 +114,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       loading,
       isAuthenticated: !!user,
       login,
+      register,
       logout,
     }),
     [user, loading]

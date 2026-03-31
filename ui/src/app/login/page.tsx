@@ -1,17 +1,27 @@
 'use client';
 
-import React, { useState } from 'react';
-import '../login.css';
+import React, { useState, useEffect, useMemo } from 'react';
+import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
-  const [activePanel, setActivePanel] = useState('login');
-  const [loginEmail, setLoginEmail] = useState('');
-  const [loginPass, setLoginPass] = useState('');
-  const [showError, setShowError] = useState(false);
-  const [regPass, setRegPass] = useState('');
+  const { login, register, loading, isAuthenticated } = useAuth();
+  const router = useRouter();
+
+  const [activePanel, setActivePanel] = useState<'login' | 'register'>('login');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
   const [passwordStrength, setPasswordStrength] = useState(0);
-  const [showPassLogin, setShowPassLogin] = useState(false);
-  const [showPassReg, setShowPassReg] = useState(false);
+  const [showPass, setShowPass] = useState(false);
+
+  // Redirect jika sudah login
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push('/');
+    }
+  }, [isAuthenticated, router]);
 
   const checkStrength = (val: string) => {
     let score = 0;
@@ -22,22 +32,33 @@ export default function LoginPage() {
     setPasswordStrength(score);
   };
 
-  const doLogin = () => {
-    if (!loginEmail || !loginPass) {
-      setShowError(true);
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    try {
+      await login(username, password);
+    } catch (err: any) {
+      setError(err.message || 'Login gagal. Periksa kembali akun Anda.');
+    }
+  };
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+
+    if (password !== confirmPassword) {
+      setError('Konfirmasi kata sandi tidak cocok.');
       return;
     }
-    setShowError(false);
-    // Simulate login
-    window.location.href = '/';
+
+    try {
+      await register(username, password);
+    } catch (err: any) {
+      setError(err.message || 'Pendaftaran gagal.');
+    }
   };
 
-  const doRegister = () => {
-    // Simulate register
-    window.location.href = '/';
-  };
-
-  const getStrengthInfo = () => {
+  const strengthInfo = useMemo(() => {
     const levels = [
       { w: '0%', c: 'transparent', t: '' },
       { w: '25%', c: '#ff4d6d', t: 'Lemah' },
@@ -46,171 +67,300 @@ export default function LoginPage() {
       { w: '100%', c: '#3dffa0', t: 'Sangat Kuat' },
     ];
     return levels[passwordStrength];
-  };
-
-  const strength = getStrengthInfo();
+  }, [passwordStrength]);
 
   return (
-    <div style={{ background: 'var(--bg)', color: 'var(--text)', fontFamily: 'var(--font-body)', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
-      {/* Grid background */}
-      <div style={{ content: "''", position: 'fixed', inset: 0, backgroundImage: 'linear-gradient(rgba(0,212,200,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,212,200,.04) 1px, transparent 1px)', backgroundSize: '48px 48px', pointerEvents: 'none' }} />
+    <div style={S.root}>
+      {/* Background & Orbs */}
+      <div style={S.bgGrid} />
+      <div style={S.orb1} />
+      <div style={S.orb2} />
 
-      {/* Orbs */}
-      <div style={{ position: 'fixed', width: '400px', height: '400px', background: 'rgba(0,212,200,.08)', top: '-80px', right: '10%', borderRadius: '50%', filter: 'blur(80px)', pointerEvents: 'none', animation: 'floatOrb 8s ease-in-out infinite' }} />
-      <div style={{ position: 'fixed', width: '300px', height: '300px', background: 'rgba(0,80,160,.1)', bottom: 0, left: '5%', borderRadius: '50%', filter: 'blur(80px)', pointerEvents: 'none', animationDelay: '-4s' }} />
-
-      <style>{`
-        @keyframes floatOrb {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-30px); }
-        }
-      `}</style>
-
-      {/* Login wrap */}
-      <div style={{ width: '100%', maxWidth: '440px', padding: '20px', position: 'relative', zIndex: 10, animation: 'fadeUp .5s ease' }}>
+      <div style={S.container}>
         {/* Brand */}
-        <div style={{ textAlign: 'center', marginBottom: '36px' }}>
-          <div style={{ width: '60px', height: '60px', background: 'linear-gradient(135deg, var(--teal), #0070ff)', borderRadius: '16px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-mono)', fontSize: '18px', fontWeight: 700, color: '#fff', boxShadow: '0 0 30px rgba(0,212,200,.3)', marginBottom: '14px' }}>BG</div>
-          <h1 style={{ fontFamily: 'var(--font-head)', fontSize: '26px', fontWeight: 800 }}>BG-AI</h1>
-          <p style={{ color: 'var(--muted)', fontSize: '13px', marginTop: '6px' }}>Platform AI Multimodal Pengawasan Gizi & Vendor MBG</p>
+        <div style={S.brand}>
+          <div style={S.logo}>BG</div>
+          <h1 style={S.h1}>BG-AI</h1>
+          <p style={S.subH1}>Platform AI Multimodal Pengawasan Gizi</p>
         </div>
 
         {/* Card */}
-        <div style={{ background: 'var(--panel)', border: '1px solid var(--border)', borderRadius: '20px', padding: '36px 32px', boxShadow: 'var(--glow)' }}>
+        <div style={S.card}>
           {/* Tabs */}
-          <div style={{ display: 'flex', background: 'var(--card)', borderRadius: '10px', padding: '4px', marginBottom: '28px', gap: '4px' }}>
-            <button onClick={() => setActivePanel('login')} style={{ flex: 1, padding: '9px', borderRadius: '8px', fontSize: '13px', fontWeight: 600, textAlign: 'center', cursor: 'pointer', border: activePanel === 'login' ? '1px solid var(--border)' : 'none', background: activePanel === 'login' ? 'var(--panel)' : 'none', color: activePanel === 'login' ? 'var(--teal)' : 'var(--muted)', transition: 'all .2s', fontFamily: 'var(--font-body)' }}>Masuk</button>
-            <button onClick={() => setActivePanel('register')} style={{ flex: 1, padding: '9px', borderRadius: '8px', fontSize: '13px', fontWeight: 600, textAlign: 'center', cursor: 'pointer', border: activePanel === 'register' ? '1px solid var(--border)' : 'none', background: activePanel === 'register' ? 'var(--panel)' : 'none', color: activePanel === 'register' ? 'var(--teal)' : 'var(--muted)', transition: 'all .2s', fontFamily: 'var(--font-body)' }}>Daftar</button>
+          <div style={S.tabs}>
+            <button 
+              onClick={() => { setActivePanel('login'); setError(''); }} 
+              style={{ ...S.tabBtn, ...(activePanel === 'login' ? S.tabActive : {}) }}
+            >Masuk</button>
+            <button 
+              onClick={() => { setActivePanel('register'); setError(''); }} 
+              style={{ ...S.tabBtn, ...(activePanel === 'register' ? S.tabActive : {}) }}
+            >Daftar</button>
           </div>
 
-          {/* LOGIN PANEL */}
-          {activePanel === 'login' && (
-            <div>
-              {showError && (
-                <div style={{ background: 'rgba(255,77,109,.1)', border: '1px solid rgba(255,77,109,.3)', color: 'var(--red)', borderRadius: '8px', padding: '10px 14px', fontSize: '13px', marginBottom: '16px' }}>⚠ Email atau kata sandi salah. Coba lagi.</div>
+          {error && <div style={S.errorBox}>⚠ {error}</div>}
+
+          <form onSubmit={activePanel === 'login' ? handleLogin : handleRegister}>
+            <div style={S.inputGroup}>
+              <label style={S.label}>Username / Email</label>
+              <div style={S.inputWrap}>
+                <span style={S.inputIcon}>✉</span>
+                <input 
+                  type="text" 
+                  value={username} 
+                  onChange={(e) => setUsername(e.target.value)} 
+                  placeholder="Username" 
+                  style={S.input} 
+                  required 
+                  disabled={loading}
+                />
+              </div>
+            </div>
+
+            <div style={S.inputGroup}>
+              <label style={S.label}>Kata Sandi</label>
+              <div style={S.inputWrap}>
+                <span style={S.inputIcon}>🔒</span>
+                <input 
+                  type={showPass ? 'text' : 'password'} 
+                  value={password} 
+                  onChange={(e) => { 
+                    setPassword(e.target.value); 
+                    if(activePanel === 'register') checkStrength(e.target.value); 
+                  }} 
+                  placeholder="Masukkan kata sandi" 
+                  style={S.input} 
+                  required 
+                  disabled={loading}
+                />
+                <span onClick={() => setShowPass(!showPass)} style={S.togglePass}>
+                  {showPass ? '🙈' : '👁'}
+                </span>
+              </div>
+              {activePanel === 'register' && (
+                <div style={S.strengthContainer}>
+                  <div style={{...S.strengthBar, width: strengthInfo.w, background: strengthInfo.c}} />
+                  <div style={{...S.strengthText, color: strengthInfo.c}}>{strengthInfo.t}</div>
+                </div>
               )}
-
-              <div style={{ marginBottom: '18px' }}>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--muted)', marginBottom: '7px', letterSpacing: '.5px', textTransform: 'uppercase', fontFamily: 'var(--font-mono)' }}>Email / ID Institusi</label>
-                <div style={{ position: 'relative' }}>
-                  <span style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)', fontSize: '15px', pointerEvents: 'none' }}>✉</span>
-                  <input type="email" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} placeholder="nama@institusi.go.id" style={{ width: '100%', background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '10px', padding: '12px 16px 12px 42px', color: 'var(--text)', fontFamily: 'var(--font-body)', fontSize: '14px', outline: 'none', transition: 'all .2s' }} />
-                </div>
-              </div>
-
-              <div style={{ marginBottom: '18px' }}>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--muted)', marginBottom: '7px', letterSpacing: '.5px', textTransform: 'uppercase', fontFamily: 'var(--font-mono)' }}>Kata Sandi</label>
-                <div style={{ position: 'relative' }}>
-                  <span style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)', fontSize: '15px', pointerEvents: 'none' }}>🔒</span>
-                  <input type={showPassLogin ? 'text' : 'password'} value={loginPass} onChange={(e) => setLoginPass(e.target.value)} placeholder="Masukkan kata sandi" style={{ width: '100%', background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '10px', padding: '12px 42px 12px 42px', color: 'var(--text)', fontFamily: 'var(--font-body)', fontSize: '14px', outline: 'none', transition: 'all .2s' }} />
-                  <span onClick={() => setShowPassLogin(!showPassLogin)} style={{ position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)', cursor: 'pointer', fontSize: '15px', transition: 'color .15s' }}>
-                    {showPassLogin ? '🙈' : '👁'}
-                  </span>
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                  <input type="checkbox" style={{ accentColor: 'var(--teal)', width: '14px', height: '14px' }} />
-                  <span style={{ fontSize: '12px', color: 'var(--muted)' }}>Ingat saya</span>
-                </label>
-                <a href="#" style={{ fontSize: '12px', color: 'var(--teal)', textDecoration: 'none' }}>Lupa kata sandi?</a>
-              </div>
-
-              <button onClick={doLogin} style={{ width: '100%', padding: '13px', background: 'linear-gradient(135deg, var(--teal), #0080cc)', color: '#fff', border: 'none', borderRadius: '12px', fontFamily: 'var(--font-body)', fontSize: '15px', fontWeight: 600, cursor: 'pointer', transition: 'all .2s', boxShadow: '0 4px 20px rgba(0,212,200,.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                <span>→</span> Masuk ke SATU-AI
-              </button>
-
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', margin: '24px 0', color: 'var(--muted)', fontSize: '12px' }}>
-                <div style={{ flex: 1, height: '1px', background: 'var(--border)' }} />
-                atau masuk dengan
-                <div style={{ flex: 1, height: '1px', background: 'var(--border)' }} />
-              </div>
-
-              <button onClick={() => alert('SSO Pemerintah: Fitur segera hadir')} style={{ width: '100%', padding: '12px', background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '12px', color: 'var(--text)', fontFamily: 'var(--font-body)', fontSize: '13px', fontWeight: 500, cursor: 'pointer', transition: 'all .15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', marginBottom: '10px' }}>
-                🏛 SSO Pemerintah (SIMAN)
-              </button>
-              <button onClick={() => alert('Google SSO: Coming soon')} style={{ width: '100%', padding: '12px', background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '12px', color: 'var(--text)', fontFamily: 'var(--font-body)', fontSize: '13px', fontWeight: 500, cursor: 'pointer', transition: 'all .15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
-                ◉ Google Workspace
-              </button>
             </div>
-          )}
 
-          {/* REGISTER PANEL */}
-          {activePanel === 'register' && (
-            <div>
-              <div style={{ marginBottom: '18px' }}>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--muted)', marginBottom: '7px', letterSpacing: '.5px', textTransform: 'uppercase', fontFamily: 'var(--font-mono)' }}>Nama Lengkap</label>
-                <div style={{ position: 'relative' }}>
-                  <span style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)', fontSize: '15px', pointerEvents: 'none' }}>👤</span>
-                  <input type="text" placeholder="Nama sesuai KTP" style={{ width: '100%', background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '10px', padding: '12px 16px 12px 42px', color: 'var(--text)', fontFamily: 'var(--font-body)', fontSize: '14px', outline: 'none' }} />
+            {activePanel === 'register' && (
+              <div style={S.inputGroup}>
+                <label style={S.label}>Konfirmasi Sandi</label>
+                <div style={S.inputWrap}>
+                  <span style={S.inputIcon}>🔒</span>
+                  <input 
+                    type="password" 
+                    value={confirmPassword} 
+                    onChange={(e) => setConfirmPassword(e.target.value)} 
+                    placeholder="Ulangi kata sandi" 
+                    style={S.input} 
+                    required 
+                    disabled={loading}
+                  />
                 </div>
               </div>
+            )}
 
-              <div style={{ marginBottom: '18px' }}>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--muted)', marginBottom: '7px', letterSpacing: '.5px', textTransform: 'uppercase', fontFamily: 'var(--font-mono)' }}>Email Institusi</label>
-                <div style={{ position: 'relative' }}>
-                  <span style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)', fontSize: '15px', pointerEvents: 'none' }}>✉</span>
-                  <input type="email" placeholder="nama@institusi.go.id" style={{ width: '100%', background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '10px', padding: '12px 16px 12px 42px', color: 'var(--text)', fontFamily: 'var(--font-body)', fontSize: '14px', outline: 'none' }} />
-                </div>
-              </div>
+            <button type="submit" disabled={loading} style={S.mainBtn}>
+              {loading ? 'Memproses...' : activePanel === 'login' ? '→ Masuk ke SATU-AI' : '✦ Buat Akun'}
+            </button>
+          </form>
 
-              <div style={{ marginBottom: '18px' }}>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--muted)', marginBottom: '7px', letterSpacing: '.5px', textTransform: 'uppercase', fontFamily: 'var(--font-mono)' }}>Kata Sandi</label>
-                <div style={{ position: 'relative' }}>
-                  <span style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)', fontSize: '15px', pointerEvents: 'none' }}>🔒</span>
-                  <input type={showPassReg ? 'text' : 'password'} value={regPass} onChange={(e) => { setRegPass(e.target.value); checkStrength(e.target.value); }} placeholder="Min. 8 karakter" style={{ width: '100%', background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '10px', padding: '12px 42px 12px 42px', color: 'var(--text)', fontFamily: 'var(--font-body)', fontSize: '14px', outline: 'none' }} />
-                  <span onClick={() => setShowPassReg(!showPassReg)} style={{ position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)', cursor: 'pointer', fontSize: '15px' }}>
-                    {showPassReg ? '🙈' : '👁'}
-                  </span>
-                </div>
-                <div style={{ marginTop: '6px' }}>
-                  <div style={{ height: '3px', background: 'var(--border)', borderRadius: '99px', overflow: 'hidden' }}>
-                    <div style={{ height: '100%', borderRadius: '99px', width: strength.w, background: strength.c, transition: 'width .3s, background .3s' }} />
-                  </div>
-                  <div style={{ fontSize: '10px', color: strength.c, marginTop: '4px', textAlign: 'right', fontFamily: 'var(--font-mono)' }}>{strength.t}</div>
-                </div>
-              </div>
-
-              <div style={{ marginBottom: '18px' }}>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--muted)', marginBottom: '7px', letterSpacing: '.5px', textTransform: 'uppercase', fontFamily: 'var(--font-mono)' }}>Konfirmasi Kata Sandi</label>
-                <div style={{ position: 'relative' }}>
-                  <span style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)', fontSize: '15px', pointerEvents: 'none' }}>🔒</span>
-                  <input type="password" placeholder="Ulangi kata sandi" style={{ width: '100%', background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '10px', padding: '12px 16px 12px 42px', color: 'var(--text)', fontFamily: 'var(--font-body)', fontSize: '14px', outline: 'none' }} />
-                </div>
-              </div>
-
-              <div style={{ marginBottom: '18px' }}>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--muted)', marginBottom: '7px', letterSpacing: '.5px', textTransform: 'uppercase', fontFamily: 'var(--font-mono)' }}>Peran / Instansi</label>
-                <select style={{ width: '100%', background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '10px', padding: '12px 16px', color: 'var(--text)', fontFamily: 'var(--font-body)', fontSize: '14px', outline: 'none' }}>
-                  <option value="">Pilih peran Anda</option>
-                  <option>Petugas Pengawas Vendor MBG</option>
-                  <option>Ahli Gizi / Tenaga Kesehatan</option>
-                  <option>Admin Dinas Pendidikan</option>
-                  <option>Vendor MBG</option>
-                  <option>Peneliti / Akademisi</option>
-                </select>
-              </div>
-
-              <button onClick={doRegister} style={{ width: '100%', padding: '13px', background: 'linear-gradient(135deg, var(--teal), #0080cc)', color: '#fff', border: 'none', borderRadius: '12px', fontFamily: 'var(--font-body)', fontSize: '15px', fontWeight: 600, cursor: 'pointer', transition: 'all .2s', boxShadow: '0 4px 20px rgba(0,212,200,.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                ✦ Buat Akun
-              </button>
-            </div>
-          )}
-
-          {/* Footer */}
-          <div style={{ textAlign: 'center', marginTop: '24px', fontSize: '12px', color: 'var(--muted)' }}>
-            Dengan melanjutkan, Anda menyetujui <a href="/terms" style={{ color: 'var(--teal)', textDecoration: 'none' }}>Ketentuan Layanan</a> dan <a href="/terms" style={{ color: 'var(--teal)', textDecoration: 'none' }}>Kebijakan Privasi</a> kami.
+          <div style={S.footer}>
+            Dengan melanjutkan, Anda menyetujui <a href="#" style={S.link}>Ketentuan Layanan</a>
           </div>
         </div>
       </div>
 
-      <style>{`
+      <style jsx global>{`
+        @keyframes floatOrb {
+          0%, 100% { transform: translateY(0) scale(1); }
+          50% { transform: translateY(-30px) scale(1.05); }
+        }
         @keyframes fadeUp {
-          from { opacity: 0; transform: translateY(16px); }
+          from { opacity: 0; transform: translateY(20px); }
           to { opacity: 1; transform: translateY(0); }
         }
       `}</style>
     </div>
   );
 }
+
+const S: Record<string, React.CSSProperties> = {
+  root: {
+    background: 'var(--bg)',
+    color: 'var(--text)',
+    minHeight: '100vh',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+    overflow: 'hidden',
+    fontFamily: 'sans-serif'
+  },
+  bgGrid: {
+    position: 'fixed',
+    inset: 0,
+    backgroundImage: 'linear-gradient(rgba(0,212,200,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,212,200,.04) 1px, transparent 1px)',
+    backgroundSize: '48px 48px',
+    pointerEvents: 'none'
+  },
+  orb1: {
+    position: 'absolute',
+    width: '400px',
+    height: '400px',
+    background: 'rgba(0,212,200,.08)',
+    top: '-80px',
+    right: '10%',
+    borderRadius: '50%',
+    filter: 'blur(80px)',
+    animation: 'floatOrb 8s ease-in-out infinite'
+  },
+  orb2: {
+    position: 'absolute',
+    width: '300px',
+    height: '300px',
+    background: 'rgba(0,80,160,.1)',
+    bottom: '-50px',
+    left: '5%',
+    borderRadius: '50%',
+    filter: 'blur(80px)',
+    animation: 'floatOrb 8s ease-in-out infinite reverse'
+  },
+  container: {
+    width: '100%',
+    maxWidth: '440px',
+    padding: '20px',
+    position: 'relative',
+    zIndex: 10,
+    animation: 'fadeUp 0.6s ease-out'
+  },
+  brand: { textAlign: 'center', marginBottom: '36px' },
+  logo: {
+    width: '60px',
+    height: '60px',
+    background: 'linear-gradient(135deg, var(--teal), #0070ff)',
+    borderRadius: '16px',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '18px',
+    fontWeight: 700,
+    color: '#fff',
+    boxShadow: '0 0 30px rgba(0,212,200,.3)',
+    marginBottom: '14px'
+  },
+  h1: { fontSize: '26px', fontWeight: 800, margin: 0 },
+  subH1: { color: 'var(--muted)', fontSize: '13px', marginTop: '6px' },
+  card: {
+    background: 'var(--panel)',
+    border: '1px solid var(--border)',
+    borderRadius: '24px',
+    padding: '32px',
+    boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
+    backdropFilter: 'blur(10px)'
+  },
+  tabs: {
+    display: 'flex',
+    background: 'var(--card)',
+    borderRadius: '12px',
+    padding: '4px',
+    marginBottom: '24px',
+    gap: '4px'
+  },
+  tabBtn: {
+    flex: 1,
+    padding: '10px',
+    borderRadius: '8px',
+    fontSize: '13px',
+    fontWeight: 600,
+    cursor: 'pointer',
+    border: 'none',
+    background: 'none',
+    color: 'var(--muted)',
+    transition: '0.2s'
+  },
+  tabActive: {
+    background: 'var(--panel)',
+    border: '1px solid var(--border)',
+    color: 'var(--teal)',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+  },
+  errorBox: {
+    background: 'rgba(255,77,109,.1)',
+    border: '1px solid rgba(255,77,109,.3)',
+    color: '#ff4d6d',
+    borderRadius: '10px',
+    padding: '12px',
+    fontSize: '13px',
+    marginBottom: '20px'
+  },
+  inputGroup: { marginBottom: '20px' },
+  label: {
+    display: 'block',
+    fontSize: '11px',
+    fontWeight: 700,
+    color: 'var(--muted)',
+    marginBottom: '8px',
+    textTransform: 'uppercase',
+    letterSpacing: '1px'
+  },
+  inputWrap: { position: 'relative' },
+  inputIcon: {
+    position: 'absolute',
+    left: '14px',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    color: 'var(--muted)',
+    fontSize: '16px'
+  },
+  input: {
+    width: '100%',
+    background: 'var(--card)',
+    border: '1px solid var(--border)',
+    borderRadius: '12px',
+    padding: '12px 16px 12px 42px',
+    color: 'var(--text)',
+    fontSize: '14px',
+    outline: 'none',
+    transition: '0.2s',
+    boxSizing: 'border-box'
+  },
+  togglePass: {
+    position: 'absolute',
+    right: '14px',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    cursor: 'pointer',
+    opacity: 0.7
+  },
+  strengthContainer: { marginTop: '8px' },
+  strengthBar: {
+    height: '4px',
+    borderRadius: '2px',
+    transition: '0.3s all'
+  },
+  strengthText: { fontSize: '10px', textAlign: 'right', marginTop: '4px' },
+  mainBtn: {
+    width: '100%',
+    padding: '14px',
+    background: 'linear-gradient(135deg, var(--teal), #0080cc)',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '14px',
+    fontSize: '15px',
+    fontWeight: 600,
+    cursor: 'pointer',
+    boxShadow: '0 8px 20px rgba(0,212,200,.2)',
+    transition: '0.2s'
+  },
+  footer: {
+    textAlign: 'center',
+    marginTop: '24px',
+    fontSize: '12px',
+    color: 'var(--muted)'
+  },
+  link: { color: 'var(--teal)', textDecoration: 'none' }
+};

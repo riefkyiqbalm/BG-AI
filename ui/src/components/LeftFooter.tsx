@@ -15,7 +15,7 @@ export default function SidebarFooter({ isOpen }: { isOpen: boolean }) {
       </Link>
       <Link href="/dashboard" style={S.link}>
         <div style={{ marginLeft: 12 }}>
-          <div style={{ fontWeight: 600 }}>Riefky P.</div>
+          <div style={{ fontWeight: 600 }}>Jhon D.</div>
           <div style={{ color: "var(--muted)", fontSize: 12 }}>
             Admin · LLMGuardians
           </div>

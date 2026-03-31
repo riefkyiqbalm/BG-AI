@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import '../auth.css';
+// import '../auth.css';
 
 export default function AuthPage() {
   const [showToast, setShowToast] = useState(false);
