@@ -5,19 +5,20 @@ import { useAuth } from '@/context/AuthContext'
 
 export default function RegisterForm() {
   const { register, loading } = useAuth()
-  const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [username, setUsername] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
     setSuccess('')
 
-    if (!username.trim()) {
-      setError('Username is required')
+    if (!email.trim()) {
+      setError('Email is required')
       return
     }
 
@@ -32,11 +33,12 @@ export default function RegisterForm() {
     }
 
     try {
-      await register(username, password)
+      await register(email, password, username)
       setSuccess('Registration successful! Redirecting...')
-      setUsername('')
+      setEmail('')
       setPassword('')
       setConfirmPassword('')
+      setUsername('')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration failed')
     }
@@ -102,6 +104,17 @@ export default function RegisterForm() {
       
       <form onSubmit={handleSubmit}>
         <div style={styles.formGroup}>
+          <label style={styles.label}>Email</label>
+          <input
+            style={styles.input}
+            type="text"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter email"
+            disabled={loading}
+          />
+        </div>
+         <div style={styles.formGroup}>
           <label style={styles.label}>Username</label>
           <input
             style={styles.input}

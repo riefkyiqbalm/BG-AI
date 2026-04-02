@@ -1,34 +1,51 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { LMStatus } from "../types";
-
-const MODELS = ["gpt-4", "gpt-3.5-turbo", "llama-2", "clip"];
+import { getStatus, getConfig } from "../lib/api";
 
 export function useLMStatus() {
   const [status, setStatus] = useState<LMStatus>({
     online: false,
-    model: MODELS[0],
+    model: "Loading...",
     requestsPerMin: 0,
     latencyMs: 0,
     lastChecked: new Date().toISOString(),
   });
 
+  const latencyRef = useRef<number>(0);
+
   useEffect(() => {
-    const check = () => {
-      const next: LMStatus = {
-        online: Math.random() > 0.1,
-        model: MODELS[Math.floor(Math.random() * MODELS.length)],
-        requestsPerMin: Math.round(20 + Math.random() * 80),
-        latencyMs: Math.round(50 + Math.random() * 180),
-        lastChecked: new Date().toISOString(),
-      };
-      setStatus(next);
+    const checkStatus = async () => {
+      const startTime = Date.now();
+      
+      try {
+        const [statusData, configData] = await Promise.all([
+          getStatus(),
+          getConfig(),
+        ]);
+
+        latencyRef.current = Date.now() - startTime;
+
+        setStatus({
+          online: statusData.status === "online",
+          model: configData?.model || statusData.models?.[0] || "Unknown",
+          requestsPerMin: Math.round(20 + Math.random() * 80),
+          latencyMs: latencyRef.current,
+          lastChecked: new Date().toISOString(),
+        });
+      } catch {
+        setStatus((prev) => ({
+          ...prev,
+          online: false,
+          lastChecked: new Date().toISOString(),
+        }));
+      }
     };
 
-    check();
-    const id = setInterval(check, 30_000);
-    return () => clearInterval(id);
+    checkStatus();
+    const interval = setInterval(checkStatus, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   return status;

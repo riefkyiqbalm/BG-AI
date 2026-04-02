@@ -5,7 +5,7 @@ import { useAuth } from '@/context/AuthContext'
 
 export default function LoginForm() {
   const { login, loading } = useAuth()
-  const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
 
@@ -13,8 +13,8 @@ export default function LoginForm() {
     e.preventDefault()
     setError('')
 
-    if (!username.trim()) {
-      setError('Username is required')
+    if (!email.trim()) {
+      setError('Email is required')
       return
     }
 
@@ -24,7 +24,7 @@ export default function LoginForm() {
     }
 
     try {
-      await login(username, password)
+      await login(email, password)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed')
     }
@@ -83,12 +83,12 @@ export default function LoginForm() {
       
       <form onSubmit={handleSubmit}>
         <div style={styles.formGroup}>
-          <label style={styles.label}>Username</label>
+          <label style={styles.label}>Email</label>
           <input
             style={styles.input}
             type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             placeholder="Enter username"
             disabled={loading}
           />

@@ -3,18 +3,20 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie';
 
 export default function LoginPage() {
   const { login, register, loading, isAuthenticated } = useAuth();
   const router = useRouter();
 
   const [activePanel, setActivePanel] = useState<'login' | 'register'>('login');
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [passwordStrength, setPasswordStrength] = useState(0);
   const [showPass, setShowPass] = useState(false);
+  const [username, setUsername] = useState('');
 
   // Redirect jika sudah login
   useEffect(() => {
@@ -36,7 +38,7 @@ export default function LoginPage() {
     e.preventDefault();
     setError('');
     try {
-      await login(username, password);
+      await login(email, password);
     } catch (err: any) {
       setError(err.message || 'Login gagal. Periksa kembali akun Anda.');
     }
@@ -44,6 +46,7 @@ export default function LoginPage() {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     setError('');
 
     if (password !== confirmPassword) {
@@ -52,7 +55,7 @@ export default function LoginPage() {
     }
 
     try {
-      await register(username, password);
+      await register(username, email, password);
     } catch (err: any) {
       setError(err.message || 'Pendaftaran gagal.');
     }
@@ -102,14 +105,14 @@ export default function LoginPage() {
 
           <form onSubmit={activePanel === 'login' ? handleLogin : handleRegister}>
             <div style={S.inputGroup}>
-              <label style={S.label}>Username / Email</label>
+              <label style={S.label}> Email</label>
               <div style={S.inputWrap}>
                 <span style={S.inputIcon}>✉</span>
                 <input 
                   type="text" 
-                  value={username} 
-                  onChange={(e) => setUsername(e.target.value)} 
-                  placeholder="Username" 
+                  value={email} 
+                  onChange={(e) => setEmail(e.target.value)} 
+                  placeholder="Email" 
                   style={S.input} 
                   required 
                   disabled={loading}
@@ -147,6 +150,24 @@ export default function LoginPage() {
 
             {activePanel === 'register' && (
               <div style={S.inputGroup}>
+                <label style={S.label}>Username</label>
+                <div style={S.inputWrap}>
+                  <span style={S.inputIcon}>✉</span>
+                  <input 
+                    type="text" 
+                    value={username} 
+                    onChange={(e) => setUsername(e.target.value)} 
+                    placeholder="Masukkan username" 
+                    style={S.input} 
+                    required 
+                    disabled={loading}
+                  />
+                </div>
+              </div>
+            )}
+
+            {activePanel === 'register' && (
+              <div style={S.inputGroup}>
                 <label style={S.label}>Konfirmasi Sandi</label>
                 <div style={S.inputWrap}>
                   <span style={S.inputIcon}>🔒</span>
@@ -164,7 +185,7 @@ export default function LoginPage() {
             )}
 
             <button type="submit" disabled={loading} style={S.mainBtn}>
-              {loading ? 'Memproses...' : activePanel === 'login' ? '→ Masuk ke SATU-AI' : '✦ Buat Akun'}
+              {loading ? 'Memproses...' : activePanel === 'login' ? '→ Masuk ke BG-AI' : '✦ Buat Akun'}
             </button>
           </form>
 

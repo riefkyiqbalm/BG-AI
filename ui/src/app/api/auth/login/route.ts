@@ -5,20 +5,20 @@ import jwt from 'jsonwebtoken';
 
 export async function POST(req: Request) {
   try {
-    const { username, password } = await req.json();
+    const { email, password } = await req.json();
 
     const user = await prisma.user.findUnique({
-      where: { username },
+      where: { email },
     });
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
-      return NextResponse.json({ error: 'Username atau password salah' }, { status: 401 });
+      return NextResponse.json({ error: 'Email atau password salah' }, { status: 401 });
     }
 
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET!, { expiresIn: '1d' });
 
     return NextResponse.json({
-      user: { id: user.id, username: user.username },
+      user: { id: user.id, email: user.email },
       token,
     });
   } catch (error) {

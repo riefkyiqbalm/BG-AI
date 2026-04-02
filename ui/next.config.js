@@ -1,26 +1,30 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Production build settings
   output: 'standalone',
   compress: true,
   poweredByHeader: false,
   
-  // SOLUSI TIMEOUT: Menambah waktu tunggu proxy (khusus Turbopack/Next.js terbaru)
   experimental: {
-    proxyTimeout: 120000, // 120 detik (2 menit)
-    appDir: true,         // aktifkan dukungan app directory
+    proxyTimeout: 300000, // 5 menit - cocok untuk jawaban AI besar/kompleks
   },
 
-  // Custom source directory so Next.js looks in ui/src
-  srcDir: "ui/src",
-
-  // API Rewrites: Forward /api/* ke Flask backend
   async rewrites() {
     return [
       {
-        source: '/api/:path*',
-        // Menggunakan 127.0.0.1 lebih stabil daripada localhost di Windows
-        destination: 'http://127.0.0.1:5000/api/:path*',
+        source: '/api/chat/:path*',
+        destination: 'http://127.0.0.1:5000/api/chat/:path*',
+      },
+      {
+        source: '/api/status',
+        destination: 'http://127.0.0.1:5000/api/status',
+      },
+      {
+        source: '/api/models',
+        destination: 'http://127.0.0.1:5000/api/models',
+      },
+      {
+        source: '/api/config',
+        destination: 'http://127.0.0.1:5000/api/config',
       },
     ];
   },

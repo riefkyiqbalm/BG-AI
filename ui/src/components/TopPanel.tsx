@@ -3,15 +3,15 @@
 import Link from "next/link";
 import React from "react";
 import { useChat } from "@/context/ChatContext";
+import LogoIcon from "./LogoIcon";
 
 export default function TopPanel() {
   const { activeSession } = useChat();
 
   return (
     <div style={S.topbar}>
-      <div style={S.topbarTitle}>
-        BG-{" "}
-        <span style={{ color: "var(--teal)" }}>AI</span>
+      <div style={S.topbarComponent}>
+         <LogoIcon />
       </div>
 
       {activeSession && (
@@ -48,7 +48,7 @@ const S: Record<string, React.CSSProperties> = {
     padding: "0 24px",
     gap: 12,
   },
-  topbarTitle: {
+  topbarComponent: {
     fontFamily: "var(--font-head)",
     fontSize: 16,
     fontWeight: 800,

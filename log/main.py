@@ -1,5 +1,5 @@
 """
-SATU-AI | NutriGuard — Flask Backend
+BG-AI — Flask Backend
 ======================================
 Install  : pip install -r requirements.txt
 Jalankan : python main.py
@@ -32,7 +32,7 @@ FLASK_DEBUG    = os.getenv("FLASK_DEBUG",     "true").lower() == "true"
 CHAT_URL   = LM_STUDIO_BASE + "/chat/completions"
 MODELS_URL = LM_STUDIO_BASE + "/models"
 
-SYSTEM_PROMPT = """Anda adalah SATU-AI NutriGuard, asisten AI multimodal Indonesia yang ahli dalam:
+SYSTEM_PROMPT = """Anda adalah BG-AI, asisten AI multimodal Indonesia yang ahli dalam:
 1. Analisis kandungan gizi makanan (kalori, protein, karbohidrat, lemak, serat, vitamin, mineral)
 2. Perbandingan menu dengan standar AKG (Angka Kecukupan Gizi) Kemenkes RI
 3. Deteksi defisiensi gizi dan rekomendasi perbaikan menu dalam Bahasa Indonesia
@@ -67,7 +67,7 @@ def lm_chat(messages, system=None):
         "stream":      False,
     }
     try:
-        r = requests.post(CHAT_URL, json=payload, timeout=120)
+        r = requests.post(CHAT_URL, json=payload, timeout=300)
         r.raise_for_status()
         data = r.json()
         return {
@@ -164,8 +164,14 @@ def api_chat():
         messages = body.get("messages", [])
         system = body.get("system_prompt")
         
+        system_preview = "None"
+        if isinstance(system, str):
+            system_preview = system[:50]
+        elif system is not None:
+            system_preview = str(system)[:50]
+
         print(f"[DEBUG] Messages: {messages}")
-        print(f"[DEBUG] System prompt: {system[:50] if system else 'None'}...")
+        print(f"[DEBUG] System prompt: {system_preview}...")
 
         if not messages or not isinstance(messages, list):
             error_msg = f"Error: 'messages' Field tidak valid. Dapatkan: {type(messages).__name__}={messages}. Expected: list"

@@ -2,11 +2,10 @@
 
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { AuthContextType, User } from "../types";
-// Import js-cookie untuk memudahkan manajemen cookie
-// Install dulu: npm install js-cookie && npm install --save-dev @types/js-cookie
 import Cookies from "js-cookie";
+import { useRouter } from "next/navigation"; // Gunakan router Next.js untuk navigasi yang halus
 
-const AUTH_STORAGE_KEY = "bgai_auth_user";
+const AUTH_USER_KEY = "bgai_auth_user"; // Ubah nama agar lebih konsisten
 const AUTH_TOKEN_KEY = "bgai_auth_token";
 
 const defaultAuth: AuthContextType = {
@@ -14,7 +13,7 @@ const defaultAuth: AuthContextType = {
   isAuthenticated: false,
   loading: true,
   login: async () => {},
-  register: async () => {},
+  register: async (username: string, email: string, password: string) => {},
   logout: () => {},
 };
 
@@ -23,30 +22,73 @@ const AuthContext = createContext<AuthContextType>(defaultAuth);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
+  // --- 1. EFEK SAAT PAGE REFRESH ---
   useEffect(() => {
-    // Cek di localStorage (untuk data user) dan Cookie (untuk token/middleware)
-    const stored = localStorage.getItem(AUTH_STORAGE_KEY);
-    const token = Cookies.get(AUTH_TOKEN_KEY);
+    const validateAndSetUser = async () => {
+      // Ambil data dari Cookie (lebih reliabel daripada localStorage untuk Next.js)
+      const storedUser = Cookies.get(AUTH_USER_KEY);
+      const token = Cookies.get(AUTH_TOKEN_KEY);
 
-    if (stored && token) {
-      try {
-        const parsed = JSON.parse(stored) as User;
-        setUser(parsed);
-      } catch {
-        logout(); // Bersihkan jika data korup
+      if (storedUser && token) {
+        try {
+          const parsedStoredUser = JSON.parse(storedUser) as User;
+
+          // Validasi token dengan database
+          const response = await fetch('/api/auth/me', {
+            method: 'GET',
+            headers: { Authorization: `Bearer ${token}` },
+          });
+
+          if (response.ok) {
+            const dbUser = await response.json();
+
+            // Verifikasi bahwa data cookie cocok dengan database
+            const isValid = (
+              dbUser.id.toString() === parsedStoredUser.id &&
+              dbUser.username === parsedStoredUser.name &&
+              dbUser.email === parsedStoredUser.email
+            );
+
+            if (isValid) {
+              setUser(parsedStoredUser);
+            } else {
+              // Data tidak cocok, bersihkan dan redirect
+              console.warn("User data mismatch between cookie and database");
+              Cookies.remove(AUTH_USER_KEY, { path: '/' });
+              Cookies.remove(AUTH_TOKEN_KEY, { path: '/' });
+              router.push('/login');
+            }
+          } else {
+            // Token tidak valid, bersihkan dan redirect
+            console.warn("Invalid token, clearing cookies and redirecting to login");
+            Cookies.remove(AUTH_USER_KEY, { path: '/' });
+            Cookies.remove(AUTH_TOKEN_KEY, { path: '/' });
+            router.push('/login');
+          }
+        } catch (error) {
+          console.error("Error validating user from cookie:", error);
+          // Jika ada error (network, parsing, dll), bersihkan dan redirect
+          Cookies.remove(AUTH_USER_KEY, { path: '/' });
+          Cookies.remove(AUTH_TOKEN_KEY, { path: '/' });
+          router.push('/login');
+        }
       }
-    }
-    setLoading(false);
-  }, []);
+      setLoading(false);
+    };
 
-  const login = async (username: string, password: string) => {
+    validateAndSetUser();
+  }, [router]);
+
+  // --- 2. FUNGSI LOGIN ---
+  const login = async (email: string, password: string) => {
     setLoading(true);
     try {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ email, password })
       });
       
       const data = await response.json();
@@ -55,17 +97,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const userData: User = {
         id: data.user.id.toString(),
         name: data.user.username,
-        email: data.user.username
+        email: data.user.email
       };
 
-      // 1. Simpan Token di COOKIE agar bisa dibaca Middleware
-      // expires: 1 berarti 1 hari
+      // Simpan TOKEN di Cookie (Wajib untuk Middleware)
       Cookies.set(AUTH_TOKEN_KEY, data.token, { expires: 1, path: '/' });
 
-      // 2. Simpan profil di LocalStorage
-      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(userData));
+      // Simpan DATA USER di Cookie (Agar awet saat refresh dan terbaca server)
+      Cookies.set(AUTH_USER_KEY, JSON.stringify(userData), { expires: 1, path: '/' });
       
       setUser(userData);
+
+      // Gunakan router.push agar transisi ke chat lebih halus (SPA feel)
+      router.push('/chat');
+      
     } catch (error) {
       console.error('Login error:', error);
       throw error;
@@ -74,38 +119,43 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const register = async (username: string, password: string) => {
-    setLoading(true);
-    try {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
-      });
-      
-      const responseText = await response.text();
-      const data = responseText ? JSON.parse(responseText) : {};
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Registration failed');
-      }
-      
-      // Auto-login setelah register berhasil
-      await login(username, password);
-    } catch (error) {
-      console.error('Register error:', error);
-      throw error;
-    } finally {
-      setLoading(false);
+  // --- 3. FUNGSI REGISTER ---
+  const register = async (username: string, email: string, password: string) => { 
+  setLoading(true);
+  try {
+    const response = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      // KIRIMKAN USERNAME KE BACKEND
+      body: JSON.stringify({ username, email, password }) 
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Registration failed');
     }
-  };
+    
+    // Pastikan fungsi login juga dipanggil dengan parameter yang benar 
+    // (Jika login hanya butuh email & password, ini sudah benar)
+    await login(email, password);
 
+  } catch (error) {
+    console.error('Register error:', error);
+    throw error;
+  } finally {
+    setLoading(false);
+  }
+};
+
+  // --- 4. FUNGSI LOGOUT ---
   const logout = () => {
     setUser(null);
-    localStorage.removeItem(AUTH_STORAGE_KEY);
+    // Hapus semua jejak di Cookie
+    Cookies.remove(AUTH_USER_KEY, { path: '/' });
     Cookies.remove(AUTH_TOKEN_KEY, { path: '/' });
-    // Opsional: arahkan ke login setelah logout
-    window.location.href = '/login';
+    
+    // Redirect ke login menggunakan router untuk transisi yang lebih halus
+    router.push('/login');
   };
 
   const value = useMemo(

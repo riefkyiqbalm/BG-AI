@@ -9,7 +9,7 @@ import SidebarFooter from "@/components/LeftFooter";
 
 export default function Sidebar() {
   const { user } = useAuth();
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <aside style={{

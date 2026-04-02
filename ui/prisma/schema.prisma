@@ -9,8 +9,12 @@ datasource db {
 
 model User {
   id           Int           @id @default(autoincrement())
+  email        String        @unique 
   username     String        @unique
   password     String
+  contact      String?       // Nomor HP/WA
+  institution  String?       // Institusi/instansi
+  role         String?       // Peran/jabatan
   createdAt    DateTime      @default(now())
   chatSessions ChatSession[]
 }

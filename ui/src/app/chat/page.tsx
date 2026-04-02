@@ -5,13 +5,11 @@ import Link from "next/link";
 import { useChat } from "@/context/ChatContext";
 import { useToast } from "@/context/ToastContext";
 
-// Komponen Internal
 import Sidebar from "@/components/LeftPanel";
 import TopPanel from "@/components/TopPanel";
-import MessageBubble from "@/components/MessageBubble";
-import SuggestionsList from "@/components/DefaultPrompt";
+import ChatArea from "@/components/ChatArea";
+import ChatInputPanel from "@/components/ChatInputPanel";
 
-// Types
 import { InputMode, UIMessage } from "@/types";
 
 export default function ChatPage() {
@@ -28,7 +26,7 @@ export default function ChatPage() {
   const [inputMode, setInputMode] = useState<InputMode>("text");
   
   const chatEndRef = useRef<HTMLDivElement>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   // Status loading khusus untuk sesi yang sedang aktif
   const isCurrentLoading = useMemo(() => 
@@ -88,10 +86,7 @@ export default function ChatPage() {
     }, 50);
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    
+  const handleFileUpload = (file: File) => {
     setInput(`[File: ${file.name}] Tolong analisis data dari file ini.`);
     setInputMode("text");
     toast(`File "${file.name}" ditambahkan.`, "info");
@@ -102,112 +97,30 @@ export default function ChatPage() {
 
   return (
     <div style={S.root}>
-      {/* Sidebar - Footer sudah di-fix di dalam komponen ini */}
       <Sidebar />
 
       <main style={S.main}>
         <TopPanel />
 
-        {/* Area Chat */}
-        <div style={S.chatArea} className="custom-scroll">
-          {isWelcomeScreen ? (
-            <div style={S.welcome} className="animate-fade-up">
-              <div style={S.welcomeIcon}>🌿</div>
-              <h2 style={S.h2}>
-                Halo, <span style={{ color: "var(--teal)" }}>Riefky P.</span>
-              </h2>
-              <p style={S.p}>
-                Asisten BGAI siap membantu untuk proses administrasi dan perizinan IPAL.
-              </p>
+        <ChatArea
+          messages={messages}
+          isWelcomeScreen={isWelcomeScreen}
+          onSelectSuggestion={handleSelectSuggestion}
+          isCurrentLoading={isCurrentLoading}
+        />
 
-              {/* Komponen Suggestion sudah dipisah */}
-              <SuggestionsList onSelect={handleSelectSuggestion} />
-            </div>
-          ) : (
-            <div style={S.messageList}>
-              {messages.map((m) => (
-                <MessageBubble key={m.id} msg={m} />
-              ))}
-            </div>
-          )}
-
-          {/* Typing Indicator */}
-          {isCurrentLoading && (
-            <div style={S.typingRow} className="animate-fade-in">
-              <div style={S.typingAvatar}>🤖</div>
-              <div style={S.typingBubble}>
-                <span className="dot-blink"></span>
-                <span className="dot-blink" style={{ animationDelay: "0.2s" }}></span>
-                <span className="dot-blink" style={{ animationDelay: "0.4s" }}></span>
-              </div>
-            </div>
-          )}
-
-          <div ref={chatEndRef} style={{ height: 1 }} />
-        </div>
-
-        {/* Input Bar */}
-        <div style={S.inputArea}>
-          <div style={S.modeRow}>
-            {(["text", "foto", "video", "dokumen"] as InputMode[]).map((mode) => (
-              <button
-                key={mode}
-                onClick={() => setInputMode(mode)}
-                style={{
-                  ...S.modeBtn,
-                  ...(inputMode === mode ? S.modeBtnActive : {}),
-                }}
-              >
-                {mode === "text" && "✏️ Teks"}
-                {mode === "foto" && "📸 Foto"}
-                {mode === "video" && "🎬 Video"}
-                {mode === "dokumen" && "📄 Dokumen"}
-              </button>
-            ))}
-          </div>
-
-          {inputMode !== "text" && (
-            <div style={S.dropZone} onClick={() => document.getElementById("file-up")?.click()}>
-              <span>☁️ Klik untuk upload {inputMode}</span>
-              <input id="file-up" type="file" style={{ display: "none" }} onChange={handleFileUpload} />
-            </div>
-          )}
-
-          <div style={S.inputContainer}>
-            <textarea
-              ref={textareaRef}
-              value={input}
-              onChange={(e) => {
-                setInput(e.target.value);
-                resizeTextarea();
-              }}
-              onKeyDown={handleKeyDown}
-              placeholder="Tanyakan sesuatu..."
-              rows={1}
-              style={S.textarea}
-              disabled={isCurrentLoading}
-            />
-            <div style={S.actionButtons}>
-              <button style={S.iconBtn} onClick={() => document.getElementById("file-up")?.click()}>
-                📎
-              </button>
-              <button
-                onClick={handleSend}
-                disabled={isCurrentLoading || !input.trim()}
-                style={{
-                  ...S.sendBtn,
-                  ...((isCurrentLoading || !input.trim()) ? S.sendBtnDisabled : {}),
-                }}
-              >
-                ➤
-              </button>
-            </div>
-          </div>
-
-          <div style={S.footerHint}>
-            Qwen3-4B · AI Bisa Salah Harap Cek Kembali. <Link href="/terms" style={{ color: "var(--teal)" }}>Terms of Service</Link>
-          </div>
-        </div>
+        <ChatInputPanel
+          input={input}
+          onInput={setInput}
+          inputMode={inputMode}
+          onModeChange={setInputMode}
+          isCurrentLoading={isCurrentLoading}
+          onSend={handleSend}
+          onFileUpload={handleFileUpload}
+          onKeyDown={handleKeyDown}
+          textareaRef={textareaRef}
+          onResizeTextarea={resizeTextarea}
+        />
       </main>
 
       {/* Global CSS untuk Animasi Typing */}
