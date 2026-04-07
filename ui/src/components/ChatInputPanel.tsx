@@ -38,12 +38,18 @@ export default function ChatInputPanel({
       {inputMode !== 'text' && (
         <div style={S.dropZone} onClick={() => document.getElementById('file-up')?.click()}>
           <span>☁️ Klik untuk upload {inputMode}</span>
-          <input id="file-up" type="file" style={{ display: 'none' }} onChange={(e) => {
-            const file = e.target.files?.[0];
-            if (file) onFileUpload(file);
-          }} />
         </div>
       )}
+
+      <input
+        id="file-up"
+        type="file"
+        style={{ display: 'none' }}
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) onFileUpload(file);
+        }}
+      />
 
       <div style={S.inputContainer}>
         <textarea
@@ -74,7 +80,7 @@ export default function ChatInputPanel({
 }
 
 const S: Record<string, React.CSSProperties> = {
-  inputArea: { padding: '20px 5% 24px', background: 'linear-gradient(to top, var(--bg) 80%, transparent)' },
+  inputArea: { padding: '40px 20% 24px', background: 'linear-gradient(to top, var(--bg) 80%, transparent)' },
   dropZone: { padding: '12px 14px', borderRadius: 12, border: '1px dashed var(--border)', marginBottom: 12, cursor: 'pointer', textAlign: 'center', color: 'var(--muted)' },
   inputContainer: { display: 'flex', alignItems: 'flex-end', gap: 8 },
   textarea: { width: '100%', minHeight: '38px', maxHeight: '140px', resize: 'none', border: '1px solid var(--border)', borderRadius: '12px', padding: '12px 12px', background: 'var(--card)', color: 'var(--text)', fontFamily: 'var(--font-body)', fontSize: '14px', outline: 'none', lineHeight: 1.4 },

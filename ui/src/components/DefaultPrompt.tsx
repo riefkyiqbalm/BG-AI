@@ -16,7 +16,7 @@ interface SuggestionsListProps {
 const SUGGESTIONS: Suggestion[] = [
   {
     id: "1",
-    title: "Foto MakananL",
+    title: "Foto Makanan",
     subtitle: "Analisis Dokumen atau Makanan lewat foto dan dokumen.",
     icon: "📸",
     prompt: "Tolong bantu saya menganalisis menu makanan saya dan hasil pengecekan hegenitas dapur saya.",

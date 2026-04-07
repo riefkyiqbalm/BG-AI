@@ -24,8 +24,8 @@ export default function AuthPage() {
 
   useEffect(() => {
     if (user) {
-      const fallbackName = user.name || user.email || 'User name';
-      const fallbackEmail = user.email || user.name || 'email@example.com';
+      const fallbackName = user.username || user.email || 'User name';
+      const fallbackEmail = user.email || user.username || 'email@example.com';
       setProfileName(fallbackName);
       setProfileEmail(fallbackEmail);
       setProfileRoles(['User']);

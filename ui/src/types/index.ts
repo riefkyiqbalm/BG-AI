@@ -8,7 +8,7 @@ export type Role = "user" | "assistant" | "system";
 
 export interface User {
   id:    string;
-  name:  string;
+  username:  string;
   email: string;
 }
 

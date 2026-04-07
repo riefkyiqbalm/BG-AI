@@ -5,6 +5,7 @@ import MessageBubble from './MessageBubble';
 import SuggestionsList from './DefaultPrompt';
 import TypingIndicator from './TypeIndicator';
 import { UIMessage } from '@/types';
+import { useAuth } from '@/context/AuthContext';
 
 interface ChatAreaProps {
   messages: UIMessage[];
@@ -14,12 +15,14 @@ interface ChatAreaProps {
 }
 
 export default function ChatArea({ messages, isWelcomeScreen, isCurrentLoading, onSelectSuggestion }: ChatAreaProps) {
+  const { user } = useAuth();
+
   return (
     <div style={S.chatArea} className="custom-scroll">
       {isWelcomeScreen ? (
         <div style={S.welcome} className="animate-fade-up">
           <div style={S.welcomeIcon}>🌿</div>
-          <h2 style={S.h2}>Halo, <span style={{ color: 'var(--teal)' }}>Riefky P.</span></h2>
+          <h2 style={S.h2}>Halo, <span style={{ color: 'var(--teal)' }}>{user?.username}</span></h2>
           <p style={S.p}>Asisten BGAI siap membantu untuk proses administrasi dan perizinan IPAL.</p>
           <SuggestionsList onSelect={onSelectSuggestion} />
         </div>

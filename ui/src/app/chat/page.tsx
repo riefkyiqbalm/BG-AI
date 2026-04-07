@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useChat } from "@/context/ChatContext";
 import { useToast } from "@/context/ToastContext";
 
-import Sidebar from "@/components/LeftPanel";
+import LeftPanel from "@/components/LeftPanel";
 import TopPanel from "@/components/TopPanel";
 import ChatArea from "@/components/ChatArea";
 import ChatInputPanel from "@/components/ChatInputPanel";
@@ -97,7 +97,7 @@ export default function ChatPage() {
 
   return (
     <div style={S.root}>
-      <Sidebar />
+      <LeftPanel />
 
       <main style={S.main}>
         <TopPanel />

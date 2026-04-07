@@ -15,7 +15,7 @@ export default function NotFoundPage() {
           <span style={S.line} />PAGE_NOT_FOUND<span style={S.line} />
         </div>
         <h1 style={S.h1}>Halaman Ini <span style={{ color: 'var(--teal)' }}>Tidak Ditemukan</span></h1>
-        <p style={S.p}>URL yang Anda akses tidak ada di sistem SATU-AI. Halaman mungkin telah dipindahkan, dihapus, atau memang tidak pernah ada.</p>
+        <p style={S.p}>URL yang Anda akses tidak ada di sistem BG-AI. Halaman mungkin telah dipindahkan, dihapus, atau memang tidak pernah ada.</p>
 
         <div style={S.actions}>
           <Link href="/chat" style={S.btnPrimary}>→ Kembali ke Chat</Link>
@@ -25,7 +25,7 @@ export default function NotFoundPage() {
         <div style={S.suggestBox}>
           <div style={S.suggestTitle}>Mungkin yang Anda cari:</div>
           {[
-            { href: '/chat', icon: '💬', label: 'Chat SATU-AI — Analisis Gizi & Vendor MBG' },
+            { href: '/chat', icon: '💬', label: 'Chat BG-AI — Analisis Gizi & Vendor MBG' },
             { href: '/login', icon: '🔑', label: 'Halaman Login & Registrasi' },
             { href: '/auth', icon: '👤', label: 'Pengaturan Akun' },
             { href: '/terms', icon: '⚖', label: 'Ketentuan Layanan' },
@@ -39,7 +39,7 @@ export default function NotFoundPage() {
         </div>
 
         <div style={S.terminal}>
-          <span style={{ color: 'var(--teal)' }}>satu-ai</span>
+          <span style={{ color: 'var(--teal)' }}>BG-AI</span>
           <span style={{ color: 'var(--muted)' }}> ~$</span>
           <span> Error 404: route not found</span>
           <span style={S.cursor} />

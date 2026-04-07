@@ -99,3 +99,32 @@ yarn-error.log*
 .next/
 out/
 
+# Prisma
+.env
+node_modules/
+/prisma/migrations/
+
+# PostgreSQL / Database
+*.sql
+*.dump
+postgresql.log
+/db_data/             # Jika Anda menggunakan Docker dan menyimpan data di folder lokal
+
+# Next.js & Node
+node_modules/
+.next/
+out/
+build/
+dist/
+
+# Environment Files (Paling Krusial)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

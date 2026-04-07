@@ -4,10 +4,10 @@ import React, { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import HamburgerIcon from "@/components/HamburgerIcon";
 import NewChatButton from "@/components/NewButton";
-import SessionList from "@/components/ChatList";
+import ChatList from "@/components/ChatList"; 
 import SidebarFooter from "@/components/LeftFooter";
 
-export default function Sidebar() {
+export default function LeftPanel() {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -26,7 +26,7 @@ export default function Sidebar() {
             pointerEvents: isOpen ? "auto" : "none"
           }}>
             <div style={S.title}>BG-AI</div>
-            <div style={S.subtitle}>{user?.name || "Guest"}</div>
+            <div style={S.subtitle}>{user?.username || "Guest"}</div>
           </div>
         </div>
 
@@ -38,7 +38,7 @@ export default function Sidebar() {
           flex: 1
         }}>
           <NewChatButton isOpen={isOpen} />
-          <SessionList isOpen={isOpen} />
+          <ChatList isOpen={isOpen} />
           <SidebarFooter isOpen={isOpen} />
         </div>
       </div>
@@ -54,7 +54,7 @@ const S: Record<string, React.CSSProperties> = {
     borderRight: "1px solid rgb(55, 65, 81)",
     // Animasi yang lebih smooth menggunakan cubic-bezier
     transition: "width 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
-    overflowX: "hidden",
+    overflowX: "visible",
     position: "relative",
   },
   container: {

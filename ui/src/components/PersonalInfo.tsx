@@ -69,7 +69,7 @@ export default function PersonalInfo({ onProfileUpdated }: PersonalInfoProps) {
       } catch (err) {
         console.error('[PersonalInfo] ', err);
         if (user) {
-          const fallbackEmail = user.email || user.name || '';
+          const fallbackEmail = user.email || user.username || '';
           setEmail(fallbackEmail);
           setFirstName(fallbackEmail.substring(0, 6));
         }

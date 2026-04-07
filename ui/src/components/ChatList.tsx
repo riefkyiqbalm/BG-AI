@@ -3,8 +3,9 @@ import { useChat } from "@/context/ChatContext";
 import React from "react";
 import ActionMenu from "@/components/Action" ; // Sesuaikan path
 
-export default function SessionList({ isOpen }: { isOpen: boolean }) {
+export default function ChatList({ isOpen }: { isOpen: boolean }) {
   const { sessions, activeSessionId, setActiveSession, deleteSession } = useChat();
+  
 
   if (!isOpen) return null;
 
@@ -21,7 +22,7 @@ export default function SessionList({ isOpen }: { isOpen: boolean }) {
   };
 
   return (
-    <div style={S.sessionsList}>
+    <div style={S.chatsList}>
       {sessions.length === 0 ? (
         <p style={S.emptyText}>BELUM ADA SESI.</p>
       ) : (
@@ -38,6 +39,7 @@ export default function SessionList({ isOpen }: { isOpen: boolean }) {
             <ActionMenu 
               actions={["pin", "rename", "delete"]} 
               onAction={(type) => handleAction(session.id, type)}
+              align={isOpen ? "left" : "right"}
             />
           </div>
         ))
@@ -48,7 +50,7 @@ export default function SessionList({ isOpen }: { isOpen: boolean }) {
 // ... Gaya S (tetap sama seperti kode Anda)
 
 const S: Record<string, React.CSSProperties> = {
-  sessionsList: { display: "flex", flexDirection: "column", gap: 8 },
+  chatsList: { display: "flex", flexDirection: "column", gap: 8 },
   emptyText: { color: "#5a7a99", fontSize: 15, fontFamily: "Space Mono, monospace", letterSpacing: 1.5, textTransform: "uppercase", padding: "8px 8px 4px" },   
   sessionItem: { 
     padding: "9px 12px", 

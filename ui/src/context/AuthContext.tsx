@@ -47,7 +47,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             // Verifikasi bahwa data cookie cocok dengan database
             const isValid = (
               dbUser.id.toString() === parsedStoredUser.id &&
-              dbUser.username === parsedStoredUser.name &&
+              dbUser.username === parsedStoredUser.username &&
               dbUser.email === parsedStoredUser.email
             );
 
@@ -96,7 +96,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       const userData: User = {
         id: data.user.id.toString(),
-        name: data.user.username,
+        username: data.user.username,
         email: data.user.email
       };
 
@@ -104,7 +104,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       Cookies.set(AUTH_TOKEN_KEY, data.token, { expires: 1, path: '/' });
 
       // Simpan DATA USER di Cookie (Agar awet saat refresh dan terbaca server)
-      Cookies.set(AUTH_USER_KEY, JSON.stringify(userData), { expires: 1, path: '/' });
+      Cookies.set(AUTH_USER_KEY, JSON.stringify(userData), { expires: 2, path: '/' });
       
       setUser(userData);
 

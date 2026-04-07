@@ -10,7 +10,7 @@ datasource db {
 model User {
   id           Int           @id @default(autoincrement())
   email        String        @unique 
-  username     String        @unique
+  username     String      
   password     String
   contact      String?       // Nomor HP/WA
   institution  String?       // Institusi/instansi
