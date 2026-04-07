@@ -1,16 +1,21 @@
 "use client";
 import { useChat } from "@/context/ChatContext";
-import React from "react";
-import ActionMenu from "@/components/Action" ; // Sesuaikan path
+import React, { useState } from "react";
+import ActionMenu from "@/components/Action" ;
+import Modal from "@/components/Modal";
 
 export default function ChatList({ isOpen }: { isOpen: boolean }) {
   const { sessions, activeSessionId, setActiveSession, deleteSession } = useChat();
+  const [showModal, setShowModal] = useState(false);
+  const [sessionToDelete, setSessionToDelete] = useState<string | null>(null);
   
-
   if (!isOpen) return null;
 
   const handleAction = (id: string, type: string) => {
-    if (type === "delete") deleteSession(id);
+    if (type === "delete") {
+      setSessionToDelete(id);
+      setShowModal(true);
+    };
     if (type === "rename") {
         const newTitle = prompt("Masukkan nama baru:");
         if (newTitle) {
@@ -19,6 +24,17 @@ export default function ChatList({ isOpen }: { isOpen: boolean }) {
         }
     }
     // Tambahkan logic untuk 'pin' jika sudah ada di backend
+  };
+
+  const handleConfirm = async () => {
+    if (sessionToDelete) {
+      // Panggil fungsi hapus dari Prisma/Backend Anda di sini
+      await deleteSession(sessionToDelete);
+      console.log("Menghapus sesi:", sessionToDelete);
+      
+      setShowModal(false);
+      setSessionToDelete(null);
+    }
   };
 
   return (
@@ -41,6 +57,12 @@ export default function ChatList({ isOpen }: { isOpen: boolean }) {
               onAction={(type) => handleAction(session.id, type)}
               align={isOpen ? "left" : "right"}
             />
+           <Modal
+                   isOpen={showModal}
+                   onClose={() => setShowModal(false)}
+                   onConfirm={handleConfirm}
+                  message="Apakah Anda yakin ingin menghapus sesi ini?"
+                 />
           </div>
         ))
       )}

@@ -10,6 +10,11 @@ import SidebarFooter from "@/components/LeftFooter";
 export default function LeftPanel() {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const leftPanelStyle = {
+    ...S.sidebar,
+    overflowX : isDropdownOpen ? "visible" : "hidden", // Ubah overflow saat dropdown terbuka
+  }
 
   return (
     <aside style={{
