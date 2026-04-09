@@ -59,7 +59,7 @@ const S: Record<string, React.CSSProperties> = {
     borderRight: "1px solid rgb(55, 65, 81)",
     // Animasi yang lebih smooth menggunakan cubic-bezier
     transition: "width 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
-    overflowX: "visible",
+    overflow: "visible", 
     position: "relative",
   },
   container: {

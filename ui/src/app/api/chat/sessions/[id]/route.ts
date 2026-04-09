@@ -17,7 +17,7 @@ export async function GET(
     return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
   }
 
-  const sessionId = parseInt(id)
+  const sessionId = id
   const session = await prisma.chatSession.findUnique({
     where: { id: sessionId }
   })
@@ -44,8 +44,8 @@ export async function PATCH(
     return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
   }
 
-  const sessionId = parseInt(id)
-  const { title, messages } = await request.json()
+  const sessionId = id
+  const { title } = await request.json()
 
   const session = await prisma.chatSession.findUnique({
     where: { id: sessionId }
@@ -58,8 +58,7 @@ export async function PATCH(
   const updatedSession = await prisma.chatSession.update({
     where: { id: sessionId },
     data: {
-      ...(title && { title }),
-      ...(messages && { messages })
+      ...(title && { title })
     }
   })
 
@@ -81,7 +80,7 @@ export async function DELETE(
     return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
   }
 
-  const sessionId = parseInt(id)
+  const sessionId = id
   const session = await prisma.chatSession.findUnique({
     where: { id: sessionId }
   })

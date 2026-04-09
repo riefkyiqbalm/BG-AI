@@ -19,7 +19,7 @@ export async function DELETE(request: NextRequest) {
     // Karena skema kamu memiliki onDelete: Cascade, 
     // menghapus User akan otomatis menghapus semua ChatSession miliknya.
     await prisma.user.delete({
-      where: { id: Number(userId) },
+      where: { id: userId },
     });
 
     return NextResponse.json({ message: 'Akun berhasil dihapus' });

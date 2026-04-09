@@ -104,6 +104,7 @@ const S: Record<string, React.CSSProperties> = {
     alignItems: "center",
     justifyContent: "center",
     transition: "all 0.2s ease",
+    zIndex: 1000,
   },
   dropdown: {
     position: "absolute",

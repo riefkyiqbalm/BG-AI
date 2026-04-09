@@ -25,61 +25,54 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
   // --- 1. EFEK SAAT PAGE REFRESH ---
-  useEffect(() => {
-    const validateAndSetUser = async () => {
-      // Ambil data dari Cookie (lebih reliabel daripada localStorage untuk Next.js)
-      const storedUser = Cookies.get(AUTH_USER_KEY);
-      const token = Cookies.get(AUTH_TOKEN_KEY);
+// --- 1. EFEK SAAT PAGE REFRESH (Di dalam AuthContext.tsx) ---
+useEffect(() => {
+  const validateAndSetUser = async () => {
+    const storedUser = Cookies.get(AUTH_USER_KEY);
+    const token = Cookies.get(AUTH_TOKEN_KEY);
 
-      if (storedUser && token) {
-        try {
-          const parsedStoredUser = JSON.parse(storedUser) as User;
+    if (storedUser && token) {
+      try {
+        const response = await fetch('/api/auth/me', {
+          method: 'GET',
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
-          // Validasi token dengan database
-          const response = await fetch('/api/auth/me', {
-            method: 'GET',
-            headers: { Authorization: `Bearer ${token}` },
-          });
+        if (response.ok) {
+          const dbUser = await response.json(); // Data flat dari route.ts kamu
 
-          if (response.ok) {
-            const dbUser = await response.json();
+          // Update User Data untuk mencakup field baru (contact, role, dll)
+          const updatedUserData: User = {
+            id: dbUser.id.toString(),
+            username: dbUser.username,
+            email: dbUser.email,
+            // Tambahkan field ini jika tipe 'User' kamu mendukungnya
+            contact: dbUser.contact,
+            role: dbUser.role,
+            institution: dbUser.institution,
+            createdAt: dbUser.createdAt,
+          };
 
-            // Verifikasi bahwa data cookie cocok dengan database
-            const isValid = (
-              dbUser.id.toString() === parsedStoredUser.id &&
-              dbUser.username === parsedStoredUser.username &&
-              dbUser.email === parsedStoredUser.email
-            );
-
-            if (isValid) {
-              setUser(parsedStoredUser);
-            } else {
-              // Data tidak cocok, bersihkan dan redirect
-              console.warn("User data mismatch between cookie and database");
-              Cookies.remove(AUTH_USER_KEY, { path: '/' });
-              Cookies.remove(AUTH_TOKEN_KEY, { path: '/' });
-              router.push('/login');
-            }
-          } else {
-            // Token tidak valid, bersihkan dan redirect
-            console.warn("Invalid token, clearing cookies and redirecting to login");
-            Cookies.remove(AUTH_USER_KEY, { path: '/' });
-            Cookies.remove(AUTH_TOKEN_KEY, { path: '/' });
-            router.push('/login');
-          }
-        } catch (error) {
-          console.error("Error validating user from cookie:", error);
-          // Jika ada error (network, parsing, dll), bersihkan dan redirect
-          Cookies.remove(AUTH_USER_KEY, { path: '/' });
-          Cookies.remove(AUTH_TOKEN_KEY, { path: '/' });
-          router.push('/login');
+          // SINKRONISASI: Selalu update cookie dengan data terbaru dari DB
+          // Ini mencegah error "mismatch" jika ada perubahan data di DB
+          Cookies.set(AUTH_USER_KEY, JSON.stringify(updatedUserData), { expires: 2, path: '/' });
+          setUser(updatedUserData);
+          
+        } else {
+          // Jika token expired (401), baru logout
+          logout();
         }
+      } catch (error) {
+        console.error("Auth mismatch or error:", error);
+        logout();
       }
-      setLoading(false);
-    };
+    }
+    setLoading(false);
+  };
 
-    validateAndSetUser();
-  }, [router]);
+  validateAndSetUser();
+}, [router]);
+
 
   // --- 2. FUNGSI LOGIN ---
   const login = async (email: string, password: string) => {
@@ -97,7 +90,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const userData: User = {
         id: data.user.id.toString(),
         username: data.user.username,
-        email: data.user.email
+        email: data.user.email,
+        contact: data.user.contact || '',
+        institution: data.user.institution || '',
+        role: data.user.role || '',
+        createdAt: data.user.createdAt,
       };
 
       // Simpan TOKEN di Cookie (Wajib untuk Middleware)
@@ -109,7 +106,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(userData);
 
       // Gunakan router.push agar transisi ke chat lebih halus (SPA feel)
-      router.push('/chat');
+      // router.push('/chat');
       
     } catch (error) {
       console.error('Login error:', error);

@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { useChat } from "@/context/ChatContext";
 import { useToast } from "@/context/ToastContext";
+import { useParams } from "next/navigation";
 
 import LeftPanel from "@/components/LeftPanel";
 import TopPanel from "@/components/TopPanel";
@@ -21,6 +22,7 @@ export default function ChatPage() {
   } = useChat();
 
   const { toast } = useToast();
+  const params = useParams();
 
   const [input, setInput] = useState("");
   const [inputMode, setInputMode] = useState<InputMode>("text");
@@ -95,6 +97,52 @@ export default function ChatPage() {
   const messages = (activeSession?.messages ?? []) as UIMessage[];
   const isWelcomeScreen = messages.length === 0;
 
+  const sendMsg = async (messageText: string) => {
+  let currentSessionId = params.id; // Ambil ID dari URL jika ada
+
+  // JIKA TIDAK ADA ID di URL, berarti ini pesan pertama (Sesi Baru)
+  if (!currentSessionId) {
+    try {
+      // 1. Buat Sesi Baru di database
+      const res = await fetch('/api/sessions', {
+        method: 'POST',
+        body: JSON.stringify({ 
+          title: messageText.substring(0, 30) // Judul diambil dari potongan pesan pertama
+        }),
+      });
+      const newSession = await res.json();
+      currentSessionId = newSession.id;
+
+      // 2. Update URL secara silent agar user sekarang berada di dalam sesi tersebut
+      // Tanpa mereload halaman
+      window.history.pushState(null, '', `/chat/${currentSessionId}`);
+    } catch (err) {
+      console.error("Gagal membuat sesi baru");
+      return;
+    }
+  }
+
+  // 3. Setelah Sesi ada (Baru atau Lama), simpan pesannya
+ try {
+    const res = await fetch('/api/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sessionId: currentSessionId,
+        text: messageText,
+        role: 'user' // atau 'human'
+      }),
+    });
+
+    if (!res.ok) throw new Error("Gagal menyimpan pesan");
+    
+    // Update UI chat di sini (tambah pesan ke state)
+  } catch (error) {
+    console.error("Error saving message:", error);
+  }
+
+};
+
   return (
     <div style={S.root}>
       <LeftPanel />
@@ -163,160 +211,4 @@ const S: Record<string, React.CSSProperties> = {
     flexDirection: "column",
     minWidth: 0,
     position: "relative",
-  },
-  chatArea: {
-    flex: 1,
-    overflowY: "auto",
-    padding: "20px 5% 40px",
-    display: "flex",
-    flexDirection: "column",
-  },
-  welcome: {
-    margin: "auto",
-    textAlign: "center",
-    maxWidth: 600,
-    padding: "40px 0",
-  },
-  welcomeIcon: {
-    fontSize: 40,
-    background: "rgba(0, 212, 200, 0.1)",
-    width: 80,
-    height: 80,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 20,
-    margin: "0 auto 20px",
-    border: "1px solid var(--teal)",
-  },
-  h2: { fontSize: 32, fontWeight: 800, marginBottom: 12 },
-  p: { color: "var(--muted)", fontSize: 15, lineHeight: 1.6, marginBottom: 30 },
-  messageList: {
-    display: "flex",
-    flexDirection: "column",
-    gap: 24,
-    maxWidth: 800,
-    margin: "0 auto",
-    width: "100%",
-  },
-  typingRow: {
-    display: "flex",
-    gap: 12,
-    alignItems: "center",
-    maxWidth: 800,
-    margin: "20px auto 0",
-    width: "100%",
-  },
-  typingAvatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 8,
-    background: "var(--teal-dim)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: 14,
-  },
-  typingBubble: {
-    background: "var(--card)",
-    padding: "12px 16px",
-    borderRadius: "12px 12px 12px 4px",
-    border: "1px solid var(--border)",
-    display: "flex",
-    gap: 4,
-  },
-  inputArea: {
-    padding: "20px 5% 24px",
-    background: "linear-gradient(to top, var(--bg) 80%, transparent)",
-  },
-  modeRow: {
-    display: "flex",
-    gap: 8,
-    marginBottom: 12,
-    justifyContent: "center",
-  },
-  modeBtn: {
-    padding: "6px 12px",
-    borderRadius: 20,
-    fontSize: 12,
-    background: "transparent",
-    border: "1px solid var(--border)",
-    color: "var(--muted)",
-    cursor: "pointer",
-    transition: "0.2s",
-  },
-  modeBtnActive: {
-    background: "rgba(0, 212, 200, 0.1)",
-    borderColor: "var(--teal)",
-    color: "var(--teal)",
-  },
-  dropZone: {
-    border: "2px dashed var(--border)",
-    borderRadius: 12,
-    padding: 20,
-    textAlign: "center",
-    marginBottom: 12,
-    maxWidth: 800,
-    margin: "0 auto 12px",
-    cursor: "pointer",
-    color: "var(--muted)",
-    fontSize: 13,
-  },
-  inputContainer: {
-    maxWidth: 800,
-    margin: "0 auto",
-    background: "var(--card)",
-    border: "1px solid var(--border)",
-    borderRadius: 16,
-    padding: "10px 16px",
-    display: "flex",
-    alignItems: "flex-end",
-    gap: 12,
-    boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
-  },
-  textarea: {
-    flex: 1,
-    background: "none",
-    border: "none",
-    outline: "none",
-    color: "var(--text)",
-    fontSize: 15,
-    lineHeight: "1.5",
-    resize: "none",
-    maxHeight: 140,
-    padding: "4px 0",
-  },
-  actionButtons: { display: "flex", gap: 8, alignItems: "center" },
-  iconBtn: {
-    background: "none",
-    border: "none",
-    color: "var(--muted)",
-    fontSize: 20,
-    cursor: "pointer",
-    padding: 4,
-  },
-  sendBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    background: "var(--teal)",
-    color: "white",
-    border: "none",
-    cursor: "pointer",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    transition: "0.2s",
-  },
-  sendBtnDisabled: {
-    opacity: 0.4,
-    cursor: "not-allowed",
-    filter: "grayscale(1)",
-  },
-  footerHint: {
-    textAlign: "center",
-    fontSize: 11,
-    color: "var(--muted)",
-    marginTop: 12,
-  },
-};
+  }};

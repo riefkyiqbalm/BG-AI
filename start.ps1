@@ -10,6 +10,7 @@ Write-Host "`nPrerequisites:" -ForegroundColor Yellow
 Write-Host " 1. LM Studio running with Qwen3-4B loaded and server started"
 Write-Host " 2. Python 3.8+ installed"
 Write-Host " 3. Node.js + npm installed`n"
+Write-Host " 4. Run prisma studio and ensure database is set up (see README)`n" 
 
 # Check if running from project root
 if (-not (Test-Path "log\main.py")) {
@@ -55,6 +56,12 @@ Start-Sleep -Seconds 3
 
 Write-Host "[4/4] Starting Next.js Frontend (Port 3000)..." -ForegroundColor Cyan
 Start-Process powershell -ArgumentList "-NoExit", "-Command", "Set-Location ui; npm run dev"
+
+Write-Host "[5/5] Starting Prisma Studio (Port 51272)..." -ForegroundColor Cyan
+Write-Host "Moving up one directory and starting Prisma Studio..." -ForegroundColor Cyan
+
+# Start a new process that changes directory then runs prisma
+Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd ./ui; npx prisma studio"
 
 Write-Host "`n====================================================================" -ForegroundColor Green
 Write-Host " Startup Sequence Complete!" -ForegroundColor Green

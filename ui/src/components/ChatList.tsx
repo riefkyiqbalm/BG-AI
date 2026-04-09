@@ -8,6 +8,8 @@ export default function ChatList({ isOpen }: { isOpen: boolean }) {
   const { sessions, activeSessionId, setActiveSession, deleteSession } = useChat();
   const [showModal, setShowModal] = useState(false);
   const [sessionToDelete, setSessionToDelete] = useState<string | null>(null);
+  const [sessionToRename, setSessionToRename] = useState<string | null>(null);
+  const [sessionToPin, setSessionToPin] = useState<string | null>(null);
   
   if (!isOpen) return null;
 
@@ -17,13 +19,13 @@ export default function ChatList({ isOpen }: { isOpen: boolean }) {
       setShowModal(true);
     };
     if (type === "rename") {
-        const newTitle = prompt("Masukkan nama baru:");
-        if (newTitle) {
-            // Panggil fungsi rename dari context Anda jika ada
-            console.log("Rename session", id, "to", newTitle);
-        }
+      setSessionToRename(id);
+      setShowModal(true);
     }
-    // Tambahkan logic untuk 'pin' jika sudah ada di backend
+    if (type === "pin") {
+        setSessionToPin(id);
+        setShowModal(true);
+    }
   };
 
   const handleConfirm = async () => {

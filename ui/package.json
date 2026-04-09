@@ -9,6 +9,9 @@
     "lint": "next lint",
     "export": "next build && next export",
     "db:init": "tsx scripts/init-db.ts",
+    "db:clear": "tsx scripts/clear-db.ts",
+    "db:drop": "tsx scripts/reset-db.ts",
+    "db:reset:seed": "tsx scripts/reset-seed-db.ts",
     "deploy:s3": "next build && aws s3 sync ./out s3://aotamata.space --delete --acl public-read --cache-control max-age=31536000,public"
   },
   "dependencies": {

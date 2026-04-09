@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 
 export default function LoginPage() {
-  const { login, register, loading, isAuthenticated } = useAuth();
+  const { login, register, loading, user } = useAuth();
   const router = useRouter();
 
   const [activePanel, setActivePanel] = useState<'login' | 'register'>('login');
@@ -20,10 +20,10 @@ export default function LoginPage() {
 
   // Redirect jika sudah login
   useEffect(() => {
-    if (isAuthenticated) {
-      router.push('/');
+    if (user?.id) {
+      router.push(`/chat/${user.id}`);
     }
-  }, [isAuthenticated, router]);
+  }, [user, router]);
 
   const checkStrength = (val: string) => {
     let score = 0;

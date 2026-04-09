@@ -19,7 +19,7 @@ async function main() {
     console.log('🚀 Starting database initialization...')
 
     // Check if test user exists
-    const existingUser = await prisma.user.findUnique({
+    const existingUser = await prisma.user.findFirst({
       where: { username: 'testuser' }
     })
 
@@ -31,6 +31,7 @@ async function main() {
       const user = await prisma.user.create({
         data: {
           username: 'testuser',
+          email: 'test@example.com',
           password: hashedPassword
         }
       })
@@ -38,7 +39,7 @@ async function main() {
     }
 
     // Create default chat session for test user if it doesn't exist
-    const user = await prisma.user.findUnique({
+    const user = await prisma.user.findFirst({
       where: { username: 'testuser' },
       include: { chatSessions: true }
     })

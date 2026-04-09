@@ -8,23 +8,33 @@ datasource db {
 }
 
 model User {
-  id           Int           @id @default(autoincrement())
-  email        String        @unique 
-  username     String      
+  id           String        @id @default(uuid())
+  email        String        @unique
+  username     String
   password     String
-  contact      String?       // Nomor HP/WA
-  institution  String?       // Institusi/instansi
-  role         String?       // Peran/jabatan
+  contact      String? // Nomor HP/WA
+  institution  String? // Institusi/instansi
+  role         String? // Peran/jabatan
   createdAt    DateTime      @default(now())
   chatSessions ChatSession[]
 }
 
 model ChatSession {
-  id        Int      @id @default(autoincrement())
-  userId    Int
+  id        String    @id @default(uuid())
+  userId    String
   title     String?
-  messages  Json?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages  Message[]
+}
+
+model Message {
+  id        String   @id @default(uuid()) // Ubah ke String + UUID
+  text      String   @db.Text // Gunakan @db.Text untuk pesan panjang
+  role      String
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  sessionId   String // Harus String
+  chatSession ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 }

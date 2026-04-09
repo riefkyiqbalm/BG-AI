@@ -10,6 +10,10 @@ export interface User {
   id:    string;
   username:  string;
   email: string;
+  contact: string;
+  role: Role;
+  institution: string;
+  createdAt: string;
 }
 
 // ── Chat Messages ─────────────────────────────────────────────

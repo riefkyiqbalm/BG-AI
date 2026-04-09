@@ -11,8 +11,9 @@ echo Prerequisites:
 echo  1. LM Studio running with Qwen3-4B loaded and server started
 echo  2. Python 3.8+ installed
 echo  3. Node.js + npm installed
+echo  4. Run prisma studio and ensure database is set up (see README)
 echo.
-echo Starting backend and frontend...
+echo Starting backend, frontend and prisma studio in parallel...
 echo.
 
 REM Check if running from project root
@@ -25,6 +26,13 @@ if not exist "log\main.py" (
 
 if not exist "ui\package.json" (
     echo ERROR: Could not find ui\package.json
+    echo Please run this script from the project root directory
+    pause
+    exit /b 1
+)
+
+if not exist "ui\prisma" (
+    echo ERROR: Could not find ui\prisma
     echo Please run this script from the project root directory
     pause
     exit /b 1
@@ -60,6 +68,10 @@ timeout /t 3 /nobreak
 
 echo [4/4] Starting Next.js Frontend (Port 3000)...
 start cmd /k "cd ui && npm run dev"
+
+echo [5/5] Starting Prisma Studio (Port 51272)...
+start "Prisma Studio" cmd /k "cd ./ui && npx prisma studio"
+
 
 echo.
 echo ====================================================================
