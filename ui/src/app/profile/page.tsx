@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import AuthTopPanel from '@/components/AuthTopPanel';
+// import AuthTopPanel from '@/components/AuthTopPanel';
 import AuthLeftPanel from '@/components/AuthLeftPanel';
 import SummaryCard from '@/components/SummaryCard';
 import PersonalInfo from '@/components/PersonalInfo';
@@ -10,6 +10,7 @@ import Toast from '@/components/Toast';
 import { useAuth } from '@/context/AuthContext';
 import Modal from '@/components/Modal';
 import Cookies from 'js-cookie';
+import AppHeader from '@/components/AppHeader';
 
 export default function AuthPage() {
   const { user } = useAuth();
@@ -72,7 +73,7 @@ export default function AuthPage() {
 
   return (
     <div style={S.pageRoot}>
-      <AuthTopPanel />
+      <AppHeader title="BG-AI" subtitle="Profil" backHref="/" />
 
       <div style={S.pageBody}>
         <AuthLeftPanel />

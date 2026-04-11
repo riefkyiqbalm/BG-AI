@@ -1,3 +1,6 @@
+// lib/prisma.ts, Untuk menginisialisasi Prisma Client dengan adapter PostgreSQL 
+// yang menggunakan connection pooling.
+
 import { PrismaClient } from '../../prisma/generated/client'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { Pool } from 'pg'

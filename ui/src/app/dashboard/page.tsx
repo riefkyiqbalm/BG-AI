@@ -10,11 +10,11 @@ export default function DashboardPage() {
   const { sessions } = useChat();
   const status = useLMStatus();
 
-  const totalMessages = sessions.reduce((count, s) => count + s.messages.length, 0);
+  const totalMessages = sessions.reduce((count, s) => count + (s.messages?.length || 0), 0);
 
   return (
     <div style={S.root}>
-      <AppHeader title="BG-AI" subtitle="Dashboard" backHref="/chat" />
+      <AppHeader title="BG-AI" subtitle="Dashboard" backHref="/" />
 
       <main style={S.main}>
         <h1 style={S.h1}>Dashboard BG-AI</h1>

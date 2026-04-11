@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import BackButton from '@/components/BackButton';
 
 interface AppHeaderProps {
   title?: string;
@@ -10,7 +11,7 @@ interface AppHeaderProps {
   children?: React.ReactNode;
 }
 
-export default function AppHeader({ title, subtitle, backHref = '/chat', children }: AppHeaderProps) {
+export default function AppHeader({ title, subtitle, backHref = '/', children }: AppHeaderProps) {
   return (
     <nav style={S.nav}>
       <Link href="/" style={S.navBrand}>
@@ -20,7 +21,7 @@ export default function AppHeader({ title, subtitle, backHref = '/chat', childre
 
       <div style={S.rightSection}>
         {subtitle && <span style={S.subtitle}>{subtitle}</span>}
-        <Link href={backHref} style={S.backBtn}>← Kembali</Link>
+        <BackButton href={backHref} label="Kembali" variant="ghost" />
       </div>
 
       {children}
@@ -73,15 +74,5 @@ const S: Record<string, React.CSSProperties> = {
   subtitle: {
     fontSize: '13px',
     color: 'var(--muted)',
-  },
-  backBtn: {
-    padding: '8px 16px',
-    background: 'var(--card)',
-    border: '1px solid var(--border)',
-    borderRadius: '8px',
-    color: 'var(--muted)',
-    fontSize: '13px',
-    textDecoration: 'none',
-    transition: 'all 0.2s',
   },
 };

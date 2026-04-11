@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import BackButton from '@/components/BackButton';
 
 export default function NotFoundPage() {
   return (
@@ -18,14 +19,14 @@ export default function NotFoundPage() {
         <p style={S.p}>URL yang Anda akses tidak ada di sistem BG-AI. Halaman mungkin telah dipindahkan, dihapus, atau memang tidak pernah ada.</p>
 
         <div style={S.actions}>
-          <Link href="/chat" style={S.btnPrimary}>→ Kembali ke Chat</Link>
+          <BackButton href="/chat" label="Kembali ke Chat" variant="primary" />
           <Link href="/login" style={S.btnGhost}>⏏ Halaman Login</Link>
         </div>
 
         <div style={S.suggestBox}>
           <div style={S.suggestTitle}>Mungkin yang Anda cari:</div>
           {[
-            { href: '/chat', icon: '💬', label: 'Chat BG-AI — Analisis Gizi & Vendor MBG' },
+            { href: '/', icon: '💬', label: 'Chat BG-AI — Analisis Gizi & Vendor MBG' },
             { href: '/login', icon: '🔑', label: 'Halaman Login & Registrasi' },
             { href: '/auth', icon: '👤', label: 'Pengaturan Akun' },
             { href: '/terms', icon: '⚖', label: 'Ketentuan Layanan' },
@@ -59,7 +60,6 @@ const S: Record<string, React.CSSProperties> = {
   h1: { fontFamily: 'var(--font-head)', fontSize: 'clamp(22px,4vw,30px)', fontWeight: 800, marginBottom: 12 },
   p: { color: 'var(--muted)', fontSize: 15, lineHeight: 1.7, marginBottom: 32, maxWidth: 420, margin: '0 auto 32px' },
   actions: { display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 36 },
-  btnPrimary: { padding: '12px 22px', borderRadius: 12, fontSize: 13, fontWeight: 600, background: 'linear-gradient(135deg,var(--teal),#0080cc)', color: '#fff', boxShadow: '0 4px 20px rgba(0,212,200,.25)', display: 'inline-flex', alignItems: 'center', gap: 8, transition: 'all .2s', textDecoration: 'none' },
   btnGhost: { padding: '12px 22px', borderRadius: 12, fontSize: 13, fontWeight: 600, background: 'var(--card)', color: 'var(--text)', border: '1px solid var(--border)', display: 'inline-flex', alignItems: 'center', gap: 8, textDecoration: 'none' },
   suggestBox: { background: 'var(--panel)', border: '1px solid var(--border)', borderRadius: 16, padding: '18px 22px', textAlign: 'left', marginBottom: 32 },
   suggestTitle: { fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--muted)', letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: 12 },

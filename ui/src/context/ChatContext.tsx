@@ -2,7 +2,8 @@
 
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { ChatContextType, ChatMessage, ChatSession } from "@/types";
-import { useRouter } from "next/navigation"; 
+import { useRouter } from "next/navigation";
+import Cookies from "js-cookie"; 
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
@@ -17,7 +18,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   // Load awal dari Database via API (Bukan localStorage lagi agar sinkron antar perangkat)
   useEffect(() => {
     const fetchSessions = async () => {
-      const token = localStorage.getItem("token");
+      const token = Cookies.get("bgai_auth_token");
       if (!token) return;
 
       try {
@@ -38,7 +39,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
   const createSession = async () => {
     try {
-      const token = localStorage.getItem("token"); 
+      const token = Cookies.get("bgai_auth_token"); 
       const response = await fetch("/api/chat/sessions", {
         method: "POST",
         headers: {
@@ -65,7 +66,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
   const deleteSession = async (sessionId: string) => {
     try {
-      const token = localStorage.getItem("token");
+      const token = Cookies.get("bgai_auth_token");
       const res = await fetch(`/api/chat/sessions/${sessionId}`, {
         method: "DELETE",
         headers: { "Authorization": `Bearer ${token}` }
@@ -123,7 +124,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       setSessions(prev => prev.map(s => s.id === targetSessionId ? { ...s, title: newTitle } : s));
       
       // Update judul di database (Background process)
-      const token = localStorage.getItem("token");
+      const token = Cookies.get("bgai_auth_token");
       fetch(`/api/chat/sessions/${targetSessionId}`, {
         method: 'PATCH',
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
@@ -132,10 +133,10 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     }
 
     // Optimistic Update: Tampilkan pesan user langsung
-    addMessage(targetSessionId, { sessionId: targetSessionId, role: "user", text });
+    addMessage(targetSessionId, { sessionId: targetSessionId, role: "USER", text });
 
     try {
-      const token = localStorage.getItem("token");
+      const token = Cookies.get("bgai_auth_token");
       // Kirim pesan ke API Endpoint Message yang baru
       const response = await fetch(`/api/chat/sessions/${targetSessionId}/messages`, {
         method: "POST",
@@ -153,14 +154,14 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       // Tampilkan pesan dari AI
       addMessage(targetSessionId, {
         sessionId: targetSessionId,
-        role: "assistant",
+        role: "ASSISTANT",
         text: data.response.text, // Pastikan field "text" sesuai dengan DB Message Anda
       });
 
     } catch (err: any) {
       addMessage(targetSessionId, {
         sessionId: targetSessionId,
-        role: "assistant",
+        role: "ASSISTANT",
         text: `❌ Error: ${err.message || "Gagal menghubungi backend"}`,
       });
     } finally {

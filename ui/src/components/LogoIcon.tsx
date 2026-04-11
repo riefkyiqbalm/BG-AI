@@ -9,7 +9,8 @@ export default function LogoIcon() {
 
   const targetPath = (isAuthenticated && user?.id) ? `/chat/${user.id}` : '/login';
   return (
-    <Link href={targetPath} style={S.brandAnchor}>
+    <Link href={targetPath} style={S.brandAnchor}
+    suppressHydrationWarning={true}>
         <div style={S.logo}>B•G</div>
         <div style={S.brandText}>BG-AI</div>
       </Link>

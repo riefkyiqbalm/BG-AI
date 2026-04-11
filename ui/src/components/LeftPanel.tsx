@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import HamburgerIcon from "@/components/HamburgerIcon";
 import NewChatButton from "@/components/NewButton";
@@ -11,43 +11,51 @@ export default function LeftPanel() {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
+
   const leftPanelStyle = {
     ...S.sidebar,
     overflowX : isDropdownOpen ? "visible" : "hidden", // Ubah overflow saat dropdown terbuka
   }
 
   return (
-    <aside style={{
-      ...S.sidebar, 
-      width: isOpen ? 280 : 70,
-    }}>
-      <div style={S.container}>
-        <div style={S.header} className="custom-scroll">
-          <HamburgerIcon isOpen={isOpen} onClick={() => setIsOpen(!isOpen)} />
-          <div style={{
-            ...S.titleContainer, 
-            opacity: isOpen ? 1 : 0,
-            transform: isOpen ? "translateX(0)" : "translateX(-10px)",
-            pointerEvents: isOpen ? "auto" : "none"
+    isHydrated && (
+      <aside style={{
+        ...S.sidebar, 
+        width: isOpen ? 280 : 70,
+      }}>
+        <div style={S.container}>
+          <div style={S.header} className="custom-scroll">
+            <HamburgerIcon isOpen={isOpen} onClick={() => setIsOpen(!isOpen)} />
+            <div style={{
+              ...S.titleContainer, 
+              opacity: isOpen ? 1 : 0,
+              transform: isOpen ? "translateX(0)" : "translateX(-10px)",
+              pointerEvents: isOpen ? "auto" : "none"
+            }}>
+              <div style={S.title}>BG-AI</div>
+              <div style={S.subtitle}>{user?.name || "Guest"}</div>
+            </div>
+          </div>
+
+          <div style={{ 
+            opacity: isOpen ? 1 : 0, 
+            transition: "opacity 0.2s ease-in-out",
+            display: "flex",
+            flexDirection: "column",
+            flex: 1
           }}>
-            <div style={S.title}>BG-AI</div>
-            <div style={S.subtitle}>{user?.username || "Guest"}</div>
+            <NewChatButton isOpen={isOpen} />
+            <ChatList isOpen={isOpen} />
+            <SidebarFooter isOpen={isOpen} />
           </div>
         </div>
-
-        <div style={{ 
-          opacity: isOpen ? 1 : 0, 
-          transition: "opacity 0.2s ease-in-out",
-          display: "flex",
-          flexDirection: "column",
-          flex: 1
-        }}>
-          <NewChatButton isOpen={isOpen} />
-          <ChatList isOpen={isOpen} />
-          <SidebarFooter isOpen={isOpen} />
-        </div>
-      </div>
-    </aside>
+      </aside>
+    )
   );
 }
 

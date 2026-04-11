@@ -1,94 +1,104 @@
-import { NextResponse } from 'next/server';
-// import { prisma } from '@/lib/prisma';
-import { getUserFromToken } from '@/lib/auth';
-import { PrismaClient } from '@prisma/client/extension';
-import { cookies } from 'next/headers';
+// app/api/auth/me/route.ts
+//
+// ⚠️  If you see "Property 'contact' / 'institution' / 'role' does not exist"
+// run `npx prisma generate` from the `ui/` directory. Your schema already has
+// these fields — the generated client just needs to be refreshed.
+//
+// Schema facts that affect this file:
+//   role  Role @default(USER)  — enum (USER | ASSISTANT), NOT a free-text field.
+//         Users cannot self-assign a role via the profile form. It is returned
+//         in GET but excluded from PUT. If you need to change a user's role,
+//         do it in a separate admin-only endpoint.
+//
+//   contact     String?   — editable via PUT
+//   institution String?   — editable via PUT
 
-const prisma = new PrismaClient();
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { getUserFromToken } from "@/lib/auth";
 
+// ── GET /api/auth/me ──────────────────────────────────────────────────────────
 export async function GET(req: Request) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get('token')?.value;   // ← Ambil dari cookie
-
-    if (!token) {
-      return NextResponse.json({ error: 'Akses tidak sah' }, { status: 401 });
+    const authHeader = req.headers.get("authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return NextResponse.json({ error: "Akses tidak sah" }, { status: 401 });
     }
 
-    const userId = getUserFromToken(token);   // fungsi kamu tetap dipakai
-
+    const token = authHeader.substring(7);
+    const userId = getUserFromToken(token);
     if (!userId) {
-      return NextResponse.json({ error: 'Token tidak valid' }, { status: 401 });
+      return NextResponse.json({ error: "Token tidak valid" }, { status: 401 });
     }
 
-
-    const user = await prisma.user.findUnique({ where: { id: userId }, select: {
-    id: true,
-    name: true,
-    email: true,
-    role: true,        // 
-    contact: true,     // 
-    institution: true, //
-  } });
+    const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user) {
-      return NextResponse.json({ error: 'Pengguna tidak ditemukan' }, { status: 404 });
+      return NextResponse.json({ error: "Pengguna tidak ditemukan" }, { status: 404 });
     }
 
     return NextResponse.json({
-      id: user.id,
-      username: user.name,
-      email: user.email,
-      contact: user.contact || '',
-      institution: user.institution || '',
-      role: user.role || '',
-      createdAt: user.createdAt,
+      id:          user.id,
+      name:        user.name        ?? "",
+      email:       user.email,
+      image:       user.image       ?? "",
+      contact:     user.contact     ?? "",
+      institution: user.institution ?? "",
+      role:        user.role,           // Role enum value: "USER" | "ASSISTANT"
+      createdAt:   user.createdAt,
     });
   } catch (error) {
-    console.error('[API /auth/me] ', error);
-    return NextResponse.json({ error: 'Terjadi kesalahan server' }, { status: 500 });
+    console.error("[GET /api/auth/me]", error);
+    return NextResponse.json({ error: "Terjadi kesalahan server" }, { status: 500 });
   }
 }
 
+// ── PUT /api/auth/me ──────────────────────────────────────────────────────────
+// Only allows updating profile fields — NOT role (that's an auth concern).
 export async function PUT(req: Request) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get('token')?.value;   // ← Ambil dari cookie
-
-    if (!token) {
-      return NextResponse.json({ error: 'Akses tidak sah' }, { status: 401 });
+    const authHeader = req.headers.get("authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return NextResponse.json({ error: "Akses tidak sah" }, { status: 401 });
     }
 
-    const userId = getUserFromToken(token);   // fungsi kamu tetap dipakai
-
+    const token = authHeader.substring(7);
+    const userId = getUserFromToken(token);
     if (!userId) {
-      return NextResponse.json({ error: 'Token tidak valid' }, { status: 401 });
+      return NextResponse.json({ error: "Token tidak valid" }, { status: 401 });
     }
-    const body = await req.json();
-    const { contact, institution, role } = body;
 
-    const updatedUser = await prisma.user.update({
+    const body = await req.json().catch(() => ({}));
+
+    // Only pick the fields that are safe for users to edit themselves.
+    // `role` is intentionally excluded — it is a Role enum and must only be
+    // changed by an admin. Accepting it here would allow privilege escalation.
+    const { name, contact, institution } = body as {
+      name?: string;
+      contact?: string;
+      institution?: string;
+    };
+
+    const updated = await prisma.user.update({
       where: { id: userId },
-      select: {
-       id: true,
-    name: true,
-    email: true,
-    role: true,        // 
-    contact: true,     // 
-    institution: true, //
+      data: {
+        ...(name        !== undefined && { name:        name        || null }),
+        ...(contact     !== undefined && { contact:     contact     || null }),
+        ...(institution !== undefined && { institution: institution || null }),
       },
     });
 
     return NextResponse.json({
-      id: updatedUser.id,
-      username: updatedUser.username,
-      email: updatedUser.email,
-      contact: updatedUser.contact || '',
-      institution: updatedUser.institution || '',
-      role: updatedUser.role || '',
-      createdAt: updatedUser.createdAt,
+      id:          updated.id,
+      name:        updated.name        ?? "",
+      email:       updated.email,
+      image:       updated.image       ?? "",
+      contact:     updated.contact     ?? "",
+      institution: updated.institution ?? "",
+      role:        updated.role,
+      createdAt:   updated.createdAt,
     });
   } catch (error) {
-    console.error('[API /auth/me PUT] ', error);
-    return NextResponse.json({ error: 'Terjadi kesalahan server' }, { status: 500 });
+    console.error("[PUT /api/auth/me]", error);
+    return NextResponse.json({ error: "Terjadi kesalahan server" }, { status: 500 });
   }
 }

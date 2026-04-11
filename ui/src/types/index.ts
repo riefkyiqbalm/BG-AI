@@ -2,18 +2,19 @@
 
 // ── Roles ─────────────────────────────────────────────────────
 
-export type Role = "user" | "assistant" | "system";
+export type Role = "USER" | "ASSISTANT";
 
 // ── User ──────────────────────────────────────────────────────
 
 export interface User {
-  id:    string;
-  name:  string;
-  email: string;
-  contact: string;
-  role: Role;
-  institution: string;
-  createdAt: string;
+  id:          string;
+  name:        string;
+  email:       string;
+  image:       string;
+  contact:     string;      // String? in schema — "" when null
+  institution: string;      // String? in schema — "" when null
+  role:        Role;        // Role enum — NOT a free-text job title
+  createdAt:   string;      // ISO date string after JSON serialisation
 }
 
 // ── Chat Messages ─────────────────────────────────────────────
@@ -56,8 +57,8 @@ export interface AuthContextType {
   user:            User | null;
   isAuthenticated: boolean;
   loading:         boolean;
-  login:           (name: string, password: string) => Promise<void>;
-  register:        (email: string, name: string, password: string) => Promise<void>;
+  login:           (email: string, password: string) => Promise<void>;
+  register:        (name: string, email: string, password: string) => Promise<void>;
   logout:          () => void;
 }
 

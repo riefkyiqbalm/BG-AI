@@ -1,179 +1,212 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { AuthContextType, User } from "../types";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import Cookies from "js-cookie";
-import { useRouter } from "next/navigation"; // Gunakan router Next.js untuk navigasi yang halus
+import { useRouter } from "next/navigation";
+import type { AuthContextType, Role, User } from "@/types";
 
-const AUTH_USER_KEY = "bgai_auth_user"; // Ubah nama agar lebih konsisten
+const AUTH_USER_KEY = "bgai_auth_user";
 const AUTH_TOKEN_KEY = "bgai_auth_token";
 
+// ─── Cookie options ──────────────────────────────────────────────────────────
+// BUG FIX #1 — token expiry was 1 day but user cookie was 2 days.
+// On day 2 the user cookie existed but the token was gone → white-screen loop.
+// Both are now 7 days and kept in sync.
+const COOKIE_OPTS: Cookies.CookieAttributes = {
+  expires: 7,   // days
+  path: "/",
+  sameSite: "Lax",
+  // secure: true  ← uncomment when deploying to HTTPS
+};
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+function saveAuthCookies(token: string, user: User) {
+  Cookies.set(AUTH_TOKEN_KEY, token, COOKIE_OPTS);
+  Cookies.set(AUTH_USER_KEY, JSON.stringify(user), COOKIE_OPTS);
+}
+
+function clearAuthCookies() {
+  Cookies.remove(AUTH_TOKEN_KEY, { path: "/" });
+  Cookies.remove(AUTH_USER_KEY, { path: "/" });
+}
+
+function parseUserCookie(): User | null {
+  try {
+    const raw = Cookies.get(AUTH_USER_KEY);
+    return raw ? (JSON.parse(raw) as User) : null;
+  } catch {
+    return null;
+  }
+}
+
+// ─── Context ─────────────────────────────────────────────────────────────────
 const defaultAuth: AuthContextType = {
   user: null,
   isAuthenticated: false,
   loading: true,
   login: async () => {},
-  register: async (name: string, email: string, password: string) => {},
+  register: async () => {},
   logout: () => {},
 };
 
 const AuthContext = createContext<AuthContextType>(defaultAuth);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  // BUG FIX #2 — was initialised as null, so every refresh started in
+  // "logged-out" state and triggered a redirect before the useEffect ran.
+  // Now we read the cookie synchronously so the initial state is correct.
+  const [user, setUser] = useState<User | null>(() => parseUserCookie());
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  // --- 1. EFEK SAAT PAGE REFRESH ---
-// --- 1. EFEK SAAT PAGE REFRESH (Di dalam AuthContext.tsx) ---
-useEffect(() => {
-  const validateAndSetUser = async () => {
-    const storedUser = Cookies.get(AUTH_USER_KEY);
-    const token = Cookies.get(AUTH_TOKEN_KEY);
+  // ── Logout (defined before useEffect so it can be called inside it) ────────
+  // BUG FIX #3 — logout was defined AFTER the useEffect that called it, so
+  // the closure captured an undefined reference on first render.
+  const logout = useCallback(() => {
+    setUser(null);
+    clearAuthCookies();
+    router.push("/login");
+  }, [router]);
 
-    if (storedUser && token) {
+  // ── Validate session on mount / refresh ────────────────────────────────────
+  useEffect(() => {
+    const validate = async () => {
+      const token = Cookies.get(AUTH_TOKEN_KEY);
+
+      // No token → definitely not logged in, stop loading immediately.
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+
       try {
-        const response = await fetch('/api/auth/me', {
-          method: 'GET',
+        const res = await fetch("/api/auth/me", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        if (response.ok) {
-          const dbUser = await response.json(); // Data flat dari route.ts kamu
-
-          // Update User Data untuk mencakup field baru (contact, role, dll)
-          const updatedUserData: User = {
-            id: dbUser.id.toString(),
-            name: dbUser.name,
-            email: dbUser.email,
-            // Tambahkan field ini jika tipe 'User' kamu mendukungnya
-            contact: dbUser.contact,
-            role: dbUser.role,
-            institution: dbUser.institution,
-            createdAt: dbUser.createdAt,
-          };
-
-          // SINKRONISASI: Selalu update cookie dengan data terbaru dari DB
-          // Ini mencegah error "mismatch" jika ada perubahan data di DB
-          Cookies.set(AUTH_USER_KEY, JSON.stringify(updatedUserData), { expires: 7, path: '/' });
-          setUser(updatedUserData);
-          
-        } else {
-          // Jika token expired (401), baru logout
+        if (!res.ok) {
+          // 401 = token expired/invalid → clean up and redirect
           logout();
+          return;
         }
-      } catch (error) {
-        console.error("Auth mismatch or error:", error);
-        logout();
+
+        const dbUser = await res.json();
+
+        const fresh: User = {
+          id:          dbUser.id.toString(),
+          name:        dbUser.name        ?? "",
+          email:       dbUser.email,
+          image:       dbUser.image       ?? "",
+          contact:     dbUser.contact     ?? "",
+          institution: dbUser.institution ?? "",
+          role:        dbUser.role as Role,
+          createdAt:   dbUser.createdAt,
+        };
+
+        // Keep cookies in sync with latest DB data
+        Cookies.set(AUTH_USER_KEY, JSON.stringify(fresh), COOKIE_OPTS);
+        setUser(fresh);
+      } catch (err) {
+        console.error("[AuthContext] validate error:", err);
+        // Network error — keep the locally cached user so the UI doesn't
+        // flash a redirect. Loading is still resolved below.
+      } finally {
+        setLoading(false);
       }
-    }
-    setLoading(false);
-  };
+    };
 
-  validateAndSetUser();
-}, [router]);
+    validate();
+    // BUG FIX #4 — dependency array had [router] which caused the effect to
+    // re-run every navigation, triggering rapid duplicate /api/auth/me calls.
+    // Empty array = run once on mount, which is the correct behaviour.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-
-  // --- 2. FUNGSI LOGIN ---
-  const login = async (email: string, password: string) => {
+  // ── Login ──────────────────────────────────────────────────────────────────
+  const login = useCallback(async (email: string, password: string) => {
     setLoading(true);
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
       });
-      
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Login failed');
-      
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Login gagal");
+
       const userData: User = {
-        id: data.user.id.toString(),
-        name: data.user.name,
-        email: data.user.email,
-        contact: data.user.contact || '',
-        institution: data.user.institution || '',
-        role: data.user.role || '',
-        createdAt: data.user.createdAt,
+        id:          data.user.id.toString(),
+        name:        data.user.name        ?? "",
+        email:       data.user.email,
+        image:       data.user.image       ?? "",
+        contact:     data.user.contact     ?? "",
+        institution: data.user.institution ?? "",
+        role:        data.user.role as Role,  // "USER" | "ASSISTANT" from schema enum
+        createdAt:   data.user.createdAt,
       };
 
-      // Simpan TOKEN di Cookie (Wajib untuk Middleware)
-      Cookies.set(AUTH_TOKEN_KEY, data.token, { expires: 1, path: '/' });
-
-      // Simpan DATA USER di Cookie (Agar awet saat refresh dan terbaca server)
-      Cookies.set(AUTH_USER_KEY, JSON.stringify(userData), { expires: 2, path: '/' });
-      
+      saveAuthCookies(data.token, userData);
       setUser(userData);
 
-      // Gunakan router.push agar transisi ke chat lebih halus (SPA feel)
-      // router.push('/chat');
-      
-    } catch (error) {
-      console.error('Login error:', error);
-      throw error;
+      // Navigate after state is committed
+      router.push(`/chat/${userData.id}`);
+    } catch (err) {
+      console.error("[AuthContext] login error:", err);
+      throw err;
     } finally {
       setLoading(false);
     }
-  };
+  }, [router]);
 
-  // --- 3. FUNGSI REGISTER ---
-  const register = async (name: string, email: string, password: string) => { 
-  setLoading(true);
-  try {
-    const response = await fetch('/api/auth/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      // KIRIMKAN name KE BACKEND
-      body: JSON.stringify({ name, email, password }) 
-    });
-    
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.error || 'Registration failed');
-    }
-    
-    // Pastikan fungsi login juga dipanggil dengan parameter yang benar 
-    // (Jika login hanya butuh email & password, ini sudah benar)
-    await login(email, password);
+  // ── Register ───────────────────────────────────────────────────────────────
+  const register = useCallback(
+    async (name: string, email: string, password: string) => {
+      setLoading(true);
+      try {
+        const res = await fetch("/api/auth/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, password }),
+        });
 
-  } catch (error) {
-    console.error('Register error:', error);
-    throw error;
-  } finally {
-    setLoading(false);
-  }
-};
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.error || "Pendaftaran gagal");
+        }
 
-  // --- 4. FUNGSI LOGOUT ---
-  const logout = () => {
-    setUser(null);
-    // Hapus semua jejak di Cookie
-    Cookies.remove(AUTH_USER_KEY, { path: '/' });
-    Cookies.remove(AUTH_TOKEN_KEY, { path: '/' });
-    
-    // Redirect ke login menggunakan router untuk transisi yang lebih halus
-    router.push('/login');
-  };
+        // Auto-login after successful registration
+        await login(email, password);
+      } catch (err) {
+        console.error("[AuthContext] register error:", err);
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [login]
+  );
 
-  const value = useMemo(
-    () => ({
-      user,
-      loading,
-      isAuthenticated: !!user,
-      login,
-      register,
-      logout,
-    }),
-    [user, loading]
+  // BUG FIX #5 — useMemo dependency array was [user, loading] which excluded
+  // login/register/logout. Any time those callbacks changed (e.g. after router
+  // stabilised) the context value became stale and consumers got the old fns.
+  const value = useMemo<AuthContextType>(
+    () => ({ user, loading, isAuthenticated: !!user, login, register, logout }),
+    [user, loading, login, register, logout]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within AuthProvider");
-  }
-  return context;
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error("useAuth must be used within <AuthProvider>");
+  return ctx;
 }
