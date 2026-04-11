@@ -10,7 +10,7 @@ export default function RegisterForm() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
-  const [username, setUsername] = useState('')
+  const [name, setname] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -33,12 +33,12 @@ export default function RegisterForm() {
     }
 
     try {
-      await register(email, password, username)
+      await register(email, password, name)
       setSuccess('Registration successful! Redirecting...')
       setEmail('')
       setPassword('')
       setConfirmPassword('')
-      setUsername('')
+      setname('')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration failed')
     }
@@ -119,9 +119,9 @@ export default function RegisterForm() {
           <input
             style={styles.input}
             type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="Enter username"
+            value={name}
+            onChange={(e) => setname(e.target.value)}
+            placeholder="Enter name"
             disabled={loading}
           />
         </div>

@@ -8,7 +8,7 @@ export type Role = "user" | "assistant" | "system";
 
 export interface User {
   id:    string;
-  username:  string;
+  name:  string;
   email: string;
   contact: string;
   role: Role;
@@ -56,8 +56,8 @@ export interface AuthContextType {
   user:            User | null;
   isAuthenticated: boolean;
   loading:         boolean;
-  login:           (username: string, password: string) => Promise<void>;
-  register:        (email: string, username: string, password: string) => Promise<void>;
+  login:           (name: string, password: string) => Promise<void>;
+  register:        (email: string, name: string, password: string) => Promise<void>;
   logout:          () => void;
 }
 

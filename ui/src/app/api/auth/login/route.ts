@@ -15,7 +15,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Email atau password salah' }, { status: 401 });
     }
 
-    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET!, { expiresIn: '1d' });
+    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET!, { expiresIn: '7d' });
 
     return NextResponse.json({
       user: { id: user.id, email: user.email },

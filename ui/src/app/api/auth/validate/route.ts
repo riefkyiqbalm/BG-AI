@@ -1,38 +1,40 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
 import { getUserFromToken } from '@/lib/auth';
+import { PrismaClient } from '@prisma/client/extension';
+
+const prisma = new PrismaClient();
 
 export async function GET(req: Request) {
   try {
     const authHeader = req.headers.get('authorization');
     if (!authHeader?.startsWith('Bearer ')) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Akses tidak sah' }, { status: 401 });
     }
 
     const token = authHeader.substring(7);
     const userId = getUserFromToken(token);
 
     if (!userId) {
-      return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+      return NextResponse.json({ error: 'Token tidak valid' }, { status: 401 });
     }
 
     const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      return NextResponse.json({ error: 'Pengguna tidak ditemukan' }, { status: 404 });
     }
 
     return NextResponse.json({
       id: user.id,
-      username: user.username,
+      name: user.name,
       email: user.email,
-      contact: user.contact || '',
-      institution: user.institution || '',
-      role: user.role || '',
+      contact: user.contact,
+      institution: user.institution,
+      role: user.role,
       createdAt: user.createdAt,
     });
   } catch (error) {
     console.error('[API /auth/me] ', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({ error: 'Terjadi kesalahan server' }, { status: 500 });
   }
 }
 
@@ -40,18 +42,18 @@ export async function PUT(req: Request) {
   try {
     const authHeader = req.headers.get('authorization');
     if (!authHeader?.startsWith('Bearer ')) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Akses tidak sah' }, { status: 401 });
     }
 
     const token = authHeader.substring(7);
     const userId = getUserFromToken(token);
 
     if (!userId) {
-      return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+      return NextResponse.json({ error: 'Token tidak valid' }, { status: 401 });
     }
 
-    const body = await req.json();
-    const { contact, institution, role } = body;
+    const body = await req.json().catch(() => ({}));
+    const { contact = '', institution = '', role = '' } = body;
 
     const updatedUser = await prisma.user.update({
       where: { id: userId },
@@ -64,8 +66,8 @@ export async function PUT(req: Request) {
 
     return NextResponse.json({
       id: updatedUser.id,
-      username: updatedUser.username,
-      email: updatedUser.username,
+      name: updatedUser.name,
+      email: updatedUser.email,
       contact: updatedUser.contact || '',
       institution: updatedUser.institution || '',
       role: updatedUser.role || '',
@@ -73,6 +75,6 @@ export async function PUT(req: Request) {
     });
   } catch (error) {
     console.error('[API /auth/me PUT] ', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({ error: 'Terjadi kesalahan server' }, { status: 500 });
   }
 }

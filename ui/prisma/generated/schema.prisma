@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Model untuk Autentikasi User
+model User {
+  id          String   @id @default(cuid())
+  name        String?
+  email       String   @unique
+  password    String
+  image       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  contact     String?
+  role        Role     @default(USER)
+  institution String?
+
+  // Relasi ke Chat
+  sessions ChatSession[]
+}
+
+// Model Chat Session (Untuk memperbaiki error POST /api/chat/sessions)
+model ChatSession {
+  id        String   @id @default(cuid())
+  title     String   @default("New Chat")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relasi ke User
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Relasi ke Messages
+  messages Message[]
+}
+
+// Model Isi Pesan dalam Chat
+model Message {
+  id        String   @id @default(cuid())
+  content   String   @db.Text
+  role      Role     @default(USER) // USER atau ASSISTANT
+  createdAt DateTime @default(now())
+
+  // Relasi ke ChatSession
+  sessionId String
+  session   ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+}
+
+enum Role {
+  USER
+  ASSISTANT
+}

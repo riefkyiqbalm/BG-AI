@@ -2,11 +2,14 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { log } from 'node:console';
+import { useAuth } from '@/context/AuthContext';
 
 export default function LogoIcon() {
+  const { user, isAuthenticated } = useAuth();  
+
+  const targetPath = (isAuthenticated && user?.id) ? `/chat/${user.id}` : '/login';
   return (
-    <Link href='/' style={S.brandAnchor}>
+    <Link href={targetPath} style={S.brandAnchor}>
         <div style={S.logo}>B•G</div>
         <div style={S.brandText}>BG-AI</div>
       </Link>

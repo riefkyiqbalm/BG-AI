@@ -70,7 +70,7 @@ echo [4/4] Starting Next.js Frontend (Port 3000)...
 start cmd /k "cd ui && npm run dev"
 
 echo [5/5] Starting Prisma Studio (Port 51272)...
-start "Prisma Studio" cmd /k "cd ./ui && npx prisma studio"
+start "Prisma Studio" cmd /k "cd ./ui && npx prisma studio --browser=none"
 
 
 echo.
@@ -80,6 +80,7 @@ echo
 echo  Frontend: http://localhost:3000
 echo  Backend:  http://localhost:5000
 echo  LM Studio: http://localhost:1234
+echo  Prisma Studio: http://localhost:51272
 echo ====================================================================
 echo.
 pause

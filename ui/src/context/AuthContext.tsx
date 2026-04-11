@@ -13,7 +13,7 @@ const defaultAuth: AuthContextType = {
   isAuthenticated: false,
   loading: true,
   login: async () => {},
-  register: async (username: string, email: string, password: string) => {},
+  register: async (name: string, email: string, password: string) => {},
   logout: () => {},
 };
 
@@ -44,7 +44,7 @@ useEffect(() => {
           // Update User Data untuk mencakup field baru (contact, role, dll)
           const updatedUserData: User = {
             id: dbUser.id.toString(),
-            username: dbUser.username,
+            name: dbUser.name,
             email: dbUser.email,
             // Tambahkan field ini jika tipe 'User' kamu mendukungnya
             contact: dbUser.contact,
@@ -55,7 +55,7 @@ useEffect(() => {
 
           // SINKRONISASI: Selalu update cookie dengan data terbaru dari DB
           // Ini mencegah error "mismatch" jika ada perubahan data di DB
-          Cookies.set(AUTH_USER_KEY, JSON.stringify(updatedUserData), { expires: 2, path: '/' });
+          Cookies.set(AUTH_USER_KEY, JSON.stringify(updatedUserData), { expires: 7, path: '/' });
           setUser(updatedUserData);
           
         } else {
@@ -89,7 +89,7 @@ useEffect(() => {
       
       const userData: User = {
         id: data.user.id.toString(),
-        username: data.user.username,
+        name: data.user.name,
         email: data.user.email,
         contact: data.user.contact || '',
         institution: data.user.institution || '',
@@ -117,14 +117,14 @@ useEffect(() => {
   };
 
   // --- 3. FUNGSI REGISTER ---
-  const register = async (username: string, email: string, password: string) => { 
+  const register = async (name: string, email: string, password: string) => { 
   setLoading(true);
   try {
     const response = await fetch('/api/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      // KIRIMKAN USERNAME KE BACKEND
-      body: JSON.stringify({ username, email, password }) 
+      // KIRIMKAN name KE BACKEND
+      body: JSON.stringify({ name, email, password }) 
     });
     
     if (!response.ok) {

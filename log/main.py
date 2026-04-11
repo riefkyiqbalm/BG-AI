@@ -266,7 +266,7 @@ def api_config():
 if __name__ == "__main__":
     print(f"""
 =================================================================
-  SATU-AI | NutriGuard  -  Flask Backend
+  BG-AI -  Flask Backend
 =================================================================
   Port       : {FLASK_PORT}
   LM Studio  : {LM_STUDIO_BASE}

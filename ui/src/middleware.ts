@@ -1,48 +1,55 @@
+
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
-  // Ambil token dari cookie (Nama harus sama dengan di AuthContext)
   const token = request.cookies.get("bgai_auth_token")?.value;
   const { pathname } = request.nextUrl;
 
-  // 1. IZINKAN: File statis, API, dan aset internal Next.js
+  // 1. SKIP: Aset statis dan API internal
+  // Kita biarkan API tetap jalan karena handle proteksinya biasanya di dalam Route Handler itu sendiri
   if (
-    pathname.startsWith('/api') || 
     pathname.startsWith('/_next') || 
-    pathname.includes('favicon.ico')
+    pathname.startsWith('/api') ||
+    pathname.includes('favicon.ico') ||
+    pathname.includes('.') // Menangkap file seperti .png, .jpg, dll
   ) {
     return NextResponse.next();
   }
 
-  // 2. DEFINISI JALUR PUBLIK: Halaman yang BISA diakses tanpa login
-  // Jangan masukkan "/" di sini jika "/" adalah Dashboard utama kamu
-  const publicPaths = ["/login", "/terms", "/404"];
-  const isPublicPath = publicPaths.some((path) => pathname === path);
+  // 2. DEFINISI JALUR PUBLIK (URL yang diketik user di browser)
+  // Perhatikan: Tidak pakai "(auth)" karena itu Route Group
+  const publicPaths = ["/login", "/register", "/terms", "/404"];
+  const isPublicPath = publicPaths.includes(pathname);
 
-  // 3. LOGIKA REDIRECT:
+  // 3. LOGIKA REDIRECT
 
-  // KASUS A: User SUDAH Login tapi mencoba buka halaman /login
+  // Kasus A: User SUDAH Login tapi mau buka halaman Login/Register
+  // Kita tendang ke "/" (Dashboard) atau bisa juga ke "/chat"
   if (token && isPublicPath) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
-  // KASUS B: User BELUM Login dan mencoba akses halaman terproteksi (termasuk "/")
+  // Kasus B: User BELUM Login dan mencoba akses halaman terproteksi
+  // Halaman terproteksi: "/", "/chat/[id]", "/profile", dll.
   if (!token && !isPublicPath) {
     const loginUrl = new URL("/login", request.url);
-    // Simpan lokasi asal agar user bisa balik lagi setelah login
-    loginUrl.searchParams.set("from", pathname);
-    return NextResponse.redirect(loginUrl);
+    
+    // Jangan redirect jika user memang sudah di halaman login (mencegah infinite loop)
+    if (pathname !== "/login") {
+      loginUrl.searchParams.set("from", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
   }
 
-  // KASUS C: User sudah login dan akses halaman terproteksi, atau akses public path tanpa login
+  // Kasus C: User sudah login dan akses halaman terproteksi, atau akses public path tanpa login
   return NextResponse.next();
 }
 
-// Konfigurasi Matcher agar middleware tidak berjalan di setiap request gambar/css
+// Konfigurasi Matcher
 export const config = {
   matcher: [
-    /*
+      /*
      * Match semua request kecuali:
      * - api (sudah ditangani di dalam fungsi)
      * - _next/static (file statis)

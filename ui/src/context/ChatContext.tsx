@@ -1,67 +1,86 @@
 "use client";
 
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import { ChatContextType, ChatMessage, ChatSession } from "../types";
-import { sendChat, ChatResponse } from "../lib/api";
-
-const CHAT_STORAGE_KEY = "bgai_chat_sessions";
+import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { ChatContextType, ChatMessage, ChatSession } from "@/types";
+import { useRouter } from "next/navigation"; 
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
-
-function makeSession(name?: string): ChatSession {
-  const now = new Date().toISOString();
-  return {
-    id: `session_${Date.now()}`,
-    title: name || `Sesi Chat ${new Date().toLocaleString()}`,
-    createdAt: now,
-    updatedAt: now,
-    messages: [],
-  };
-}
 
 export function ChatProvider({ children }: { children: React.ReactNode }) {
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [activeSessionId, setActiveSessionId] = useState<string>("");
-  const [loadingSessionId, setLoadingSessionId] = useState<string | null>(null); // State loading per session
+  const [loadingSessionId, setLoadingSessionId] = useState<string | null>(null);
 
+  // FIX: Pindahkan useRouter ke tingkat komponen atas
+  const router = useRouter();
+
+  // Load awal dari Database via API (Bukan localStorage lagi agar sinkron antar perangkat)
   useEffect(() => {
-    const saved = localStorage.getItem(CHAT_STORAGE_KEY);
-    if (saved) {
+    const fetchSessions = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
       try {
-        const data = JSON.parse(saved) as ChatSession[];
-        setSessions(data);
-        if (data.length > 0) setActiveSessionId(data[0].id);
-      } catch {
-        localStorage.removeItem(CHAT_STORAGE_KEY);
+        const res = await fetch("/api/chat/sessions", {
+          headers: { "Authorization": `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setSessions(data.sessions);
+          if (data.sessions.length > 0) setActiveSessionId(data.sessions[0].id);
+        }
+      } catch (err) {
+        console.error("Gagal memuat sesi chat:", err);
       }
-    } else {
-      const initialSession = makeSession("Sesi Pertama");
-      setSessions([initialSession]);
-      setActiveSessionId(initialSession.id);
-    }
+    };
+    fetchSessions();
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(sessions));
-  }, [sessions]);
+  const createSession = async () => {
+    try {
+      const token = localStorage.getItem("token"); 
+      const response = await fetch("/api/chat/sessions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+      });
 
-  const createSession = (name?: string) => {
-    const s = makeSession(name);
-    setSessions((prev) => [s, ...prev]);
-    setActiveSessionId(s.id);
+      if (!response.ok) throw new Error("Gagal membuat sesi");
+
+      const data = await response.json();
+      const newUuid = data.session.id;
+
+      setSessions((prev) => [data.session, ...prev]);
+      setActiveSessionId(newUuid);
+
+      // Navigasi setelah sesi terbuat di DB
+      router.push(`/chat/${newUuid}`);
+    } catch (error) {
+      console.error("Error creating session:", error);
+      alert("Maaf, gagal membuat chat baru.");
+    }
   };
 
-  const deleteSession = (sessionId: string) => {
-    setSessions((prev) => prev.filter((session) => session.id !== sessionId));
-    if (activeSessionId === sessionId) {
-      const next = sessions.find((s) => s.id !== sessionId);
-      setActiveSessionId(next?.id || "");
+  const deleteSession = async (sessionId: string) => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`/api/chat/sessions/${sessionId}`, {
+        method: "DELETE",
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+
+      if (res.ok) {
+        setSessions((prev) => prev.filter((session) => session.id !== sessionId));
+        if (activeSessionId === sessionId) {
+          const next = sessions.find((s) => s.id !== sessionId);
+          setActiveSessionId(next?.id || "");
+          router.push(next ? `/chat/${next.id}` : '/chat');
+        }
+      }
+    } catch (error) {
+      console.error("Error deleting session:", error);
     }
   };
 
@@ -71,10 +90,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const addMessage = (
-    sessionId: string,
-    payload: Omit<ChatMessage, "id" | "createdAt">,
-  ) => {
+  const addMessage = (sessionId: string, payload: Omit<ChatMessage, "id" | "createdAt">) => {
     setSessions((prev) =>
       prev.map((session) => {
         if (session.id !== sessionId) return session;
@@ -86,66 +102,61 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         return {
           ...session,
           updatedAt: new Date().toISOString(),
-          messages: [...session.messages, msg],
+          messages: [...(session.messages || []), msg],
         };
-      }),
+      })
     );
   };
 
   const sendMessage = async (text: string) => {
-    if (!text.trim()) return;
+    if (!text.trim() || !activeSessionId) return;
 
     const targetSessionId = activeSessionId;
 
-    // --- FIX 1: ANTI DOUBLE SEND (GUARD) ---
-    if (loadingSessionId === targetSessionId) {
-      console.log("[ChatContext] Session busy, ignoring duplicate send");
-      return;
-    }
-
-    // --- FIX 2: SET LOADING HANYA UNTUK SESSION INI ---
+    if (loadingSessionId === targetSessionId) return;
     setLoadingSessionId(targetSessionId);
 
-    // Update Judul Sesi jika pesan pertama
+    // Update judul otomatis jika ini pesan pertama
     const currentSession = sessions.find(s => s.id === targetSessionId);
-    if (currentSession && currentSession.messages.length === 0) {
-      setSessions(prev => prev.map(s => 
-        s.id === targetSessionId 
-          ? { ...s, title: text.substring(0, 30) + (text.length > 30 ? "..." : "") } 
-          : s
-      ));
+    if (currentSession && (!currentSession.messages || currentSession.messages.length === 0)) {
+      const newTitle = text.substring(0, 30) + (text.length > 30 ? "..." : "");
+      setSessions(prev => prev.map(s => s.id === targetSessionId ? { ...s, title: newTitle } : s));
+      
+      // Update judul di database (Background process)
+      const token = localStorage.getItem("token");
+      fetch(`/api/chat/sessions/${targetSessionId}`, {
+        method: 'PATCH',
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+        body: JSON.stringify({ title: newTitle })
+      });
     }
 
-    // Bangun list pesan untuk dikirim ke backend
-    const messagesToSend = (currentSession?.messages || []).map(msg => ({
-      role: msg.role as "user" | "assistant" | "system",
-      content: msg.text
-    }));
-    messagesToSend.push({ role: "user", content: text });
-
-    // Tambah pesan user ke UI (Optimistic)
-    addMessage(targetSessionId, {
-      sessionId: targetSessionId,
-      role: "user",
-      text,
-    });
+    // Optimistic Update: Tampilkan pesan user langsung
+    addMessage(targetSessionId, { sessionId: targetSessionId, role: "user", text });
 
     try {
-      const response: ChatResponse = await sendChat(messagesToSend);
-      
-      if (response.error) {
-        addMessage(targetSessionId, {
-          sessionId: targetSessionId,
-          role: "assistant",
-          text: `❌ Error (${response.error}): ${response.reply}`,
-        });
-      } else {
-        addMessage(targetSessionId, {
-          sessionId: targetSessionId,
-          role: "assistant",
-          text: response.reply,
-        });
-      }
+      const token = localStorage.getItem("token");
+      // Kirim pesan ke API Endpoint Message yang baru
+      const response = await fetch(`/api/chat/sessions/${targetSessionId}/messages`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ message: text }) // Kirim parameter "message" saja
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) throw new Error(data.error || "Gagal mendapatkan respon API");
+
+      // Tampilkan pesan dari AI
+      addMessage(targetSessionId, {
+        sessionId: targetSessionId,
+        role: "assistant",
+        text: data.response.text, // Pastikan field "text" sesuai dengan DB Message Anda
+      });
+
     } catch (err: any) {
       addMessage(targetSessionId, {
         sessionId: targetSessionId,
@@ -153,22 +164,20 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         text: `❌ Error: ${err.message || "Gagal menghubungi backend"}`,
       });
     } finally {
-      // --- FIX 3: RELEASE LOADING ---
       setLoadingSessionId(null);
     }
   };
 
   const activeSession = useMemo(
     () => sessions.find((s) => s.id === activeSessionId) || null,
-    [sessions, activeSessionId],
+    [sessions, activeSessionId]
   );
 
-  // --- FIX 4: MASUKKAN loadingSessionId KE VALUE PROVIDER ---
   const value: ChatContextType = {
     sessions,
     activeSessionId,
     activeSession,
-    loadingSessionId, // Sekarang UI bisa baca ini
+    loadingSessionId,
     createSession,
     setActiveSession,
     addMessage,

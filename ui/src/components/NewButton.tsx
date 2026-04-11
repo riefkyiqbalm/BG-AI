@@ -6,6 +6,7 @@ export default function NewChatButton({ isOpen }: { isOpen: boolean }) {
   const { createSession } = useChat();
 
   if (!isOpen) return null;
+  
 
   return (
     <button onClick={() => createSession()} style={S.newChatBtn}>

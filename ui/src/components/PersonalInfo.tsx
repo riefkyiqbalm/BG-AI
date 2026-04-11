@@ -8,7 +8,7 @@ import FormatButton from './FormatButton';
 
 interface DbUser {
   id: number;
-  username: string;
+  name: string;
   email: string;
   contact?: string;
   institution?: string;
@@ -24,7 +24,7 @@ export default function PersonalInfo({ onProfileUpdated }: PersonalInfoProps) {
   const [loading, setLoading] = useState(true);
   const [dbUser, setDbUser] = useState<DbUser | null>(null);
   const [email, setEmail] = useState('');
-  const [firstName, setFirstName] = useState('');
+  const [name,setName]=useState('');
   const [contact, setContact] = useState('');
   const [institution, setInstitution] = useState('');
   const [role, setRole] = useState('');
@@ -51,9 +51,10 @@ export default function PersonalInfo({ onProfileUpdated }: PersonalInfoProps) {
         const data = await response.json();
         setDbUser(data);
 
-        const userEmail = data.email || data.username || '';
+        const userEmail = data.email || '';
+        const name = data.name || ''
         setEmail(userEmail);
-        setFirstName(userEmail.substring(0, 6));
+        setName(name);
         setContact(data.contact || '');
         setInstitution(data.institution || '');
         setRole(data.role || '');
@@ -61,7 +62,7 @@ export default function PersonalInfo({ onProfileUpdated }: PersonalInfoProps) {
 
         if (onProfileUpdated) {
           onProfileUpdated({
-            name: data.username || userEmail.substring(0, 6),
+            name: name,
             email: userEmail,
             role: data.role || 'User',
           });
@@ -69,9 +70,10 @@ export default function PersonalInfo({ onProfileUpdated }: PersonalInfoProps) {
       } catch (err) {
         console.error('[PersonalInfo] ', err);
         if (user) {
-          const fallbackEmail = user.email || user.username || '';
+          const fallbackEmail = user.email || '';
+          const fallbackName = user.name || '';
           setEmail(fallbackEmail);
-          setFirstName(fallbackEmail.substring(0, 6));
+          setName(fallbackName);
         }
       } finally {
         setLoading(false);
@@ -93,11 +95,11 @@ export default function PersonalInfo({ onProfileUpdated }: PersonalInfoProps) {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
         <div>
           <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--muted)', marginBottom: '6px', letterSpacing: '.5px', textTransform: 'uppercase', fontFamily: 'var(--font-mono)' }}>Nama Depan</label>
-          <input readOnly value={firstName} style={{ width: '100%', background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '10px', padding: '11px 14px', color: 'var(--text)', fontFamily: 'var(--font-body)', fontSize: '14px', outline: 'none' }} />
+          <input  value={name} onChange={(e) =>setName(e.target.value)} style={{ width: '100%', background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '10px', padding: '11px 14px', color: 'var(--text)', fontFamily: 'var(--font-body)', fontSize: '14px', outline: 'none' }} />
         </div>
         <div>
           <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--muted)', marginBottom: '6px', letterSpacing: '.5px', textTransform: 'uppercase', fontFamily: 'var(--font-mono)' }}>Email</label>
-          <input readOnly value={email} style={{ width: '100%', background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '10px', padding: '11px 14px', color: 'var(--text)', fontFamily: 'var(--font-body)', fontSize: '14px', outline: 'none' }} />
+          <input  value={email} onChange={(e) => setEmail(e.target.value)} style={{ width: '100%', background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '10px', padding: '11px 14px', color: 'var(--text)', fontFamily: 'var(--font-body)', fontSize: '14px', outline: 'none' }} />
         </div>
       </div>
 
@@ -151,7 +153,7 @@ export default function PersonalInfo({ onProfileUpdated }: PersonalInfoProps) {
 
                 if (onProfileUpdated) {
                   onProfileUpdated({
-                    name: updated.username || updated.email || '',
+                    name: updated.name || updated.email || '',
                     email: updated.email || '',
                     role: updated.role || 'User',
                   });
@@ -172,7 +174,7 @@ export default function PersonalInfo({ onProfileUpdated }: PersonalInfoProps) {
               const revertedRole = dbUser?.role ?? 'User';
 
               setEmail(revertedEmail);
-              setFirstName(revertedName);
+              setName(revertedName);
               setContact(dbUser?.contact ?? '');
               setInstitution(dbUser?.institution ?? '');
               setRole(revertedRole);

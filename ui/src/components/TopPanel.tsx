@@ -28,7 +28,7 @@ export default function TopPanel() {
         <Link href="/dashboard" style={S.tbBtn} title="Dashboard">
           📊
         </Link>
-        <Link href="/auth" style={S.tbBtn} title="Pengaturan">
+        <Link href="/profile" style={S.tbBtn} title="Pengaturan">
           ⚙
         </Link>
       </div>

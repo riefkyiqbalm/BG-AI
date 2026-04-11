@@ -6,10 +6,10 @@ export async function POST(req: Request) {
   try {
     // 1. Ambil data (tambahkan pengecekan apakah body ada isi)
     const body = await req.json().catch(() => ({}));
-    const { email, password, username } = body;
+    const { email, password, name } = body;
 
     // 2. Validasi Data Lengkap
-    if (!email || !password || !username) {
+    if (!email || !password || !name) {
       return NextResponse.json(
         { error: 'Registrasi gagal: Email, password, dan username wajib diisi.' }, 
         { status: 400 }
@@ -21,7 +21,7 @@ export async function POST(req: Request) {
       where: {
         OR: [
           { email: email },
-          { username: username }
+          { name: name }
         ]
       }
     });
@@ -41,7 +41,7 @@ export async function POST(req: Request) {
     const newUser = await prisma.user.create({
       data: { 
         email, 
-        username, 
+        name, 
         password: hashedPassword 
       }
     });
@@ -52,7 +52,7 @@ export async function POST(req: Request) {
       user: { 
         id: newUser.id, 
         email: newUser.email, 
-        username: newUser.username 
+        name: newUser.name 
       } 
     }, { status: 201 });
 

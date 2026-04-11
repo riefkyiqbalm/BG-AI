@@ -100,3 +100,7 @@ yarn-error.log*
 out/
 
 /generated/prisma
+
+/src/generated/prisma
+
+/src/generated/prisma
