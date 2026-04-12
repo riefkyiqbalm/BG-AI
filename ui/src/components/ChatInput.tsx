@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react'
 import { useAuth } from '@/context/AuthContext'
+import { getAuthToken, parseErrorMessage, handleAPIError } from '@/lib/errors'
 
 export interface ChatInputProps {
   sessionId?: number
@@ -29,7 +30,7 @@ export default function ChatInput({ sessionId, onMessageSent }: ChatInputProps) 
     setError('')
 
     try {
-      const token = localStorage.getItem('bgai_auth_token')
+      const token = getAuthToken()
       if (!token) throw new Error('No authentication token')
 
       const response = await fetch(`/api/chat/sessions/${sessionId}`, {
@@ -48,13 +49,14 @@ export default function ChatInput({ sessionId, onMessageSent }: ChatInputProps) 
       })
 
       if (!response.ok) {
-        throw new Error('Failed to save message')
+        const error = await handleAPIError(response)
+        throw new Error(error.message)
       }
 
       onMessageSent?.(text)
       setMessage('')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to send message')
+      setError(parseErrorMessage(err, 'Failed to send message'))
     } finally {
       setLoading(false)
     }

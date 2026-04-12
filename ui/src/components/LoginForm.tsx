@@ -3,6 +3,8 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
+import { checkPasswordStrength, validatePasswordMatch } from "@/lib/validators";
+import { parseErrorMessage } from "@/lib/errors";
 
 export default function LoginPage() {
   const { login, register, loading, user } = useAuth();
@@ -27,12 +29,8 @@ export default function LoginPage() {
     }
   }, [user, loading, router]);
 
-  const checkStrength = (val: string) => {
-    let score = 0;
-    if (val.length >= 8) score++;
-    if (/[A-Z]/.test(val)) score++;
-    if (/[0-9]/.test(val)) score++;
-    if (/[^A-Za-z0-9]/.test(val)) score++;
+  const handlePasswordChange = (val: string) => {
+    const score = checkPasswordStrength(val);
     setPasswordStrength(score);
   };
 
@@ -42,7 +40,7 @@ export default function LoginPage() {
     try {
       await login(email, password);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Login gagal. Periksa kembali akun Anda.");
+      setError(parseErrorMessage(err, "Login gagal. Periksa kembali akun Anda."));
     }
   };
 
@@ -50,7 +48,7 @@ export default function LoginPage() {
     e.preventDefault();
     setError("");
 
-    if (password !== confirmPassword) {
+    if (!validatePasswordMatch(password, confirmPassword)) {
       setError("Konfirmasi kata sandi tidak cocok.");
       return;
     }
@@ -58,7 +56,7 @@ export default function LoginPage() {
     try {
       await register(username, email, password);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Pendaftaran gagal.");
+      setError(parseErrorMessage(err, "Pendaftaran gagal."));
     }
   };
 
@@ -160,7 +158,7 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => {
                     setPassword(e.target.value);
-                    if (activePanel === "register") checkStrength(e.target.value);
+                    if (activePanel === "register") handlePasswordChange(e.target.value);
                   }}
                   placeholder="Masukkan kata sandi"
                   style={S.input}

@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react'
 import { useAuth } from '@/context/AuthContext'
+import { validatePassword, validatePasswordMatch } from '@/lib/validators'
+import { parseErrorMessage as parseError } from '@/lib/errors'
 
 export default function RegisterForm() {
   const { register, loading } = useAuth()
@@ -22,12 +24,12 @@ export default function RegisterForm() {
       return
     }
 
-    if (password.length < 6) {
+    if (!validatePassword(password, 6)) {
       setError('Password must be at least 6 characters')
       return
     }
 
-    if (password !== confirmPassword) {
+    if (!validatePasswordMatch(password, confirmPassword)) {
       setError('Passwords do not match')
       return
     }
@@ -40,7 +42,7 @@ export default function RegisterForm() {
       setConfirmPassword('')
       setname('')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Registration failed')
+      setError(parseError(err, 'Registration failed'))
     }
   }
 

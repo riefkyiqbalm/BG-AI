@@ -4,16 +4,16 @@ import React from 'react';
 import Link from 'next/link';
 import BackButton from '@/components/BackButton';
 
-export default function NotFoundPage() {
+export default function NotFoundPage({ errorcode, type }: { errorcode: string, type?: string }) {
   return (
     <div style={S.root} className="bg-grid">
       <div style={{ ...S.orb, width: 400, height: 400, top: -80, right: '8%', background: 'rgba(0,212,200,.07)', animationDelay: '0s' }} />
       <div style={{ ...S.orb, width: 280, height: 280, bottom: 60, left: '4%', background: 'rgba(255,77,109,.07)', animationDelay: '-3s' }} />
 
       <div style={S.wrap} className="animate-fade-up">
-        <div style={S.bigNum} aria-label="404">404</div>
+        <div style={S.bigNum} aria-label="404">{errorcode}</div>
         <div style={S.errorCode}>
-          <span style={S.line} />PAGE_NOT_FOUND<span style={S.line} />
+          <span style={S.line} />{type}<span style={S.line} />
         </div>
         <h1 style={S.h1}>Halaman Ini <span style={{ color: 'var(--teal)' }}>Tidak Ditemukan</span></h1>
         <p style={S.p}>URL yang Anda akses tidak ada di sistem BG-AI. Halaman mungkin telah dipindahkan, dihapus, atau memang tidak pernah ada.</p>

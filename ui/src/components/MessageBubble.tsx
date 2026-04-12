@@ -3,46 +3,22 @@
 
 import { UIMessage } from "@/types";
 import { useState } from "react";
-import ActionMenu from "@/components/Action"; // Pastikan path benar
+import ActionMenu from "@/components/Action";
+import { formatText, formatTimeFromISO } from "@/lib/formatters";
+import { useCopyToClipboard } from "@/lib/hooks";
 
 interface Props {
   msg: UIMessage;
 }
 
-// Format teks: **bold**, \n → <br>
-function formatText(text: string): React.ReactNode[] {
-  return text.split("\n").map((line, li, arr) => {
-    const parts = line.split(/(\*\*[^*]+\*\*)/g);
-    return (
-      <span key={li}>
-        {parts.map((p, pi) =>
-          p.startsWith("**") && p.endsWith("**") ? (
-            <strong key={pi}>{p.slice(2, -2)}</strong>
-          ) : (
-            <span key={pi}>{p}</span>
-          )
-        )}
-        {li < arr.length - 1 && <br />}
-      </span>
-    );
-  });
-}
-
-function timeStr(iso: string) {
-  return new Date(iso).toLocaleTimeString("id-ID", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
-
 export default function MessageBubble({ msg }: Props) {
-  const isUser = msg.role === "user";
+  const isUser = msg.role === "USER";
   const [isHovered, setIsHovered] = useState(false);
+  const { copyToClipboard } = useCopyToClipboard();
 
   const handleAction = (type: string) => {
     if (type === "copy") {
-      navigator.clipboard.writeText(msg.text);
-      // Anda bisa menambahkan toast notification di sini jika ada
+      copyToClipboard(msg.text);
     }
     if (type === "delete") {
       console.log("Delete message ID:", msg.id);
@@ -66,15 +42,15 @@ export default function MessageBubble({ msg }: Props) {
           style={{
             ...S.bubble,
             ...(isUser ? S.bubbleUser : S.bubbleBot),
-            position: "relative" // Penting untuk penempatan menu
+            position: "relative"
           }}
         >
-          {/* Action Menu - Hanya muncul saat hover & tidak sedang streaming */}
+          {/* Action Menu - Only shown on hover & not streaming */}
           {!msg.isStreaming && (
             <div style={{ 
               ...S.actionWrapper, 
               opacity: isHovered ? 1 : 0,
-              [isUser ? "left" : "right"]: -40 // Muncul di sisi luar bubble
+              [isUser ? "left" : "right"]: -40
             }}>
               <ActionMenu 
                 actions={["copy", "delete"]} 
@@ -108,7 +84,7 @@ export default function MessageBubble({ msg }: Props) {
             ...(isUser ? { textAlign: "right" as const } : {}),
           }}
         >
-          {timeStr(msg.createdAt)}
+          {formatTimeFromISO(msg.createdAt)}
         </div>
       </div>
     </div>
@@ -116,7 +92,6 @@ export default function MessageBubble({ msg }: Props) {
 }
 
 const S: Record<string, React.CSSProperties> = {
-  // ... style Anda sebelumnya tetap sama ...
   row: {
     display: "flex",
     gap: 12,
@@ -169,7 +144,6 @@ const S: Record<string, React.CSSProperties> = {
     color: "var(--muted)",
     paddingLeft: 4,
   },
-  // Tambahan style untuk Action Menu
   actionWrapper: {
     position: "absolute",
     top: 0,

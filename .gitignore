@@ -128,3 +128,10 @@ dist/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Markdown
+*DATABASE_FORMS.md
+*EXTRACTABLE_FUNCTIONS.md
+*PRISMA.md
+*REFACTORING_COMPLETE.md
+*REFACTORING_SUMMARY.md

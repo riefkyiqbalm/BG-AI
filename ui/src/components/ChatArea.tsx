@@ -22,7 +22,7 @@ export default function ChatArea({ messages, isWelcomeScreen, isCurrentLoading, 
       {isWelcomeScreen ? (
         <div style={S.welcome} className="animate-fade-up">
           <div style={S.welcomeIcon}>🌿</div>
-          <h2 style={S.h2}>Halo, <span style={{ color: 'var(--teal)' }}>{(user?.name || 'user').charAt(0).toUpperCase() + (user?.name || 'User').slice(1)}</span></h2>
+          <h2 style={S.h2}>Halo, <span style={{ color: 'var(--teal)' }}>{(user?.name || 'user').charAt(0).toUpperCase() + (user?.name || 'user').slice(1)}</span></h2>
           <p style={S.p}>Asisten BGAI siap membantu untuk proses administrasi dan perizinan IPAL.</p>
           <SuggestionsList onSelect={onSelectSuggestion} />
         </div>
